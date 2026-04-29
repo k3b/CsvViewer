@@ -5,9 +5,15 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 appcompat = "1.7.1"
 material = "1.13.0"
+constraintlayout = "2.2.1"
+
 # activity 1.11.0 last version compatible with api-21. 1.12.2-Requires api 23
 activity = "1.11.0"
-constraintlayout = "2.2.1"
+
+# commonsIo = "2.7": last version compatible with java-8
+commonsIo = "2.7"
+# opencsv = "3.10": last version compatible with java-8
+opencsv = "3.10"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -17,6 +23,12 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+# non-android StringUtils
+commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
+
+# non-android csv parser/generator
+opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
