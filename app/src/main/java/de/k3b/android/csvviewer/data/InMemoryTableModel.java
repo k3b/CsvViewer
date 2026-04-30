@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class InMemoryTableModel implements TableModelApi {
 
+    /** names of the columns */
     @NonNull private final String[] columnNames;
 
     /** A list of rows where each row is an array of columns  */
@@ -41,6 +42,11 @@ public class InMemoryTableModel implements TableModelApi {
         }
     }
 
+    /** @return  names of the columns */
+    @NonNull public String[] getColumnNames() {
+        return columnNames;
+    }
+
     /**
      * Creates a row with no values. Use {@link #addRow(Object[])} to add it to this.
      */
@@ -54,9 +60,7 @@ public class InMemoryTableModel implements TableModelApi {
         if (rowCandidate == null || rowCandidate.length < getColumnCount()) {
             result = createEmptyRow();
             if (rowCandidate != null) {
-                for (int i = rowCandidate.length - 1; i >= 0; i--) {
-                    result[i] = rowCandidate[i];
-                }
+                System.arraycopy(rowCandidate, 0, result, 0, rowCandidate.length);
             }
         }
         check(result);
@@ -130,7 +134,17 @@ public class InMemoryTableModel implements TableModelApi {
     @Override @Nullable
     public Object getValueAt(int row, int column) {
         check(row, column);
-        return rows.get(row)[column];
+        return getRow(row)[column];
+    }
+
+    /**
+     * @param row
+     * @return the row data at specified row number
+     */
+    @Override
+    public @NonNull Object[] getRow(int row) {
+        check(row, 0);
+        return rows.get(row);
     }
 
     /**
@@ -156,6 +170,6 @@ public class InMemoryTableModel implements TableModelApi {
     @Override
     public void setValueAt(@Nullable Object value, int row, int column) {
         check(row, column);
-        rows.get(row)[column] = value;
+        getRow(row)[column] = value;
     }
 }

@@ -27,6 +27,8 @@ public interface TableModelApi {
      */
     @Nullable Object getValueAt(int row, int column);
 
+    @NonNull Object[] getRow(int row);
+
     /**
      * Sets the value for the cell in the table model at <code>row</code>
      * and <code>column</code>.
@@ -67,7 +69,10 @@ public interface TableModelApi {
      */
     int getColumnCount();
 
-    /** @return a valid version of rowCandidate. */
+    /** @return  names of the columns */
+    @NonNull String[] getColumnNames();
+
+        /** @return a valid version of rowCandidate. */
     @NonNull
     Object[] fixRow(@Nullable Object[] rowCandidate);
 }
