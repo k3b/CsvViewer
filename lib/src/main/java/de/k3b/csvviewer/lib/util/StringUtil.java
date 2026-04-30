@@ -1,4 +1,4 @@
-package de.k3b.android.csvviewer.util;
+package de.k3b.csvviewer.lib.util;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

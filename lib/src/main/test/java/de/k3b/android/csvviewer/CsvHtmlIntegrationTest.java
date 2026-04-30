@@ -2,8 +2,6 @@ package de.k3b.android.csvviewer;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 
 import de.k3b.android.csvviewer.csv.Csv2TableModel;

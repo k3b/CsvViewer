@@ -1,9 +1,9 @@
-package de.k3b.android.csvviewer.csv;
+package de.k3b.csvviewer.lib.csv;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import de.k3b.android.csvviewer.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.TableModelApi;
 
 /** Converts {@link TableModelApi} to html-Table */
 public class TableModel2Html {

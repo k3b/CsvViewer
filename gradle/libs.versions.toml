@@ -15,6 +15,8 @@ commonsIo = "2.7"
 # opencsv = "3.10": last version compatible with java-8
 opencsv = "3.10"
 
+jspecify = "1.0.0"
+
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -23,6 +25,8 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
 
 # non-android StringUtils
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }

@@ -1,0 +1,34 @@
+plugins {
+    id 'java-library'
+}
+java {
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+}
+
+dependencies {
+    // csv support
+    // https://opencsv.sourceforge.net/licenses.html License: Apache2
+    // opencsv 3.10 was the last java-6 version
+    // opencsv 5.7.1' for java-8 may have dependencies that are not backward compatibility with android-4.1
+    //noinspection GradleDependency
+    implementation(libs.opencsv) {
+        // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
+
+    implementation libs.commons.io
+    implementation libs.jspecify
+
+    testImplementation libs.junit
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+
+    maxHeapSize = '1G'
+
+    testLogging {
+        events "passed"
+    }
+}

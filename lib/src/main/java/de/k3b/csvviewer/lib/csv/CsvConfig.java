@@ -5,9 +5,9 @@
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
 #########################################################*/
-package de.k3b.android.csvviewer.csv;
+package de.k3b.csvviewer.lib.csv;
 
-import de.k3b.android.csvviewer.util.StringUtil;
+import de.k3b.csvviewer.lib.util.StringUtil;
 
 /**
  * Configuration for CSV file format.

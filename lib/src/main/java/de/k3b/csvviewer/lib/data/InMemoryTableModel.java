@@ -1,4 +1,4 @@
-package de.k3b.android.csvviewer.data;
+package de.k3b.csvviewer.lib.data;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
