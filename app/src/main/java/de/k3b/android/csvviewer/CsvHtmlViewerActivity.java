@@ -84,7 +84,7 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
     }
 
     /**
-     * See https://developer.android.com/develop/ui/views/layout/webapps/webview#groovy for details
+     * See <a href="https://developer.android.com/develop/ui/views/layout/webapps/webview#groovy">...</a> for details
      */
     @SuppressLint({"ClickableViewAccessibility", "ObsoleteSdkInt"})
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

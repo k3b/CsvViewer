@@ -16,8 +16,11 @@ activity = "1.12.2"
 webkit = "1.15.0"
 
 # commonsIo = "2.7": last version compatible with java-8
+#noinspection NewerVersionAvailable
 commonsIo = "2.7"
+
 # opencsv = "3.10": last version compatible with java-8
+#noinspection NewerVersionAvailable
 opencsv = "3.10"
 
 jspecify = "1.0.0"

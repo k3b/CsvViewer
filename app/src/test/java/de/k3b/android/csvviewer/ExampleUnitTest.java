@@ -4,12 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import java.io.IOException;
-
-import de.k3b.csvviewer.lib.csv.Csv2TableModel;
-import de.k3b.csvviewer.lib.csv.TableModel2Html;
-import de.k3b.csvviewer.lib.data.TableModelApi;
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -17,7 +11,7 @@ import de.k3b.csvviewer.lib.data.TableModelApi;
  */
 public class ExampleUnitTest {
     @Test
-    public void calculate_isCorrect() throws IOException {
+    public void calculate_isCorrect()  {
         assertEquals(4, 2 + 2);
    }
 }
