@@ -16,11 +16,6 @@ import de.k3b.csvviewer.lib.data.TableModelApi;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
-    String exampleCsv = "# some comment\n" +
-            "name,greeting\n" +
-            "peter,hello peter\n" +
-            "susi,hello susi\n";
-
     @Test
     public void calculate_isCorrect() throws IOException {
         assertEquals(4, 2 + 2);

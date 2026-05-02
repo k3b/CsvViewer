@@ -4,9 +4,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import de.k3b.android.csvviewer.csv.Csv2TableModel;
-import de.k3b.android.csvviewer.csv.TableModel2Html;
-import de.k3b.android.csvviewer.data.TableModelApi;
+import de.k3b.csvviewer.lib.csv.Csv2TableModel;
+import de.k3b.csvviewer.lib.csv.TableModel2Html;
+import de.k3b.csvviewer.lib.data.TableModelApi;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

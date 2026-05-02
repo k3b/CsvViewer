@@ -10,7 +10,8 @@ android {
 
     defaultConfig {
         applicationId "de.k3b.android.csvviewer"
-        minSdk 21 // required for WebView and request
+        // minSdk 21 // required for WebView and request
+        minSdk 23 // WebView instable with minSdk 21
         targetSdk 36
         versionCode 1
         versionName "1.0"
@@ -36,6 +37,8 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
 
+    implementation libs.webkit
+
     // csv support
     // https://opencsv.sourceforge.net/licenses.html License: Apache2
     // opencsv 3.10 was the last java-6 version
@@ -47,12 +50,13 @@ dependencies {
     }
 
     implementation libs.commons.io
+    implementation project(':lib')
 
     testImplementation libs.junit
     testImplementation project(':lib')
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    implementation group: 'org.jspecify', name: 'jspecify', version: '1.0.0'
+    implementation libs.jspecify
 
 }

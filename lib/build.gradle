@@ -6,6 +6,9 @@ java {
     targetCompatibility JavaVersion.VERSION_11
 }
 
+test {
+    useJUnit()  // JUnit 4
+}
 dependencies {
     // csv support
     // https://opencsv.sourceforge.net/licenses.html License: Apache2
@@ -24,7 +27,7 @@ dependencies {
 }
 
 tasks.named('test', Test) {
-    useJUnitPlatform()
+    // useJUnitPlatform() for junit 5
 
     maxHeapSize = '1G'
 

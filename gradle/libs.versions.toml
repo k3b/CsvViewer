@@ -8,7 +8,12 @@ material = "1.13.0"
 constraintlayout = "2.2.1"
 
 # activity 1.11.0 last version compatible with api-21. 1.12.2-Requires api 23
-activity = "1.11.0"
+# activity = "1.11.0"
+activity = "1.12.2"
+
+# webkit 1.14.0 last version compatible with api-21. 1.15.0-Requires api 23
+# webkit = "1.14.0"
+webkit = "1.15.0"
 
 # commonsIo = "2.7": last version compatible with java-8
 commonsIo = "2.7"
@@ -18,14 +23,7 @@ opencsv = "3.10"
 jspecify = "1.0.0"
 
 [libraries]
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-
+# android independant ide support for null/notnull
 jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
 
 # non-android StringUtils
@@ -34,6 +32,18 @@ commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
 # non-android csv parser/generator
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 
+# Android activity specific
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
+
+# Test(dirven) specific
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

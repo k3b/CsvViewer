@@ -7,21 +7,27 @@ import de.k3b.csvviewer.lib.data.TableModelApi;
 
 /** Converts {@link TableModelApi} to html-Table */
 public class TableModel2Html {
-    @NonNull public static String toHtmlTable(@NonNull TableModelApi tableModel, int[] columns,int[] rows, int pageNumber) {
+
+    @NonNull public static String toHtmlTable(@NonNull TableModelApi tableModel, int[] columns, int[] rows, int pageNumber) {
         return new TableModel2Html(tableModel, columns,rows, pageNumber).toHtmlTable();
     }
 
-    private static final String HtmlStart = "<!DOCTYPE html []>\n" +
+    /** added before every link text. Note: including a "#" will crash html rendering */
+    private static final String LINE_ITEM_PREFIX = "> ";
+
+    private static final String HtmlStart = "<!DOCTYPE html>\n" +
             "<html>\n" +
-            "  <head>\n" +
-            "    <meta charset='UTF-8' />\n" +
-            "    <style type='text/css'>\n" +
-            "            \n" +
-            "/* Avoid page breaks inside the most common attributes, especially for exports (i.e. PDF) */\n" +
-            "td, h1, h2, h3, h4, h5, p, ul, ol, li {\n" +
-            "    page-break-inside: avoid; \n" +
-            "}\n" +
-            "    </style>\n" +
+                "<head>\n" +
+                    "<meta charset='UTF-8' />\n" +
+                    "<style type='text/css'>\n" +
+                            "/* Avoid page breaks inside the most common attributes, especially for exports (i.e. PDF) */\n" +
+                            "td, h1, h2, h3, h4, h5, p, ul, ol, li {\n" +
+                            "  page-break-inside: avoid; \n" +
+                            "}\n" +
+                            "td, th {\n" +
+                            "  border: 1px solid;\n" +
+                            "}\n" +
+                    "</style>\n" +
             "  </head>\n" +
             "<body>\n";
     private static final String HtmlEnd = "</body>\n</html>\n";
@@ -76,11 +82,11 @@ public class TableModel2Html {
             mdMarkup.append("<p>");
 
             for(int i = 1; i <= maxPage; i++) {
-                String text = "#" + i;
+                String text = LINE_ITEM_PREFIX + i;
                 if (i == pageNumber) {
                     mdMarkup.append(text);
                 } else {
-                    addButton(text, "app:page?id=" + i);
+                    addButton(text, "app:/?page=" + i);
                 }
                 mdMarkup.append(BLANK);
             }
@@ -108,7 +114,7 @@ public class TableModel2Html {
 
     private void addHeaderColumn(int virtualColumn, int physicalColumn, String name) {
         mdMarkup.append("<th>");
-        addButton(toString(name), "app:col?id=" + physicalColumn);
+        addButton(toString(name), "app:/?col=" + physicalColumn);
         mdMarkup.append("</th>\n");
     }
 
@@ -131,7 +137,7 @@ public class TableModel2Html {
     private void addRowColumn(int rowNumber, int virtualColumn, int physicalColumn,@Nullable Object cell) {
         mdMarkup.append("<td>");
         if (virtualColumn == 0) {
-            addButton("#" + toString(cell), "app:row?id=" + tableModel.getValueAt(rowNumber, 0));
+            addButton(LINE_ITEM_PREFIX + toString(cell), "app:/?row=" + tableModel.getValueAt(rowNumber, 0));
         } else {
             mdMarkup.append(toString(cell));
         }
@@ -147,8 +153,12 @@ public class TableModel2Html {
     }
 
     private void addButton(String text, String link) {
-        mdMarkup.append("<a href='").append(link)
-                .append("'><button type='button'>")
-                .append(text).append("</button></a>");
+        mdMarkup.append("<button type='button'>");
+        mdMarkup.append("<a href='");
+        mdMarkup.append(link);
+        mdMarkup.append("'>");
+        mdMarkup.append(text);
+        mdMarkup.append("</a>");
+        mdMarkup.append("</button>");
     }
 }
