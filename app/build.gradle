@@ -32,31 +32,31 @@ android {
 }
 
 dependencies {
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.activity
-    implementation libs.constraintlayout
+    implementation libs.android.appcompat
+    implementation libs.android.material
+    implementation libs.android.activity
+    implementation libs.android.constraintlayout
 
-    implementation libs.webkit
+    implementation libs.android.webkit
 
     // csv support
     // https://opencsv.sourceforge.net/licenses.html License: Apache2
     // opencsv 3.10 was the last java-6 version
     // opencsv 5.7.1' for java-8 may have dependencies that are not backward compatibility with android-4.1
     //noinspection GradleDependency
-    implementation(libs.opencsv) {
+    implementation(libs.java.opencsv) {
         // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
-    implementation libs.commons.io
+    implementation libs.java.commons.io
     implementation project(':lib')
 
-    testImplementation libs.junit
+    testImplementation libs.test.java.junit
     testImplementation project(':lib')
-    androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.test.android.ext.junit
+    androidTestImplementation libs.test.android.espresso.core
 
-    implementation libs.jspecify
+    implementation libs.java.jspecify
 
 }

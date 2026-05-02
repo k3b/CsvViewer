@@ -112,9 +112,7 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
                 if (uri != null) {
 
                     if ("app".equals(uri.getScheme())) {
-                        String row = uri.getQueryParameter("row");
-                        String col = uri.getQueryParameter("col");
-                        handleEvent(row, col, lastX, lastY);
+                        handleEvent(uri, lastX, lastY);
                         return true; // stop WebView from loading
                     }
                 }
@@ -187,10 +185,13 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
         popupMenu.show();
     }
 
-    private void handleEvent(String row, String col, float x, float y) {
-        showHeaderMenu(x,y);
-            String text = String.format("Link id=%s clicked at (%s,%s)", col, lastX, lastY);
-            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    private void handleEvent(Uri uri, float x, float y) {
+        String row = uri.getQueryParameter("row");
+        String col = uri.getQueryParameter("col");
+
+        // showHeaderMenu(x,y);
+        String text = String.format("clicked on %s at (%s,%s)", uri, lastX, lastY);
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
 }
