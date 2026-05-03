@@ -9,19 +9,24 @@ android {
     }
 
     defaultConfig {
-        applicationId "de.k3b.android.csvviewer"
         // minSdk 21 // required for WebView and request
-        minSdk 23 // WebView instable with minSdk 21
+        // minSdk 23 // WebView instable with minSdk 21
         targetSdk 36
-        versionCode 1
-        versionName "1.0"
+        versionCode 1000 // increment in 1000 steps
+        versionName "0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -29,34 +34,43 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+    flavorDimensions "api"
+
+    productFlavors {
+        minApi21 {
+            dimension "api"
+            minSdkVersion 21 // android 5
+            versionCode android.defaultConfig.versionCode + 21
+            versionNameSuffix "-minApi21"
+            applicationId "de.k3b.android.csvviewer.api21"
+        }
+        minApi23 {
+            dimension "api"
+            minSdkVersion 23 // android 6
+            versionCode android.defaultConfig.versionCode + 23
+            versionNameSuffix "-minApi23"
+            applicationId "de.k3b.android.csvviewer.api23"
+        }
+    }
 }
 
 dependencies {
-    implementation libs.android.appcompat
-    implementation libs.android.material
-    implementation libs.android.activity
-    implementation libs.android.constraintlayout
+    implementation libs.bundles.android
 
-    implementation libs.android.webkit
-
-    // csv support
-    // https://opencsv.sourceforge.net/licenses.html License: Apache2
-    // opencsv 3.10 was the last java-6 version
-    // opencsv 5.7.1' for java-8 may have dependencies that are not backward compatibility with android-4.1
-    //noinspection GradleDependency
-    implementation(libs.java.opencsv) {
+    minApi21Implementation(libs.bundles.api21) {
+        // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
+    minApi23Implementation(libs.bundles.api23) {
         // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
-    implementation libs.java.commons.io
     implementation project(':lib')
 
     testImplementation libs.test.java.junit
     testImplementation project(':lib')
     androidTestImplementation libs.test.android.ext.junit
     androidTestImplementation libs.test.android.espresso.core
-
-    implementation libs.java.jspecify
-
 }
