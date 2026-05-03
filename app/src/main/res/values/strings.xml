@@ -1,3 +1,3 @@
 <resources>
-    <string name="app_name">Csv Viewer</string>
+    <string name="err_exception">Error loading %1$s and parsing csv: %2$s.</string>
 </resources>

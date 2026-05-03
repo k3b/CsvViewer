@@ -1,6 +1,7 @@
 package de.k3b.android.csvviewer;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -27,10 +28,14 @@ import androidx.core.view.WindowInsetsCompat;
 import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
+import de.k3b.android.csvviewer.util.IntentUtil;
+import de.k3b.csvviewer.lib.csv.Csv2Html;
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
+import de.k3b.csvviewer.lib.csv.DemoData;
 import de.k3b.csvviewer.lib.csv.TableModel2Html;
-import de.k3b.csvviewer.lib.data.TableModelApi;
 
 public class CsvHtmlViewerActivity extends AppCompatActivity {
 
@@ -43,6 +48,9 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
 
     @NonNull
     private WebView webView;
+
+    /** last loaded csv data source for error message */
+    private String lastCsvSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +82,20 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
 
         initWebView(webView);
 
-        String unencodedHtml = null;
         try {
-            unencodedHtml = getHtml();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            showHtml(getHtml());
+        } catch (Exception e) {
+            String errorMessage = getCsvErrorMessage(e);
+            Log.e(LOG_TAG, errorMessage, e);
+            String html = "<html><body><pre>\n" //
+                    + TableModel2Html.escapeHtml(errorMessage) //
+                    + "\n</pre></body><html>\n";
+            showHtml(html);
         }
-        webView.loadData( unencodedHtml, "text/html", "UTF-8");
+    }
+
+    private void showHtml(String html) {
+        webView.loadData(html, "text/html", "UTF-8");
     }
 
     /**
@@ -134,22 +149,41 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
         return webView;
     }
 
+    /**
+     *
+     * @return table html from
+     * * View/Edit/SENDTO(uri=DATA) or
+     * * SEND(uri=EXTRA_STREAM)
+     * * Clip-Text(csv=EXTRA_TEXT)
+     * * else demo data
+     * @throws IOException
+     */
     public String getHtml() throws IOException {
-        String exampleCsv = "# some comment\n" +
-                "name,greeting\n" +
-                "peter,hello peter\n" +
-                "susi,hello susi\n" +
-                "world,hello world\n" +
-                "nobody,hello nobody\n" +
-                ",hello \n";
+        int options = Csv2TableModel.OPTION_ALL;
+        Intent intent = getIntent();
+        Uri uri = IntentUtil.getUri(intent);
+        String html = null;
+        if (uri != null) {
+            this.lastCsvSource = uri.toString();
+            try (Reader csvReader = new InputStreamReader(getContentResolver().openInputStream(uri))) {
+                html = Csv2Html.toHtmlTable(csvReader, options);
+            }
+        } else {
+            this.lastCsvSource = "";
+            String csvText = DemoData.demoCsv;
+            Object extraValue = IntentUtil.getExtra(intent, Intent.EXTRA_TEXT);
+            if (extraValue != null) {
+                csvText = extraValue.toString();
+            }
 
-        TableModelApi model = null;
-        try(Csv2TableModel csv = new Csv2TableModel(Csv2TableModel.OPTION_ALL)) {
-            model = csv.toTableModel(exampleCsv);
-            String html = TableModel2Html.toHtmlTable(model, null, null, 0);
-            Log.i(LOG_TAG, html);
-            return html;
+            html = Csv2Html.toHtmlTable(csvText, options);
         }
+        Log.i(LOG_TAG, html);
+        return html;
+    }
+
+    private String getCsvErrorMessage(Exception e) {
+        return this.getString(R.string.err_exception, this.lastCsvSource, e.getLocalizedMessage());
     }
 
     // Source - https://stackoverflow.com/a/31834668

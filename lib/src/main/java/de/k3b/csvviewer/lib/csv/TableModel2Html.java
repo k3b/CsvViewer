@@ -1,5 +1,6 @@
 package de.k3b.csvviewer.lib.csv;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -13,7 +14,7 @@ public class TableModel2Html {
     }
 
     /** added before every link text. Note: including a "#" will crash html rendering */
-    private static final String LINE_ITEM_PREFIX = "> ";
+    private static final String LINE_ITEM_PREFIX = "# ";
 
     private static final String HtmlStart = "<!DOCTYPE html>\n" +
             "<html>\n" +
@@ -82,7 +83,7 @@ public class TableModel2Html {
             mdMarkup.append("<p>");
 
             for(int i = 1; i <= maxPage; i++) {
-                String text = LINE_ITEM_PREFIX + i;
+                String text = escapeHtml(LINE_ITEM_PREFIX + i);
                 if (i == pageNumber) {
                     mdMarkup.append(text);
                 } else {
@@ -114,7 +115,7 @@ public class TableModel2Html {
 
     private void addHeaderColumn(int virtualColumn, int physicalColumn, String name) {
         mdMarkup.append("<th>");
-        addButton(toString(name), "app:/?col=" + physicalColumn);
+        addButton(escapeHtml(name), "app:/?col=" + physicalColumn);
         mdMarkup.append("</th>\n");
     }
 
@@ -137,17 +138,19 @@ public class TableModel2Html {
     private void addRowColumn(int rowNumber, int virtualColumn, int physicalColumn,@Nullable Object cell) {
         mdMarkup.append("<td>");
         if (virtualColumn == 0) {
-            addButton(LINE_ITEM_PREFIX + toString(cell), "app:/?row=" + tableModel.getValueAt(rowNumber, 0));
+            addButton(escapeHtml(LINE_ITEM_PREFIX + cell), "app:/?row=" + tableModel.getValueAt(rowNumber, 0));
         } else {
-            mdMarkup.append(toString(cell));
+            mdMarkup.append(escapeHtml(cell));
         }
         mdMarkup.append("</td>\n");
     }
 
     @NonNull
-    private String toString(@Nullable Object cellObject) {
+    public static String escapeHtml(@Nullable Object cellObject) {
         String cellString = null;
-        if (cellObject != null) cellString = cellObject.toString().trim();
+        if (cellObject != null) cellString = StringEscapeUtils.escapeHtml4(cellObject.toString()
+                // "#" inside the column of a html-table stops from table rendering in android
+                .trim().replace("#","*"));
         if (cellString == null || cellString.isEmpty()) cellString = BLANK;
         return cellString;
     }
