@@ -72,7 +72,17 @@ public interface TableModelApi {
     /** @return  names of the columns */
     @NonNull String[] getColumnNames();
 
-        /** @return a valid version of rowCandidate. */
+    /**
+     *
+     * @param column
+     * @return width of given column in chars. 0 means hidden. -1 means automatic width
+     */
+    default int getColumnWidth(int column) {
+        return -1;
+    }
+
+    /** @return a valid version of rowCandidate. */
     @NonNull
     Object[] fixRow(@Nullable Object[] rowCandidate);
+
 }
