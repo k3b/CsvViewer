@@ -12,8 +12,13 @@ import java.util.List;
  */
 public class InMemoryTableModel implements TableModelApi {
 
+    /** number of rows beeing analysed */
+    private static final int INFER_ROW_COUNT = 50;
     /** names of the columns */
     @NonNull private final String[] columnNames;
+
+    /** names of the columns  */
+    private int[] columnWidths = null;
 
     /** A list of rows where each row is an array of columns  */
     @NonNull private final List<Object[]> rows = new ArrayList<>();
@@ -45,6 +50,54 @@ public class InMemoryTableModel implements TableModelApi {
     /** @return  names of the columns */
     @NonNull public String[] getColumnNames() {
         return columnNames;
+    }
+
+    /**
+     * @return names of the columns
+     */
+    @Override
+    public int getColumnWidth(int column) {
+        if(columnWidths == null) {
+            // columnWidths =inferColumnWidths(INFER_ROW_COUNT);
+        }
+
+        int result = -1;
+        if (columnWidths != null && column >= 0 && column < getColumnCount()) {
+            result =  columnWidths[column];
+        }
+
+        return result;
+    }
+
+    private int[] inferColumnWidths(int numberOfRowsToAnalyse) {
+        int[] columnWidths = new int[getColumnCount()];
+
+        for (int col = 0;col < columnNames.length; col++) {
+            int min = columnNames[col].length();
+            int sum = min;
+            int max = min;
+
+            int nonEmpty = 1;
+            int count = getRowCount();
+            if (count > numberOfRowsToAnalyse) count = numberOfRowsToAnalyse;
+
+            for (int row = 0;row < count; row++) {
+                @Nullable Object value = getValueAt(row, col);
+                if (value != null) {
+                    int len = value.toString().length();
+                        sum += len;
+                        if (len > max) max = len;
+                        if (len > 0) nonEmpty++;
+                }
+
+            }
+
+            int average = sum / nonEmpty;
+
+            columnWidths[col] = average;
+
+        }
+        return columnWidths;
     }
 
     /**
