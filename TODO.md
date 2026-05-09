@@ -1,5 +1,12 @@
 // how to implement an android java eventhandler that is connected to a link inside a android html view
 
+### api
+
+
+
+### Android gui
+
+### html gui
 app://event/header?col=42
 
 WebView webView = findViewById(R.id.webView);

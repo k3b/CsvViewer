@@ -81,6 +81,9 @@ public interface TableModelApi {
         return -1;
     }
 
+    /** return column specific propery */
+    @Nullable default <KEY, VALUE> VALUE getColumnProperty(@NonNull KEY key) { return (VALUE) null; }
+
     /** @return a valid version of rowCandidate. */
     @NonNull
     Object[] fixRow(@Nullable Object[] rowCandidate);
