@@ -4,12 +4,12 @@ package de.k3b.csvviewer.lib.csv;
 public class DemoData {
     public static final String demoCsv = "# some comment\n" +
             // ' is optional string delimiter
-            "'name',greeting\n" +
-            "peter,hello peter\n" +
-            "susi,hello susi\n" +
+            "'name',greeting,html,birthday\n" +
+            "peter,hello peter,0,1970-01-07\n" +
+            "susi,hello susi,0,2001-12-25\n" +
             // is not a comment because surrounded by delimiter
-            "' #world#',hello #world#\n" +
+            "' #world#',hello #world#,0\n" +
             // html - escaping
-            "<b>nobody</b>,hello <b>nobody</b>\n" +
-            ",hello \n";
+            "<b>nobody</b>,hello <b>nobody</b>,1\n" +
+            ",hello ,0\n";
 }

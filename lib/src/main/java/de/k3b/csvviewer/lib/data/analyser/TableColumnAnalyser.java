@@ -13,6 +13,7 @@ import de.k3b.csvviewer.lib.data.formatter.StringFormatter;
 
 /** analyse String content of a table column */
 public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements AnalyserApi<Object> {
+    private final int MIN_SUCCESS_ITEMS = 1;
     private boolean nullable = false;
     private int minStringLength = Integer.MAX_VALUE;
     private int maxStringLength = 0;
@@ -103,7 +104,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
 
     @Nullable public BooleanFormatter createBooleanFormatter() {
         BooleanFormatter result = null;
-        if (booleanAnalyser.isEnabled() && nonNullStringCount > 5) {
+        if (booleanAnalyser.isEnabled() && nonNullStringCount >= 3) {
             result = booleanAnalyser.createFormatter();
         }
         return result;
@@ -111,7 +112,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
 
     @Nullable public DateFormatter createDateFormatter() {
         DateFormatter result = null;
-        if (dateAnalyser.isEnabled() && nonNullStringCount > 5) {
+        if (dateAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS) {
             result = dateAnalyser.createFormatter();
         }
         return result;
@@ -119,7 +120,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
 
     @Nullable public LongFormatter createLongFormatter() {
         LongFormatter result = null;
-        if (longIntegerAnalyser.isEnabled() && nonNullStringCount > 5) {
+        if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS) {
             result = longIntegerAnalyser.createFormatter();
         }
         return result;
@@ -127,9 +128,10 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
 
     @Nullable public IntegerFormatter createIntegerFormatter() {
         IntegerFormatter result = null;
-        if (longIntegerAnalyser.isEnabled() && nonNullStringCount > 5
+        if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS
+                && longIntegerAnalyser.getMin() != null
                 && longIntegerAnalyser.getMin() >= (long) Integer.MIN_VALUE
-                && longIntegerAnalyser.getMax() >= (long) Integer.MAX_VALUE) {
+                && longIntegerAnalyser.getMax() <= (long) Integer.MAX_VALUE) {
                 result = new IntegerFormatter();
         }
         return result;

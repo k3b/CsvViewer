@@ -2,23 +2,17 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.formatter.FormatterFactoryApi;
 
-/** implements global Errorhandling, basic properties and report in {@link AnalyserReport}. */
-public class AnalyserBase<T,API> implements AnalyserApi<API> {
+/** implements global Error handling, basic properties and report in {@link AnalyserReport}. */
+public class AnalyserBase<T,API> extends ErrorInfo implements AnalyserApi<API> {
 
     /** if there are more than maxErrors then {@link #isEnabled()} will 
      be set to false so that analysing stops. */
     private final int maxErrors;
     
-    /** Each call to {@link #addError(Long)} will be remembered here. */
-    private final List<Long> errorRowIds = new ArrayList<>();
-
-    /** count the  successfull calls to {@link #analyse(Long, Object)} with data != null. {@link #addError(Long)} will decrease it. */
+    /** count the  successfully calls to {@link #analyse(Long, Object)} with data != null. {@link ErrorInfo#addError(Long, String)} will decrease it. */
     private int successCount =0;
     
     /** true means {@link #analyse(Long, Object)} is active.
@@ -60,11 +54,11 @@ public class AnalyserBase<T,API> implements AnalyserApi<API> {
     }
 
     /** remember a parsing error for the {@link AnalyserReport} report.
-     If there are more than maxErrors then {@link #isEnabled()} will 
+     If there are more than maxErrors then {@link #isEnabled()} will
      be set to false so that analysing stops. */
-    public void addError(Long rowId) {
+    public void addError(Long rowId, String stringValue) {
         successCount--;
-        errorRowIds.add(rowId);
+        super.addError(rowId, stringValue);
         if (errorRowIds.size() >= maxErrors) enabled = false;
     }
 
@@ -77,18 +71,19 @@ public class AnalyserBase<T,API> implements AnalyserApi<API> {
         return true;
     }
 
-    /** add one report row for this Analyser to {@link AnalyserReport} report */
-    protected Object[] addInfoRowToReport(AnalyserReport report, String subParser) {
+    /**
+     * add one report row for this Analyser to {@link AnalyserReport} report
+     */
+    protected void addInfoRowToReport(AnalyserReport report, String subParser) {
         Object[] reportRow = report.addReportRow(this.getClass().getSimpleName(), subParser);
-        if (subParser != null) {
+        if (subParser == null) {
             reportRow[AnalyserReport.col_enabled] = enabled;
             reportRow[AnalyserReport.col_min] = min;
             reportRow[AnalyserReport.col_max] = max;
             reportRow[AnalyserReport.col_success] = successCount;
-            addErrorRowIdsToReport(reportRow, errorRowIds);
+            reportRow[AnalyserReport.col_errorRowIds] = appendErrorInfo(new StringBuilder()).toString();
             reportRow[AnalyserReport.col_result] = getResultColumnValueForReport();
         }
-        return reportRow;
     }
 
     /** get data for the Result column in of {@link AnalyserReport} report. */
@@ -105,19 +100,6 @@ public class AnalyserBase<T,API> implements AnalyserApi<API> {
     @Override
     public void addInfoRowsToReport(AnalyserReport report) {
         addInfoRowToReport(report, null);
-    }
-
-    /** get data for the ErrorRowIds column in of {@link AnalyserReport} */
-    protected static void addErrorRowIdsToReport(Object[] reportRow, List<Long> errorRowIds) {
-        String result = null;
-        if (errorRowIds != null && !errorRowIds.isEmpty()) {
-            StringBuilder stringBuilder = new StringBuilder();
-            for(Long errorRowId : errorRowIds) {
-                stringBuilder.append(errorRowId).append(",");
-            }
-            result = stringBuilder.toString();
-        }
-        reportRow[AnalyserReport.col_errorRowIds] = result;
     }
 
 }

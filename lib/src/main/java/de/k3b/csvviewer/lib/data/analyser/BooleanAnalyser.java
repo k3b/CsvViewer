@@ -29,7 +29,7 @@ public class BooleanAnalyser extends AnalyserBase<Boolean,String> implements Ana
                 } else if (value2.compareToIgnoreCase(stringValue) != 0) {
                     // third value found: cannot be boolean
                     isBoolean = false;
-                    addError(rowId);
+                    addError(rowId,stringValue);
                 }
             }
         }

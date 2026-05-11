@@ -5,9 +5,7 @@ import org.jspecify.annotations.Nullable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import de.k3b.csvviewer.lib.data.formatter.DateFormatter;
 import de.k3b.csvviewer.lib.data.formatter.FormatterFactoryApi;
@@ -19,14 +17,13 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
     public static final String ISO_TIME_PATTERN = "HH:mm:ss";
     public static final String ISO_DATE_TIME_PATTERN = ISO_DATE_PATTERN + " " + ISO_TIME_PATTERN;
 
-    static private class FormatterInfo {
+    static private class FormatterInfo extends ErrorInfo {
         final String formatPattern;
         final DateFormat formatter;
 
         boolean enabled = true;
         Date min;
         Date max;
-        List<Long> errorRowIds = new ArrayList<>();
         FormatterInfo(String formatPattern) {
             this(formatPattern, new SimpleDateFormat(formatPattern));
         }
@@ -35,23 +32,12 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
             this.formatter = formatter;
         }
 
-        public String getErrorInfo() {
-            StringBuilder result = new StringBuilder()//
-                    .append(formatPattern) //
-                    .append(" errors in ");
-            for(Long errorRowId : errorRowIds) {
-                result.append(errorRowId).append(",");
-            }
-            return result.toString();
-        }
-
-        public Object[] addInfo(AnalyserReport report) {
+        public void addInfo(AnalyserReport report) {
             Object[] analyzeRow = report.addReportRow(DateAnalyser.class.getSimpleName(), formatPattern);
             analyzeRow[AnalyserReport.col_enabled] = enabled;
             analyzeRow[AnalyserReport.col_min] = min;
             analyzeRow[AnalyserReport.col_max] = max;
-            addErrorRowIdsToReport(analyzeRow, errorRowIds);
-            return analyzeRow;
+            analyzeRow[AnalyserReport.col_errorRowIds] = appendErrorInfo(new StringBuilder()).toString();
         }
     }
 
@@ -86,12 +72,12 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
                         anySuccess = true;
                     } catch (ParseException e) {
                         allSuccess = false;
-                        dateParser.errorRowIds.add(rowId);
+                        dateParser.addError(rowId, stringValue);
                         if (dateParser.errorRowIds.size() > getMaxErrors()) dateParser.enabled = false;
                     }
                 }
             }
-            if (!anySuccess) addError(rowId);
+            if (!anySuccess) addError(rowId, stringValue);
         }
         return anySuccess;
     }
