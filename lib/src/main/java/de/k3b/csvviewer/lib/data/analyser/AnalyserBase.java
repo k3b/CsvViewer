@@ -59,7 +59,7 @@ public class AnalyserBase<T,API> extends ErrorInfo implements AnalyserApi<API> {
     public void addError(Long rowId, String stringValue) {
         successCount--;
         super.addError(rowId, stringValue);
-        if (errorRowIds.size() >= maxErrors) enabled = false;
+        if (errorCount() >= maxErrors) enabled = false;
     }
 
     /** successCount++ if objectValue != null */
@@ -101,5 +101,4 @@ public class AnalyserBase<T,API> extends ErrorInfo implements AnalyserApi<API> {
     public void addInfoRowsToReport(AnalyserReport report) {
         addInfoRowToReport(report, null);
     }
-
 }

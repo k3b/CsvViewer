@@ -73,7 +73,7 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
                     } catch (ParseException e) {
                         allSuccess = false;
                         dateParser.addError(rowId, stringValue);
-                        if (dateParser.errorRowIds.size() > getMaxErrors()) dateParser.enabled = false;
+                        if (dateParser.errorCount() > getMaxErrors()) dateParser.enabled = false;
                     }
                 }
             }
@@ -93,7 +93,7 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
             // use parser with the least number of errors.
             for (FormatterInfo dateParser : formatterInfos) {
                 if (dateParser.enabled &&
-                        (resultParser == null || dateParser.errorRowIds.size() < resultParser.errorRowIds.size())) {
+                        (resultParser == null || dateParser.errorCount() < resultParser.errorCount())) {
                     resultParser = dateParser;
                 }
             }
@@ -111,4 +111,5 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
         }
         super.addInfoRowsToReport(report);
     }
+
 }

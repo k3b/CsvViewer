@@ -19,7 +19,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
     private int maxStringLength = 0;
 
     // used to calculate average lenght of non blank items
-    private int nonNullTotalLength = 0;
+    private long nonNullTotalLength = 0;
     private int nonNullStringCount = 0;
 
     private final DateAnalyser dateAnalyser;
@@ -45,7 +45,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return maxStringLength;
     }
 
-    public int getNonNullTotalLength() {
+    public long getNonNullTotalLength() {
         return nonNullTotalLength;
     }
 
@@ -88,7 +88,13 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
     public String getResultColumnValueForReport() {
         String result = null;
         FormatterApi<?> formatter = createFormatter();
-        if (formatter != null) result = formatter.toString();
+        if (formatter != null) result =
+                formatter.toString() + "; nullable:" + nullable+
+                        "; len: '" + min +
+                        "' .. '" + (nonNullTotalLength / nonNullStringCount) +
+                        "' .. '" + max +
+                        "'" +
+                        "";
         return result;
     }
 
