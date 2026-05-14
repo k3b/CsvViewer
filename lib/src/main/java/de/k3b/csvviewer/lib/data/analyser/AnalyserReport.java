@@ -2,7 +2,6 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.NonNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.data.InMemoryTableModel;

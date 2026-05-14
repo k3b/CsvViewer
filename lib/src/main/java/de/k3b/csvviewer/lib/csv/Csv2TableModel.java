@@ -13,7 +13,6 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import de.k3b.csvviewer.lib.data.InMemoryTableModel;
-import de.k3b.csvviewer.lib.data.TableModelApi;
 
 public class Csv2TableModel implements AutoCloseable {
     /** csv-header must be inside 0 .. BUFFER_SIZE to be detected.  */

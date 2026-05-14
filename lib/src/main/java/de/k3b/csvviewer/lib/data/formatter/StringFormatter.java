@@ -24,7 +24,7 @@ public class StringFormatter implements FormatterApi<String>, TableColumnCompara
     /** Creates a null-save comparator for tableColumn. Nulls are last. */
     @NonNull
     public Comparator<Object> getComparator() {
-        return new Comparator<Object>() {
+        return new Comparator<>() {
             @Override
             public int compare(Object var1, Object var2) {
                 if (var1 == null) {

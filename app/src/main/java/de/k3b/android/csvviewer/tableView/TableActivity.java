@@ -30,7 +30,6 @@ import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
 import de.k3b.csvviewer.lib.data.analyser.TableModelUtils;
 
 public class TableActivity extends AppCompatActivity {
-    public static final String LOG_TAG = "TableActivity";
     private static final String TAG = TableActivity.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -41,7 +40,7 @@ public class TableActivity extends AppCompatActivity {
     private InMemoryTableModel model;
     private List<Integer> sortOrder = new ArrayList<>();
 
-    private static enum COLUMN_INFOS {
+    private enum COLUMN_INFOS {
         COLUMN_DEFINITIONS
     }
 
@@ -65,7 +64,8 @@ public class TableActivity extends AppCompatActivity {
         try {
             model = parseTableModel();
         } catch (Exception e) {
-            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG);
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, e.getLocalizedMessage(), e);
             model = createSampleModel();
         }
 
