@@ -1,0 +1,52 @@
+package de.k3b.csvviewer.lib.data.formatter;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Comparator;
+
+import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
+
+/** used to sort a TableModell by column numbers */
+public class TableModelRowComparator implements Comparator<Object[]> {
+    private final int col;
+    private final @NonNull Comparator<Object> comparator;
+    private final int inverse;
+    private final TableModelRowComparator next;
+
+    /** create a TableModelRowComparator sorted by columns in columnNos. Negative columnNo means reverse order */
+    public static TableModelRowComparator create(@NonNull TableColumnDefinition[] columnDefinitions, int... columnNos) {
+        TableModelRowComparator result = null;
+        for (int i = columnNos.length - 1; i >= 0; i--) {
+            boolean inverse = false;
+            int columnNo = columnNos[i];
+            if (columnNo < 0) {
+                inverse = true;
+                columnNo = columnNo * -1;
+            }
+            if(columnNo >= columnDefinitions.length) columnNo = 0;
+
+            TableColumnDefinition columnDefinition = columnDefinitions[columnNo];
+            Comparator<Object> comparator = columnDefinition == null ? null : columnDefinition.getFormatter().getComparator();
+            if (comparator != null) {
+                result = new TableModelRowComparator(columnNo, comparator,inverse, result);
+            }
+        }
+        return result;
+    }
+
+    public TableModelRowComparator(int col, @NonNull Comparator<Object> comparator, boolean inverse, @Nullable TableModelRowComparator next) {
+        this.col = col;
+        this.comparator = comparator;
+        this.inverse = inverse ? -1 : 1;
+        this.next = next;
+    }
+
+    public int compare(Object[] row1, Object[] row2) {
+        int result = comparator.compare(row1[col],row2[col]) * inverse;
+        if (result == 0 && next != null) {
+            result = next.compare(row1,row2);
+        }
+        return result;
+    }
+}

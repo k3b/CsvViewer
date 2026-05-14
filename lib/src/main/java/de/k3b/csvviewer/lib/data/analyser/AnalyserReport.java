@@ -9,6 +9,8 @@ import de.k3b.csvviewer.lib.data.InMemoryTableModel;
  */
 public class AnalyserReport extends InMemoryTableModel {
 
+    private final TableColumnDefinition[] tableColumnDefinitions;
+
     private int nextRowId = 0;
     private int colNo;
     private String colName;
@@ -31,8 +33,9 @@ public class AnalyserReport extends InMemoryTableModel {
             "result","enabled","min","max", "success",
             "errorRowIds"};
 
-    public AnalyserReport() {
+    public AnalyserReport(TableColumnDefinition[] tableColumnDefinitions) {
         super(columnNames);
+        this.tableColumnDefinitions = tableColumnDefinitions;
     }
 
     public void defineColumn(int colNo, String colName) {
@@ -54,6 +57,10 @@ public class AnalyserReport extends InMemoryTableModel {
         result[col_colNo]=this.colNo;
         result[col_colName]=this.colName;
         return result;
+    }
+
+    public TableColumnDefinition[] getTableColumnDefinitions() {
+        return tableColumnDefinitions;
     }
 
 }

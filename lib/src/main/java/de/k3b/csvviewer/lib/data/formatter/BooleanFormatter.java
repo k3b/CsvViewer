@@ -3,7 +3,7 @@ package de.k3b.csvviewer.lib.data.formatter;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
-public class BooleanFormatter implements FormatterApi<Boolean> {
+public class BooleanFormatter implements FormatterApi<Boolean>, TableColumnComparatorFactoryImpl<Boolean> {
     private final String trueValue;
     private final String falseValue;
     private final char trueChar;
@@ -95,7 +95,7 @@ public class BooleanFormatter implements FormatterApi<Boolean> {
         } else if (trueChar != 0 && c == trueChar) {
             result = Boolean.TRUE;
         } else {
-            result = !string.isEmpty();
+            result = string != null && !string.isEmpty();
         }
         return result;
     }

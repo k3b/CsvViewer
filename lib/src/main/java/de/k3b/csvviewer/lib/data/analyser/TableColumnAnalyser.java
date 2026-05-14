@@ -12,7 +12,7 @@ import de.k3b.csvviewer.lib.data.formatter.ObjectFormatter;
 import de.k3b.csvviewer.lib.data.formatter.StringFormatter;
 
 /** analyse String content of a table column */
-public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements AnalyserApi<Object> {
+public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements AnalyserApi<Object>, TableColumnDefinition {
     private final int MIN_SUCCESS_ITEMS = 1;
     private boolean nullable = false;
     private int minStringLength = Integer.MAX_VALUE;
@@ -33,6 +33,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         longIntegerAnalyser = new LongIntegerAnalyser(maxErrors);
     }
 
+    @Override
     public boolean isNullable() {
         return nullable;
     }
@@ -41,6 +42,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return minStringLength;
     }
 
+    @Override
     public int getMaxStringLength() {
         return maxStringLength;
     }
@@ -87,7 +89,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
 
     public String getResultColumnValueForReport() {
         String result = null;
-        FormatterApi<?> formatter = createFormatter();
+        FormatterApi<?> formatter = getFormatter();
         if (formatter != null) result =
                 formatter.toString() + "; nullable:" + nullable+
                         "; len: '" + min +
@@ -98,17 +100,18 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return result;
     }
 
-    @Nullable public FormatterApi<?> createFormatter() {
-        FormatterApi<?> result = createDateFormatter();
-        if (result == null) result = createBooleanFormatter();
-        if (result == null) result = createIntegerFormatter();
-        if (result == null) result = createLongFormatter();
+    @Override
+    public @Nullable FormatterApi<?> getFormatter() {
+        FormatterApi<?> result = getDateFormatter();
+        if (result == null) result = getBooleanFormatter();
+        if (result == null) result = getIntegerFormatter();
+        if (result == null) result = getLongFormatter();
         if (result == null) result = new StringFormatter();
         result = new ObjectFormatter(result);
         return result;
     }
 
-    @Nullable public BooleanFormatter createBooleanFormatter() {
+    @Nullable public BooleanFormatter getBooleanFormatter() {
         BooleanFormatter result = null;
         if (booleanAnalyser.isEnabled() && nonNullStringCount >= 3) {
             result = booleanAnalyser.createFormatter();
@@ -116,7 +119,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return result;
     }
 
-    @Nullable public DateFormatter createDateFormatter() {
+    @Nullable public DateFormatter getDateFormatter() {
         DateFormatter result = null;
         if (dateAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS) {
             result = dateAnalyser.createFormatter();
@@ -124,7 +127,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return result;
     }
 
-    @Nullable public LongFormatter createLongFormatter() {
+    @Nullable public LongFormatter getLongFormatter() {
         LongFormatter result = null;
         if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS) {
             result = longIntegerAnalyser.createFormatter();
@@ -132,7 +135,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return result;
     }
 
-    @Nullable public IntegerFormatter createIntegerFormatter() {
+    @Nullable public IntegerFormatter getIntegerFormatter() {
         IntegerFormatter result = null;
         if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS
                 && longIntegerAnalyser.getMin() != null

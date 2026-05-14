@@ -5,17 +5,23 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
+import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
+import de.k3b.csvviewer.lib.data.formatter.TableModelRowComparator;
 
 /**
  * A {@link TableModelApi} implementation where all data is kept in memory.
  */
 public class InMemoryTableModel implements TableModelApi {
-
-    /** number of rows beeing analysed */
-    private static final int INFER_ROW_COUNT = 50;
     /** names of the columns */
     @NonNull private final String[] columnNames;
+
+    private final Map[] columnProperties;
 
     /** names of the columns  */
     private int[] columnWidths = null;
@@ -38,6 +44,7 @@ public class InMemoryTableModel implements TableModelApi {
      */
     public InMemoryTableModel(@NonNull final String[] columnNames, final Object[]... rowData) {
         this.columnNames = columnNames;
+        this.columnProperties = new Map[columnNames.length];
         if (rowData != null) {
             for (Object[] row : rowData) {
                 if (row != null) {
@@ -57,10 +64,6 @@ public class InMemoryTableModel implements TableModelApi {
      */
     @Override
     public int getColumnWidth(int column) {
-        if(columnWidths == null) {
-            // columnWidths =inferColumnWidths(INFER_ROW_COUNT);
-        }
-
         int result = -1;
         if (columnWidths != null && column >= 0 && column < getColumnCount()) {
             result =  columnWidths[column];
@@ -82,7 +85,7 @@ public class InMemoryTableModel implements TableModelApi {
             if (count > numberOfRowsToAnalyse) count = numberOfRowsToAnalyse;
 
             for (int row = 0;row < count; row++) {
-                @Nullable Object value = getValueAt(row, col);
+                Object value = getValueAt(row, col);
                 if (value != null) {
                     int len = value.toString().length();
                         sum += len;
@@ -134,7 +137,7 @@ public class InMemoryTableModel implements TableModelApi {
     /** throws IllegalArgumentException if row is not valid */
     private void check(Object[] row) {
         if (row == null || row.length < getColumnCount()) {
-            throw new IllegalArgumentException(String.format("Row %s must have at least %d coulums", Arrays.toString(row), getColumnCount()));
+            throw new IllegalArgumentException(String.format("Row %s must have at least %d columns", Arrays.toString(row), getColumnCount()));
         }
     }
 
@@ -191,11 +194,11 @@ public class InMemoryTableModel implements TableModelApi {
     }
 
     /**
-     * @param row
+     * @param row - row number to be retrieved.
      * @return the row data at specified row number
      */
     @Override
-    public @NonNull Object[] getRow(int row) {
+    public Object[] getRow(int row) {
         check(row, 0);
         return rows.get(row);
     }
@@ -224,5 +227,45 @@ public class InMemoryTableModel implements TableModelApi {
     public void setValueAt(@Nullable Object value, int row, int column) {
         check(row, column);
         getRow(row)[column] = value;
+    }
+
+    public void sortBy(@NonNull TableColumnDefinition[] columnDefinitions, int... columnNos) {
+        TableModelRowComparator sorter = TableModelRowComparator.create(columnDefinitions, columnNos);
+
+        if (sorter != null) {
+            // rows.sort(sorter); // note List.sort requires android api 24
+            sort(rows,sorter);
+        }
+    }
+
+    /** implements list.sort(comparator) which requires android api-24 (Android-7) */
+    private void sort(List<Object[]> rowList, Comparator<Object[]> comparator) {
+        Object[][] rowArray = rowList.toArray(new Object[0][getColumnCount()]);
+        Arrays.sort(rowArray, comparator);
+        ListIterator<Object[]> rowIterator = rowList.listIterator();
+
+        for(Object[] row : rowArray) {
+            rowIterator.next();
+            rowIterator.set(row);
+        }
+    }
+
+    public <VALUE> void putColumnProperty(int column, @NonNull Object key, VALUE value) {
+        getMap(column).put(key,value);
+    }
+
+    /** return column specific propery */
+    public @Nullable <KEY, VALUE> VALUE getColumnProperty(int column, @NonNull Object key) {
+        return (VALUE) getMap(column).get(key);
+    }
+
+    private Map<Object, Object> getMap(int column) {
+        check(0,column);
+        Map<Object,Object> properties = (Map<Object,Object>) columnProperties[column]; // .put(key,value);
+        if (properties == null) {
+            properties = new HashMap<Object,Object>();
+            columnProperties[column] = properties;
+        }
+        return properties;
     }
 }

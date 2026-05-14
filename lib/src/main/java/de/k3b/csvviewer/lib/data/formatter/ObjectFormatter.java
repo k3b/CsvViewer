@@ -1,6 +1,9 @@
 package de.k3b.csvviewer.lib.data.formatter;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Comparator;
 
 public class ObjectFormatter implements FormatterApi<Object> {
     @Nullable private final FormatterApi<?> formatterImpl;
@@ -36,5 +39,13 @@ public class ObjectFormatter implements FormatterApi<Object> {
         return "ObjectFormatter{" +
                 "formatter=" + formatterImpl +
                 '}';
+    }
+
+    /**
+     * Creates a null-save comparator for tableColumn. Nulls are last.
+     */
+    @Override
+    public @NonNull Comparator<Object> getComparator() {
+        return formatterImpl == null ? null : formatterImpl.getComparator();
     }
 }

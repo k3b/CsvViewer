@@ -7,7 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
-public class DateFormatter implements FormatterApi<Date> {
+public class DateFormatter implements FormatterApi<Date>, TableColumnComparatorFactoryImpl<Date> {
     private final String formatPattern;
     private final DateFormat parser;
 
@@ -18,7 +18,7 @@ public class DateFormatter implements FormatterApi<Date> {
     /**
      * format a native value to a string
      *
-     * @param nativeValue
+     * @param nativeValue - item to be formatted
      */
     @Nullable
     @Override
@@ -30,7 +30,7 @@ public class DateFormatter implements FormatterApi<Date> {
     /**
      * parse a string to a native value
      *
-     * @param string
+     * @param string - item to be parsed
      */
     @Nullable
     @Override

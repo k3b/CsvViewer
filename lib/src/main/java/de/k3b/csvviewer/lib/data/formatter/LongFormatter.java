@@ -2,7 +2,7 @@ package de.k3b.csvviewer.lib.data.formatter;
 
 import org.jspecify.annotations.Nullable;
 
-public class LongFormatter implements FormatterApi<Long> {
+public class LongFormatter implements FormatterApi<Long>, TableColumnComparatorFactoryImpl<Long> {
     /**
      * format a native value to a string
      */
