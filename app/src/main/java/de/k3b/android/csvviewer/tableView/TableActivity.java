@@ -1,13 +1,10 @@
 package de.k3b.android.csvviewer.tableView;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.ViewGroup;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,28 +13,45 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.k3b.android.csvviewer.R;
 import de.k3b.android.csvviewer.util.IntentUtil;
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.DemoData;
+import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
+import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
+import de.k3b.csvviewer.lib.data.analyser.TableModelUtils;
 
 public class TableActivity extends AppCompatActivity {
     public static final String LOG_TAG = "TableActivity";
+    private static final String TAG = TableActivity.class.getSimpleName();
 
     private RecyclerView recyclerView;
     private LinearLayout headerRow;
 
     /** last loaded csv data source for error message */
     private String lastCsvSource;
+    private InMemoryTableModel model;
+    private List<Integer> sortOrder = new ArrayList<>();
 
+    private static enum COLUMN_INFOS {
+        COLUMN_DEFINITIONS
+    }
+
+    private <T>  List<T> getInfo(COLUMN_INFOS key) {
+        List<T> result = new ArrayList<>(model.getColumnCount());
+        for (int col = 0; col < model.getColumnCount(); col++) {
+            result.add(model.getColumnProperty(col, key));
+        }
+        return result;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +61,30 @@ public class TableActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.tableRecycler);
         headerRow = findViewById(R.id.headerRow);
 
-        TableModelApi model = null;
+        InMemoryTableModel model = null;
         try {
-            model = getTableModel();
+            model = parseTableModel();
         } catch (Exception e) {
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG);
             model = createSampleModel();
         }
 
+        AnalyserReport analysed = TableModelUtils.analyse(model, 0);
+
+        List<TableColumnDefinition> tableColumnDefinitions = analysed.getTableColumnDefinitions();
+        TableModelUtils.convertColumns(model, tableColumnDefinitions, true);
+        int col = 0;
+        for (TableColumnDefinition def : tableColumnDefinitions) {
+            model.putColumnProperty(col++, COLUMN_INFOS.COLUMN_DEFINITIONS, def);
+        }
+
+        this.model = model;
+
+        updateTableView();
+
+    }
+
+    private void updateTableView() {
         setupHeader(model);
         setupRecycler(model);
     }
@@ -66,10 +96,47 @@ public class TableActivity extends AppCompatActivity {
 
         for (int i = 0; i < columns.length; i++) {
             String text = columns[i];
+            if (sortOrder.contains(i)) text += " v";
+            else if (sortOrder.contains(negate(i))) text += " ^";
+
             TextView tv = TableHelper.createTextView(this, text, model.getColumnWidth(i));
             // tv.setTypeface(Typeface.DEFAULT_BOLD);
             headerRow.addView(tv);
+            int finalI = i;
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onHeaderClick(finalI);
+                }
+            });
         }
+    }
+
+    private void onHeaderClick(int columnNumber) {
+        Integer descending = negate(columnNumber);
+        Integer ascending = columnNumber;
+        String dir = "";
+        if (sortOrder.remove(descending)) {
+            // descending -> nothing
+            // removed from sorting
+        } else if (sortOrder.remove(ascending)) {
+                // ascending -> decending
+                sortOrder.add(0,descending);
+                dir ="v";
+        } else {
+            // nothing -> ascending
+            sortOrder.add(0,ascending);
+            dir ="^";
+        }
+
+        this.model.sortBy(getInfo(COLUMN_INFOS.COLUMN_DEFINITIONS), sortOrder);
+        Log.i(TAG, model.getColumnNames()[columnNumber] + dir + ": " + sortOrder);
+        updateTableView();
+    }
+
+    private Integer negate(int columnNumber) {
+        if (columnNumber == 0) return -9999;
+        else return -columnNumber;
     }
 
     private void setupRecycler(TableModelApi model) {
@@ -86,7 +153,7 @@ public class TableActivity extends AppCompatActivity {
      * * else demo data
      * @throws IOException
      */
-    public TableModelApi getTableModel() throws IOException {
+    public InMemoryTableModel parseTableModel() throws IOException {
         int options = Csv2TableModel.OPTION_ALL;
         Intent intent = getIntent();
         Uri uri = IntentUtil.getUri(intent);
@@ -95,7 +162,7 @@ public class TableActivity extends AppCompatActivity {
             this.lastCsvSource = uri.toString();
             try (Reader csvReader = new InputStreamReader(getContentResolver().openInputStream(uri))) {
                 try(Csv2TableModel parser = new Csv2TableModel(options)) {
-                    TableModelApi model = parser.toTableModel(csvReader);
+                    InMemoryTableModel model = parser.toTableModel(csvReader);
                     return model;
                 }
             }
@@ -108,88 +175,25 @@ public class TableActivity extends AppCompatActivity {
             }
 
             try(Csv2TableModel parser = new Csv2TableModel(options)) {
-                TableModelApi model = parser.toTableModel(csvText);
+                InMemoryTableModel model = parser.toTableModel(csvText);
                 return model;
             }
         }
     }
 
     // Example model implementation
-    private TableModelApi createSampleModel() {
-        return new TableModelApi() {
+    private InMemoryTableModel createSampleModel() {
+        String[] headers = {"ID", "Name", "Age"};
 
-            String[] headers = {"ID", "Name", "Age"};
-
-            Object[][] data = {
-                    {1, "Alice", 25},
-                    {2, "Bob", 30},
-                    {3, "Charlie", 28}
-            };
-
-            @Override
-            public Object getValueAt(int row, int column) {
-                return data[row][column];
-            }
-
-            @Override
-            public Object[] getRow(int row) {
-                return data[row];
-            }
-
-            /**
-             * Sets the value for the cell in the table model at <code>row</code>
-             * and <code>column</code>.
-             * <p>
-             * <b>Note</b>: The column is specified in the table view's display
-             * order, and not in the <code>TableModel</code>'s column
-             * order.  This is an important distinction because as the
-             * user rearranges the columns in the table,
-             * the column at a given index in the view will change.
-             * Meanwhile the user's actions never affect the model's
-             * column ordering.
-             *
-             * <code>aValue</code> is the new value.
-             *
-             * @param aValue the new value
-             * @param row    the row of the cell to be changed
-             * @param column the column of the cell to be changed
-             * @see #getValueAt
-             */
-            @Override
-            public void setValueAt(@Nullable Object aValue, int row, int column) {
-
-            }
-
-            @Override
-            public int getRowCount() {
-                return data.length;
-            }
-
-            /**
-             * Returns the number of columns in the column model. Note that this may
-             * be different from the number of columns in the table model.
-             *
-             * @return the number of columns in the table
-             * @see #getRowCount
-             */
-            @Override
-            public int getColumnCount() {
-                return 0;
-            }
-
-            @Override
-            public String[] getColumnNames() {
-                return headers;
-            }
-
-            /**
-             * @param rowCandidate
-             * @return a valid version of rowCandidate.
-             */
-            @Override
-            public @NonNull Object[] fixRow(@androidx.annotation.Nullable @Nullable Object[] rowCandidate) {
-                return new Object[0];
-            }
+        Object[][] rows = {
+                {1, "Alice", 25},
+                {2, "Bob", 30},
+                {3, "Charlie", 28}
         };
+        InMemoryTableModel model = new InMemoryTableModel(headers);
+        for (Object[] row : rows) {
+            model.addRow(row);
+        }
+        return model;
     }
 }

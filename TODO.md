@@ -2,9 +2,24 @@
 
 ### api
 
+TableModelUtils
+    analyse
+    convertColumns
+	filter
 
+InMemoryTableModel
+    sorter
+
+Analyser DateFormatterEx 
+	parser mit suffix, wenn zu kurz
+	format ohne time wenn time==null
+	
 
 ### Android gui
+
++ sort via header
+- todo filter
+- save when rotation
 
 ### html gui
 app://event/header?col=42

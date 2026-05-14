@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'de.k3b.android.csvviewer'
+    namespace = 'de.k3b.android.csvviewer'
     compileSdk {
         version = release(36)
     }
@@ -11,23 +11,23 @@ android {
     defaultConfig {
         // minSdk 21 // required for WebView and request
         // minSdk 23 // WebView instable with minSdk 21
-        targetSdk 36
-        versionCode 1000 // increment in 1000 steps
-        versionName "0.1"
-        applicationId "de.k3b.android.csvviewer"
+        targetSdk = 36
+        versionCode = 1000 // increment in 1000 steps
+        versionName = "0.1"
+        applicationId = "de.k3b.android.csvviewer"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled = false
+            shrinkResources = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -40,18 +40,18 @@ android {
 
     productFlavors {
         minApi21 {
-            dimension "api"
+            dimension = "api"
             minSdkVersion 21 // android 5
-            versionCode android.defaultConfig.versionCode + 21
-            versionNameSuffix "-minApi21"
-            applicationId "de.k3b.android.csvviewer.api21"
+            versionCode = android.defaultConfig.versionCode + 21
+            versionNameSuffix = "-minApi21"
+            applicationId = "de.k3b.android.csvviewer.api21"
         }
         minApi23 {
-            dimension "api"
+            dimension = "api"
             minSdkVersion 23 // android 6
-            versionCode android.defaultConfig.versionCode + 23
-            versionNameSuffix "-minApi23"
-            applicationId "de.k3b.android.csvviewer.api23"
+            versionCode = android.defaultConfig.versionCode + 23
+            versionNameSuffix = "-minApi23"
+            applicationId = "de.k3b.android.csvviewer.api23"
         }
     }
 }
