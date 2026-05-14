@@ -6,9 +6,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.Comparator;
 
 public class ObjectFormatter implements FormatterApi<Object> {
-    @Nullable private final FormatterApi<?> formatterImpl;
+    @NonNull private final FormatterApi<?> formatterImpl;
 
-    public ObjectFormatter(@Nullable FormatterApi<?> formatterImpl) {
+    public ObjectFormatter(@NonNull FormatterApi<?> formatterImpl) {
         this.formatterImpl = formatterImpl;
     }
 

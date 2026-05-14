@@ -255,7 +255,7 @@ public class InMemoryTableModel implements TableModelApi {
     }
 
     /** return column specific propery */
-    public @Nullable <KEY, VALUE> VALUE getColumnProperty(int column, @NonNull Object key) {
+    public @Nullable <VALUE> VALUE getColumnProperty(int column, @NonNull Object key) {
         return (VALUE) getMap(column).get(key);
     }
 

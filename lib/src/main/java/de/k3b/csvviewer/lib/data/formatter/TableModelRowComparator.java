@@ -27,7 +27,13 @@ public class TableModelRowComparator implements Comparator<Object[]> {
             if(columnNo >= columnDefinitions.length) columnNo = 0;
 
             TableColumnDefinition columnDefinition = columnDefinitions[columnNo];
-            Comparator<Object> comparator = columnDefinition == null ? null : columnDefinition.getFormatter().getComparator();
+            Comparator<Object> comparator;
+            if (columnDefinition == null) {
+                comparator = null;
+            } else {
+                FormatterApi<?> formatter = columnDefinition.getFormatter();
+                comparator = formatter == null ? null : formatter.getComparator();
+            }
             if (comparator != null) {
                 result = new TableModelRowComparator(columnNo, comparator,inverse, result);
             }

@@ -2,7 +2,6 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.NonNull;
 
-import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.TableModelApi;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 
@@ -22,8 +21,7 @@ public class TableModelUtils {
 
         int maxErrors = rowCount / 20;
 
-        // create TableColumnAnalyser-s
-        /** one analyser per modelToAnalyse column */
+        // create TableColumnAnalyser-s: one analyser per modelToAnalyse column
         TableColumnAnalyser[] analysers = new TableColumnAnalyser[columnCount];
         for (int col = 0; col < columnCount; col++) {
             analysers[col] = new TableColumnAnalyser(maxErrors);
@@ -79,7 +77,7 @@ public class TableModelUtils {
         int columnCount = modelToConvert.getColumnCount();
 
         for (int row = 0; row < rowCount; row++) {
-            @NonNull Object[] rowData = modelToConvert.getRow(row);
+            Object[] rowData = modelToConvert.getRow(row);
             for (int col = 0; col < columnCount; col++) {
                 TableColumnDefinition columnDefinition = columnDefinitions[col];
                 Object oldValue = rowData[col];

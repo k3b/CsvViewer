@@ -5,7 +5,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.Comparator;
 
 /** Defines a factory to create a TableColumnComparator that can be used to sort a table  */
-public interface TableColumnComparatorFactory<T>  {
+public interface TableColumnComparatorFactory  {
 
     /** Creates a null-save comparator for tableColumn. Nulls are last. */
     @NonNull
