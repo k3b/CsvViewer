@@ -229,7 +229,7 @@ public class InMemoryTableModel implements TableModelApi {
         getRow(row)[column] = value;
     }
 
-    public void sortBy(@NonNull TableColumnDefinition[] columnDefinitions, int... columnNos) {
+    public void sortBy(@NonNull List<TableColumnDefinition> columnDefinitions, List<Integer> columnNos) {
         TableModelRowComparator sorter = TableModelRowComparator.create(columnDefinitions, columnNos);
 
         if (sorter != null) {

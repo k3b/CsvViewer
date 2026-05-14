@@ -2,6 +2,9 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 
 /**
@@ -59,8 +62,8 @@ public class AnalyserReport extends InMemoryTableModel {
         return result;
     }
 
-    public TableColumnDefinition[] getTableColumnDefinitions() {
-        return tableColumnDefinitions;
+    public List<TableColumnDefinition> getTableColumnDefinitions() {
+        return List.of(tableColumnDefinitions);
     }
 
 }

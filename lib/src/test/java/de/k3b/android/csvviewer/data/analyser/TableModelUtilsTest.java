@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.CsvConfig;
@@ -27,7 +28,7 @@ public class TableModelUtilsTest {
             print("Analyse report", report);
 
             AnalyserReport reportOfReport = TableModelUtils.analyse(report, 0);
-            reportOfReport.sortBy(reportOfReport.getTableColumnDefinitions(), AnalyserReport.col_subParser);
+            reportOfReport.sortBy(reportOfReport.getTableColumnDefinitions(), List.of(AnalyserReport.col_subParser));
             print("Analyse report of Analyse report  sorted by subParser", reportOfReport);
 
         } catch (Exception e) {

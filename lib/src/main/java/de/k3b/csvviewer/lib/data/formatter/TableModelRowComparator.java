@@ -4,6 +4,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.List;
 
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
 
@@ -15,18 +16,18 @@ public class TableModelRowComparator implements Comparator<Object[]> {
     private final TableModelRowComparator next;
 
     /** create a TableModelRowComparator sorted by columns in columnNos. Negative columnNo means reverse order */
-    public static TableModelRowComparator create(@NonNull TableColumnDefinition[] columnDefinitions, int... columnNos) {
+    public static TableModelRowComparator create(@NonNull List<TableColumnDefinition> columnDefinitions, List<Integer> columnNos) {
         TableModelRowComparator result = null;
-        for (int i = columnNos.length - 1; i >= 0; i--) {
+        for (int i = columnNos.size() - 1; i >= 0; i--) {
             boolean inverse = false;
-            int columnNo = columnNos[i];
+            int columnNo = columnNos.get(i);
             if (columnNo < 0) {
                 inverse = true;
                 columnNo = columnNo * -1;
             }
-            if(columnNo >= columnDefinitions.length) columnNo = 0;
+            if(columnNo >= columnDefinitions.size()) columnNo = 0;
 
-            TableColumnDefinition columnDefinition = columnDefinitions[columnNo];
+            TableColumnDefinition columnDefinition = columnDefinitions.get(columnNo);
             Comparator<Object> comparator;
             if (columnDefinition == null) {
                 comparator = null;

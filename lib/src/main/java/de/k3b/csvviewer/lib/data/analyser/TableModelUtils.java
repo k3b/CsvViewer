@@ -2,6 +2,8 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.NonNull;
 
+import java.util.List;
+
 import de.k3b.csvviewer.lib.data.TableModelApi;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 
@@ -72,14 +74,14 @@ public class TableModelUtils {
      * @param modelToConvert model to be converted
      * @param columnDefinitions used to determine the type
      */
-    public static void convertColumns(@NonNull TableModelApi modelToConvert,@NonNull TableColumnDefinition[] columnDefinitions, boolean setNullIfError) {
+    public static void convertColumns(@NonNull TableModelApi modelToConvert, @NonNull List<TableColumnDefinition> columnDefinitions, boolean setNullIfError) {
         int rowCount = modelToConvert.getRowCount();
         int columnCount = modelToConvert.getColumnCount();
 
         for (int row = 0; row < rowCount; row++) {
             Object[] rowData = modelToConvert.getRow(row);
             for (int col = 0; col < columnCount; col++) {
-                TableColumnDefinition columnDefinition = columnDefinitions[col];
+                TableColumnDefinition columnDefinition = columnDefinitions.get(col);
                 Object oldValue = rowData[col];
                 if (oldValue instanceof String && columnDefinition != null && columnDefinition.getFormatter() != null) {
                     try {

@@ -37,12 +37,12 @@ public class Csv2TableModel implements AutoCloseable {
         this.withIdColumn = (0 != (options & OPTION_WITH_ID_COLUMN));
     }
 
-    public TableModelApi toTableModel(@NonNull String csvMarkup) {
+    public InMemoryTableModel toTableModel(@NonNull String csvMarkup) {
         // parser cannot handle empty lines if they are not "\r\n"
         return toTableModel(new StringReader(csvMarkup.replace("\n", "\r\n")));
     }
 
-    public TableModelApi toTableModel(@NonNull Reader csvMarkup) {
+    public InMemoryTableModel toTableModel(@NonNull Reader csvMarkup) {
         InMemoryTableModel tableModel = null;
         try (BufferedReader bufferedReader = new BufferedReader(csvMarkup, BUFFER_SIZE)) {
             CsvConfig csvConfig = inferCsvConfiguration(bufferedReader);
