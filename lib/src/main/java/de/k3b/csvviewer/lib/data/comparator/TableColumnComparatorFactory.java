@@ -1,4 +1,4 @@
-package de.k3b.csvviewer.lib.data.formatter;
+package de.k3b.csvviewer.lib.data.comparator;
 
 import org.jspecify.annotations.NonNull;
 

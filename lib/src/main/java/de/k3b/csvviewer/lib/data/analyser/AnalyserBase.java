@@ -2,6 +2,7 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.Nullable;
 
+import de.k3b.csvviewer.lib.data.analyser.AnalyserReport.ColumnDefinition;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.formatter.FormatterFactoryApi;
 
@@ -77,12 +78,12 @@ public class AnalyserBase<T,API> extends ErrorInfo implements AnalyserApi<API> {
     protected void addInfoRowToReport(AnalyserReport report, String subParser) {
         Object[] reportRow = report.addReportRow(this.getClass().getSimpleName(), subParser);
         if (subParser == null) {
-            reportRow[AnalyserReport.col_enabled] = enabled;
-            reportRow[AnalyserReport.col_min] = min;
-            reportRow[AnalyserReport.col_max] = max;
-            reportRow[AnalyserReport.col_success] = successCount;
-            reportRow[AnalyserReport.col_errorRowIds] = appendErrorInfo(new StringBuilder()).toString();
-            reportRow[AnalyserReport.col_result] = getResultColumnValueForReport();
+            reportRow[ColumnDefinition.col_enabled] = enabled;
+            reportRow[ColumnDefinition.col_min] = min;
+            reportRow[ColumnDefinition.col_max] = max;
+            reportRow[ColumnDefinition.col_success] = successCount;
+            reportRow[ColumnDefinition.col_errorRowIds] = appendErrorInfo(new StringBuilder()).toString();
+            reportRow[ColumnDefinition.col_result] = getResultColumnValueForReport();
         }
     }
 

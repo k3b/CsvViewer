@@ -20,6 +20,10 @@ webkit = "1.15.0"
 commonsIo-old = "2.7"
 commonsIo = "2.22.0"
 
+# 1.7.36 last version available for java-7
+#noinspection NewerVersionAvailable
+slf4j = "1.7.36"
+
 # opencsv = "3.10": last version compatible with java-8
 #noinspection NewerVersionAvailable
 opencsv-old = "3.10"
@@ -34,6 +38,10 @@ java-jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspe
 # non-android StringUtils
 old-java-commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo-old" }
 java-commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
+
+slf4j-api = { group="org.slf4j", name="slf4j-api", version.ref = "slf4j" }
+slf4j-android = { group="org.slf4j", name="slf4j-android", version.ref = "slf4j" }
+slf4j-j2se = { group="org.slf4j", name="slf4j-simple", version.ref = "slf4j" }
 
 # non-android csv parser/generator
 java-opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
@@ -59,10 +67,10 @@ api23 = [ "java-opencsv"    , "java-commons-io", "android-activity"    ]
 api21 = [                                        "old-android-activity"]
 
 # used by android app
-android  = [ "java-jspecify", "android-appcompat", "android-material", "android-constraintlayout"]
+android  = [ "java-jspecify", "android-appcompat", "android-material", "android-constraintlayout", "slf4j-api", "slf4j-android"]
 
 # used by lib, may bo overwritten with more recent version by android-app
-old-java = [ "java-jspecify", "old-java-opencsv", "old-java-commons-io"]
+old-java = [ "java-jspecify", "old-java-opencsv", "old-java-commons-io", "slf4j-api"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

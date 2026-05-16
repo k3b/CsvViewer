@@ -1,4 +1,4 @@
-package de.k3b.csvviewer.lib.data.formatter;
+package de.k3b.csvviewer.lib.data.comparator;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -7,12 +7,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
+import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
 /** used to sort a TableModell by column numbers */
 public class TableModelRowComparator implements Comparator<Object[]> {
     private final int col;
     private final @NonNull Comparator<Object> comparator;
     private final int inverse;
+
     private final TableModelRowComparator next;
 
     /** create a TableModelRowComparator sorted by columns in columnNos. Negative columnNo means reverse order */

@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.k3b.csvviewer.lib.data.analyser.AnalyserReport.ColumnDefinition;
 import de.k3b.csvviewer.lib.data.formatter.DateFormatter;
 import de.k3b.csvviewer.lib.data.formatter.FormatterFactoryApi;
 
@@ -34,10 +35,10 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
 
         public void addInfo(AnalyserReport report) {
             Object[] analyzeRow = report.addReportRow(DateAnalyser.class.getSimpleName(), formatPattern);
-            analyzeRow[AnalyserReport.col_enabled] = enabled;
-            analyzeRow[AnalyserReport.col_min] = min;
-            analyzeRow[AnalyserReport.col_max] = max;
-            analyzeRow[AnalyserReport.col_errorRowIds] = appendErrorInfo(new StringBuilder()).toString();
+            analyzeRow[ColumnDefinition.col_enabled] = enabled;
+            analyzeRow[ColumnDefinition.col_min] = min;
+            analyzeRow[ColumnDefinition.col_max] = max;
+            analyzeRow[ColumnDefinition.col_errorRowIds] = appendErrorInfo(new StringBuilder()).toString();
         }
     }
 

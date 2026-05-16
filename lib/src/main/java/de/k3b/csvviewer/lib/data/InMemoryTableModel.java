@@ -12,7 +12,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
-import de.k3b.csvviewer.lib.data.formatter.TableModelRowComparator;
+import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
 
 /**
  * A {@link TableModelApi} implementation where all data is kept in memory.
@@ -52,6 +52,16 @@ public class InMemoryTableModel implements TableModelApi {
                 }
             }
         }
+    }
+
+    public InMemoryTableModel createEmptyClone() {
+        InMemoryTableModel result = new InMemoryTableModel(getColumnNames());
+        System.arraycopy(result.columnProperties,0, this.columnProperties, 0, result.columnProperties.length);
+        if (this.columnWidths != null) {
+            result.columnWidths = new int[this.columnWidths.length];
+            System.arraycopy(result.columnWidths,0, this.columnWidths, 0, result.columnWidths.length);
+        }
+        return result;
     }
 
     /** @return  names of the columns */

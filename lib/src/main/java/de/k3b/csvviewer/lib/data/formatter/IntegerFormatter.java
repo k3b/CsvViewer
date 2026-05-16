@@ -1,8 +1,14 @@
 package de.k3b.csvviewer.lib.data.formatter;
 
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
 public class IntegerFormatter implements FormatterApi<Integer>, TableColumnComparatorFactoryImpl<Integer> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
     /**
      * format a native value to a string
      */
@@ -22,7 +28,7 @@ public class IntegerFormatter implements FormatterApi<Integer>, TableColumnCompa
             try {
                 result = Integer.parseInt(string);
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                LOGGER.error("IntegerFormatter.parse(string='{}') exception: {}", string,e.getMessage());
             }
         }
         return result;

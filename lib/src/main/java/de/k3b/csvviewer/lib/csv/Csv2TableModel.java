@@ -6,15 +6,20 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.ICSVParser;
 
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 
 public class Csv2TableModel implements AutoCloseable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
+
     /** csv-header must be inside 0 .. BUFFER_SIZE to be detected.  */
     public static final int BUFFER_SIZE = 8096;
 
@@ -106,7 +111,8 @@ public class Csv2TableModel implements AutoCloseable {
             // invalid csv format in editor should not crash the app when trying to display as html
             // openCsv-3.10 may throw IOException or RuntimeExcpetion,
             // openCsv-5.7 may throw IOException or CsvValidationException.
-            e.printStackTrace();
+
+            LOGGER.error("Csv2TableModel.toTableModel exception",e);
         }
         m_csvReader = null;
         return tableModel;

@@ -1,14 +1,23 @@
-package de.k3b.csvviewer.lib.data.analyser;
+package de.k3b.csvviewer.lib.data;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
+import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
+import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
+import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
+import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 
 /** Utility methods for TableModelApi */
 public class TableModelUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
     /**
      * Creates an {@link AnalyserReport} for a given TableModel.
      * @param modelToAnalyse - item to be analysed.
@@ -87,11 +96,32 @@ public class TableModelUtils {
                     try {
                         rowData[col] = columnDefinition.getFormatter().parse((String) oldValue);
                     } catch (Exception ex) {
-                        //
+                        LOGGER.error("TableModelUtils.convertColumns(row={},col={}, value) exception: {}", row, col, oldValue, ex.getMessage());
                         if (setNullIfError) rowData[col] = null;
                     }
                 }
             }
         }
+    }
+
+    public static @NonNull InMemoryTableModel filter(@NonNull InMemoryTableModel sourceModel,
+                                            @Nullable List<TableModelRowFilterBase> includeFilter,
+                                            @Nullable List<TableModelRowFilterBase> excludeFilter) {
+        InMemoryTableModel result = sourceModel.createEmptyClone();
+        int rowCount = sourceModel.getRowCount();
+        boolean hasIncludes = includeFilter != null && !includeFilter.isEmpty();
+        for(int rowNo = 0; rowNo < rowCount; rowNo++) {
+            Object[] row = sourceModel.getRow(rowNo);
+            if (TableModelRowFilterBase.match(excludeFilter, row) == null &&
+                    (hasIncludes && TableModelRowFilterBase.match(excludeFilter, row) != null)) {
+            }
+        }
+        return result;
+    }
+
+    public static ConfigurationModel toConfigurationModel(@NonNull InMemoryTableModel sourceModel) {
+        ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
+
+        return result;
     }
 }

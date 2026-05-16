@@ -3,6 +3,8 @@ package de.k3b.csvviewer.lib.data.formatter;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
+import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
+
 public class BooleanFormatter implements FormatterApi<Boolean>, TableColumnComparatorFactoryImpl<Boolean> {
     private final String trueValue;
     private final String falseValue;

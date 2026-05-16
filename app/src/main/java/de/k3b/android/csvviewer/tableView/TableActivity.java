@@ -27,7 +27,8 @@ import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
-import de.k3b.csvviewer.lib.data.analyser.TableModelUtils;
+import de.k3b.csvviewer.lib.data.TableModelUtils;
+import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 
 public class TableActivity extends AppCompatActivity {
     private static final String TAG = TableActivity.class.getSimpleName();
@@ -39,6 +40,8 @@ public class TableActivity extends AppCompatActivity {
     private String lastCsvSource;
     private InMemoryTableModel model;
     private List<Integer> sortOrder = new ArrayList<>();
+    private List<TableModelRowFilterBase> includeFilter = new ArrayList<>();
+    private List<TableModelRowFilterBase> excludeFilter = new ArrayList<>();
 
     private enum COLUMN_INFOS {
         COLUMN_DEFINITIONS
@@ -81,7 +84,6 @@ public class TableActivity extends AppCompatActivity {
         this.model = model;
 
         updateTableView();
-
     }
 
     private void updateTableView() {
@@ -120,7 +122,7 @@ public class TableActivity extends AppCompatActivity {
             // descending -> nothing
             // removed from sorting
         } else if (sortOrder.remove(ascending)) {
-                // ascending -> decending
+                // ascending -> descending
                 sortOrder.add(0,descending);
                 dir ="v";
         } else {
@@ -162,8 +164,7 @@ public class TableActivity extends AppCompatActivity {
             this.lastCsvSource = uri.toString();
             try (Reader csvReader = new InputStreamReader(getContentResolver().openInputStream(uri))) {
                 try(Csv2TableModel parser = new Csv2TableModel(options)) {
-                    InMemoryTableModel model = parser.toTableModel(csvReader);
-                    return model;
+                    return parser.toTableModel(csvReader);
                 }
             }
         } else {
@@ -175,8 +176,7 @@ public class TableActivity extends AppCompatActivity {
             }
 
             try(Csv2TableModel parser = new Csv2TableModel(options)) {
-                InMemoryTableModel model = parser.toTableModel(csvText);
-                return model;
+                return parser.toTableModel(csvText);
             }
         }
     }

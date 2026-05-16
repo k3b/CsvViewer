@@ -2,6 +2,8 @@ package de.k3b.csvviewer.lib.data.formatter;
 
 import org.jspecify.annotations.Nullable;
 
+import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactory;
+
 /**
  * FormatterApi can format a native value to a string or parse a string to a native value.
  * @param <T> - the native type

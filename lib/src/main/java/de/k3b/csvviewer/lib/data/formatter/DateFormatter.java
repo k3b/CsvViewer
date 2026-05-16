@@ -2,12 +2,18 @@ package de.k3b.csvviewer.lib.data.formatter;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
+import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
+
 public class DateFormatter implements FormatterApi<Date>, TableColumnComparatorFactoryImpl<Date> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
     private final String formatPattern;
     private final DateFormat parser;
 
@@ -40,7 +46,7 @@ public class DateFormatter implements FormatterApi<Date>, TableColumnComparatorF
             try {
                 result = parser.parse(string);
             } catch (ParseException e) {
-                e.printStackTrace();
+                LOGGER.error("DateFormatter.parse(string='{}', formatPattern='{}') exception: {}", string,formatPattern, e.getMessage());
             }
         }
         return result;
