@@ -3,8 +3,6 @@ package de.k3b.csvviewer.lib.data.filter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
-
 public class TableModelNullFilter extends TableModelRowFilterBase {
     public static final String compareTyp = "null";
 

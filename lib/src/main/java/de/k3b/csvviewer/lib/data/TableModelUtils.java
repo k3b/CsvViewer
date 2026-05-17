@@ -10,7 +10,6 @@ import java.util.List;
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationInterpreterTableColumnDefinitionNew;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
 import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 

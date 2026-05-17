@@ -32,7 +32,7 @@ public class AnalyserBase<T,API> extends ErrorInfo implements AnalyserApi<API> {
     }
 
     /** true means {@link #analyse(Long, Object)} is active.
-     if there are more than maxErrors then {@link #isEnabled()} will 
+     if there are more than maxErrors then {@link #enabled} will
      be set to false so that analysing stops. */
     public boolean isEnabled() {
         return enabled;
@@ -91,7 +91,7 @@ public class AnalyserBase<T,API> extends ErrorInfo implements AnalyserApi<API> {
     public String getResultColumnValueForReport() {
         String result = null;
         if (this instanceof FormatterFactoryApi) {
-            @Nullable FormatterApi formatter = ((FormatterFactoryApi) this).createFormatter();
+            FormatterApi formatter = ((FormatterFactoryApi) this).createFormatter();
             if (formatter != null) result = formatter.toString();
         }
         return result;

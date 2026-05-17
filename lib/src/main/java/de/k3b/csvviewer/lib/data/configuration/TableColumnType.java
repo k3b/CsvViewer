@@ -16,6 +16,7 @@ import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 /**
  * Translates between Object and String.
  */
+@SuppressWarnings("SimpleDateFormat")
 public enum TableColumnType {
     Integer(new IntegerFormatter(true)),
     Long(new LongFormatter(true)),

@@ -10,6 +10,6 @@ public interface TableColumnComparatorFactoryImpl<T extends Comparable<T>> exten
     /** Creates a null-save comparator for tableColumn. Nulls are last. */
     @NonNull
     default Comparator<Object> getComparator() {
-        return new GenericComparator<>();
+        return new GenericComparator<T>();
     }
 }

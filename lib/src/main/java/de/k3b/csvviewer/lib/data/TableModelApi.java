@@ -2,9 +2,6 @@ package de.k3b.csvviewer.lib.data;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /** Defines the api to access the table.
  * <p>
  * A table has of a list of rows.
@@ -13,7 +10,7 @@ import java.util.List;
  * <p>
  * Inspired by java swing JTable */
 public interface TableModelApi {
-    public static final String PROPERTY_COLUMN_DEFINITION = "colDef";
+    static String PROPERTY_COLUMN_DEFINITION = "colDef";
 
     /**
      * Returns the cell value at <code>row</code> and <code>column</code>.
@@ -78,8 +75,6 @@ public interface TableModelApi {
     @NonNull String[] getColumnNames();
 
     /**
-     *
-     * @param column
      * @return width of given column in chars. 0 means hidden. -1 means automatic width
      */
     default int getColumnWidth(int column) {
@@ -87,7 +82,7 @@ public interface TableModelApi {
     }
 
     /** return column specific propery */
-    @Nullable default <VALUE> VALUE getColumnProperty(int column, @NonNull Object key)  { return (VALUE) null; }
+    @Nullable default <VALUE> VALUE getColumnProperty(int column, @NonNull Object key)  { return null; }
 
     /** put column specific propery */
     default void putColumnProperty(int column, @NonNull Object key, Object value) {}

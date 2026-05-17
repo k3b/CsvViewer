@@ -28,6 +28,7 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
         boolean enabled = true;
         Date min;
         Date max;
+        @SuppressWarnings("SimpleDateFormat")
         FormatterInfo(String formatPattern) {
             this(formatPattern, new SimpleDateFormat(formatPattern));
         }
@@ -61,8 +62,6 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
         super.analyse(rowId, stringValue);
         boolean anySuccess = false;
         if (isEnabled()) {
-            boolean allSuccess = true;
-
             for (FormatterInfo dateParser : formatterInfos) {
                 if (dateParser.enabled) {
                     try {
@@ -75,7 +74,6 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
                         }
                         anySuccess = true;
                     } catch (ParseException e) {
-                        allSuccess = false;
                         dateParser.addError(rowId, stringValue);
                         if (dateParser.errorCount() > getMaxErrors()) dateParser.enabled = false;
                     }
