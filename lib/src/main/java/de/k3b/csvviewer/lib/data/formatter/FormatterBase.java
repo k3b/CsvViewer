@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 abstract class FormatterBase<T> implements FormatterApi<T> {
     private @Nullable  final Class<?> elementClass;
     private @Nullable final String formatPattern;
-    private final boolean nullable;
+    private final Boolean nullable;
 
     FormatterBase(@Nullable Class<?> elementClass, @Nullable String formatPattern, boolean nullable) {
         this.elementClass = elementClass;
@@ -24,7 +24,7 @@ abstract class FormatterBase<T> implements FormatterApi<T> {
     }
 
     @Nullable
-    public boolean isNullable() {
+    public Boolean isNullable() {
         return nullable;
     }
 }

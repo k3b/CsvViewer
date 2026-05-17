@@ -2,14 +2,13 @@ package de.k3b.csvviewer.lib.data.formatter;
 
 import org.jspecify.annotations.Nullable;
 
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactory;
 
 /**
  * FormatterApi can format a native value to a string or parse a string to a native value.
  * @param <T> - the native type
  */
-public interface FormatterApi<T> extends TableColumnComparatorFactory {
+public interface FormatterApi<T> extends FormatterDefinition, TableColumnComparatorFactory {
     /** format a native value to a string */
     @Nullable String format(@Nullable T nativeValue);
     default @Nullable String formatObject(@Nullable Object nativeValue) {
@@ -19,11 +18,5 @@ public interface FormatterApi<T> extends TableColumnComparatorFactory {
     /** parse a string to a native value */
     @Nullable T parse(@Nullable String string);
 
-    @Nullable String getElementClassName();
-
-    @Nullable String getFormatPattern();
-
-    boolean isNullable();
-
-    default int getMaxStringLength() {return -1;}
+    default Integer getMaxStringLength() {return null;}
 }

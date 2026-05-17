@@ -45,12 +45,12 @@ public class ObjectFormatter implements FormatterApi<Object> {
     }
 
     @Override
-    public boolean isNullable() {
+    public Boolean isNullable() {
         return formatterImpl == null ? true :formatterImpl.isNullable();
     }
 
     @Override
-    public int getMaxStringLength() {
+    public Integer getMaxStringLength() {
         return formatterImpl == null ? -1 :formatterImpl.getMaxStringLength();
     }
 

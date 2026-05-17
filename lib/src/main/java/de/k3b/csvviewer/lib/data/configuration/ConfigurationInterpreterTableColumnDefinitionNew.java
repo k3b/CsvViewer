@@ -10,42 +10,40 @@ import java.util.List;
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionDto;
+import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.ColumnDefinition;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
-
-import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.ColumnDefinition;
+import de.k3b.csvviewer.lib.data.formatter.FormatterDefinition;
 import de.k3b.csvviewer.lib.data.formatter.FormatterFactory;
 
 /** {@link ConfigurationModel} interpreter for filters based on {@link TableModelRowFilterBase}  */
-public class ConfigurationInterpreterTableColumnDefinition extends ConfigurationInterpreterBase<@Nullable TableColumnDefinitionApi[]> {
+public class ConfigurationInterpreterTableColumnDefinitionNew extends ConfigurationInterpreterBase<@Nullable FormatterDefinition[]> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
     public static final String CONFIGURATION_TYPE = "columnDefinition";
-    public ConfigurationInterpreterTableColumnDefinition(@NonNull ConfigurationModel target) {
+    public ConfigurationInterpreterTableColumnDefinitionNew(@NonNull ConfigurationModel target) {
         super(target, CONFIGURATION_TYPE);
     }
 
-    /** Transfer filters based on {@link TableModelRowFilterBase} from {@link #target} to {@link ConfigurationModel}. */
+    /** Transfer formatter info from {@link #target} to {@link ConfigurationModel}. */
     @Override
-    public void addConfig(TableColumnDefinitionApi[] definitions) {
+    public void addConfig(FormatterDefinition[] definitions) {
         if (definitions != null) {
             int colCount = definitions.length;
             if (colCount > 0) {
                 for (int columnNumber = 0; columnNumber < colCount; columnNumber++) {
-                    TableColumnDefinitionApi definition = definitions[columnNumber];
-                    addConfig(columnNumber, definition);
+                    addConfig(columnNumber, definitions[columnNumber]);
                 }
             }
         }
     }
 
-    private void addConfig(int columnNumber, TableColumnDefinitionApi definition) {
-        FormatterApi<?> formatter = definition == null ? null : definition.getFormatter();
+    private void addConfig(int columnNumber, FormatterDefinition formatter) {
         if (formatter != null) {
-            String description = definition.toString();
+            String description = formatter.toString();
             String subTyp = formatter.getElementClassName();
             Object formatPattern = formatter.getFormatPattern();
-            Object nullAble = definition.isNullable() ? null : "0";
-            Integer maxStringLen = definition.getMaxStringLength();
+            Object nullAble = formatter.isNullable() ? null : "0";
+            Integer maxStringLen = formatter.getMaxStringLength();
             if (maxStringLen == -1) maxStringLen = null;
             addConfig(columnNumber, subTyp, description, formatPattern, nullAble, maxStringLen);
         }
@@ -57,8 +55,8 @@ public class ConfigurationInterpreterTableColumnDefinition extends Configuration
      * @param myConfigRows
      */
     @Override
-    protected @Nullable TableColumnDefinitionApi @NonNull [] parseImpl(@NonNull List<Object[]> myConfigRows) {
-        TableColumnDefinitionApi[] result = new TableColumnDefinitionApi[target.getColumnCount()];
+    protected @Nullable FormatterDefinition @NonNull [] parseImpl(@NonNull List<Object[]> myConfigRows) {
+        FormatterDefinition[] result = new FormatterDefinition[target.getColumnCount()];
         for (Object[] row : myConfigRows) {
             String columnName = (String) row[ColumnDefinition.col_colName];
             int columnNumber = target.getTargetColumnNumber(columnName);
@@ -72,8 +70,8 @@ public class ConfigurationInterpreterTableColumnDefinition extends Configuration
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    private TableColumnDefinitionApi parseColumnDefinition(int columnNumber, String columnName, Object[] row) {
-        TableColumnDefinitionApi result = null;
+    private FormatterDefinition parseColumnDefinition(int columnNumber, String columnName, Object[] row) {
+        FormatterDefinition result = null;
 
         FormatterApi<?> formatter = null;
 
@@ -83,7 +81,7 @@ public class ConfigurationInterpreterTableColumnDefinition extends Configuration
         Integer maxStringLength = TableColumnType.Integer.parseImpl(row[ColumnDefinition.col_parameter3]);
 
         formatter = FormatterFactory.createFormatter(subType, formatPattern, nullable, maxStringLength);
-        return new TableColumnDefinitionDto(formatter);
+        return formatter;
     }
 
 }

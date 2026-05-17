@@ -9,7 +9,7 @@ import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
 public class StringFormatter extends FormatterBase<String> implements TableColumnComparatorFactoryImpl<String> {
-    private final int maxStringLength;
+    private final Integer maxStringLength;
 
     public StringFormatter(boolean nullable, int maxStringLength) {
         super(String.class,null, nullable);
@@ -38,7 +38,7 @@ public class StringFormatter extends FormatterBase<String> implements TableColum
     }
 
     @Override
-    public int getMaxStringLength() {
+    public Integer getMaxStringLength() {
         return maxStringLength;
     }
 }
