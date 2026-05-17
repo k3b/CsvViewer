@@ -11,13 +11,14 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
+import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
 import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
 
 /**
  * A {@link TableModelApi} implementation where all data is kept in memory.
  */
 public class InMemoryTableModel implements TableModelApi {
+
     /** names of the columns */
     @NonNull private final String[] columnNames;
 
@@ -239,12 +240,20 @@ public class InMemoryTableModel implements TableModelApi {
         getRow(row)[column] = value;
     }
 
-    public void sortBy(@NonNull List<TableColumnDefinition> columnDefinitions, List<Integer> columnNos) {
-        TableModelRowComparator sorter = TableModelRowComparator.create(columnDefinitions, columnNos);
+    public void sortBy(@NonNull List<Integer> columnNos) {
+        /*
+        TableColumnDefinitionApi[] columnDefinitions = getColumnProperties(
+                new TableColumnDefinitionApi[getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
 
-        if (sorter != null) {
-            // rows.sort(sorter); // note List.sort requires android api 24
-            sort(rows,sorter);
+         */
+        List<TableColumnDefinitionApi> columnDefinitions = getColumnProperties(TableModelApi.PROPERTY_COLUMN_DEFINITION);
+        if (columnDefinitions != null && columnNos != null && !columnNos.isEmpty()) {
+            TableModelRowComparator sorter = TableModelRowComparator.create(null, columnDefinitions, columnNos);
+
+            if (sorter != null) {
+                // rows.sort(sorter); // note List.sort requires android api 24
+                sort(rows, sorter);
+            }
         }
     }
 
@@ -260,11 +269,14 @@ public class InMemoryTableModel implements TableModelApi {
         }
     }
 
-    public <VALUE> void putColumnProperty(int column, @NonNull Object key, VALUE value) {
+    /** put column specific propery */
+    @Override
+    public void putColumnProperty(int column, @NonNull Object key, Object value) {
         getMap(column).put(key,value);
     }
 
     /** return column specific propery */
+    @Override
     public @Nullable <VALUE> VALUE getColumnProperty(int column, @NonNull Object key) {
         return (VALUE) getMap(column).get(key);
     }

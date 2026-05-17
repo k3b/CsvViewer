@@ -2,6 +2,9 @@ package de.k3b.csvviewer.lib.data;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Defines the api to access the table.
  * <p>
  * A table has of a list of rows.
@@ -10,6 +13,8 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * Inspired by java swing JTable */
 public interface TableModelApi {
+    public static final String PROPERTY_COLUMN_DEFINITION = "colDef";
+
     /**
      * Returns the cell value at <code>row</code> and <code>column</code>.
      * <p>
@@ -82,7 +87,37 @@ public interface TableModelApi {
     }
 
     /** return column specific propery */
-    @Nullable default <KEY, VALUE> VALUE getColumnProperty(@NonNull KEY key) { return (VALUE) null; }
+    @Nullable default <VALUE> VALUE getColumnProperty(int column, @NonNull Object key)  { return (VALUE) null; }
+
+    /** put column specific propery */
+    default void putColumnProperty(int column, @NonNull Object key, Object value) {}
+
+    @Nullable default <VALUE> VALUE[] getColumnProperties(VALUE[] result, @NonNull Object key)  {
+        int columnCount = result.length;
+        boolean allEmpty = true;
+        for (int col = 0; col < columnCount; col++) {
+            VALUE value = getColumnProperty(col, key);
+            result[col] = value;
+            if (value != null) {
+                allEmpty = false;
+            }
+        }
+        return allEmpty ? null : result;
+    }
+
+    @Nullable default <VALUE> List<VALUE> getColumnProperties(@NonNull Object key)  {
+        List<VALUE> result = new ArrayList<>();
+        int columnCount = getColumnCount();
+        boolean allEmpty = true;
+        for (int col = 0; col < columnCount; col++) {
+            Object value = getColumnProperty(col, key);
+            result.add((VALUE) value);
+            if (value != null) {
+                allEmpty = false;
+            }
+        }
+        return allEmpty ? null : result;
+    }
 
     /** @return a valid version of rowCandidate. */
     @NonNull

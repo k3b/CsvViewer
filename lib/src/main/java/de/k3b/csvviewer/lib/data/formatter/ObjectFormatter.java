@@ -35,6 +35,26 @@ public class ObjectFormatter implements FormatterApi<Object> {
     }
 
     @Override
+    public String getElementClassName() {
+        return formatterImpl == null ? null :formatterImpl.getElementClassName();
+    }
+
+    @Override
+    public String getFormatPattern() {
+        return formatterImpl == null ? null :formatterImpl.getFormatPattern();
+    }
+
+    @Override
+    public boolean isNullable() {
+        return formatterImpl == null ? true :formatterImpl.isNullable();
+    }
+
+    @Override
+    public int getMaxStringLength() {
+        return formatterImpl == null ? -1 :formatterImpl.getMaxStringLength();
+    }
+
+    @Override
     public String toString() {
         return "ObjectFormatter{" +
                 "formatter=" + formatterImpl +

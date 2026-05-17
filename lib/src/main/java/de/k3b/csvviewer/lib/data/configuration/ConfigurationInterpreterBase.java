@@ -12,6 +12,7 @@ import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.ColumnDefinition;
 import de.k3b.csvviewer.lib.data.filter.TableModelComparatorFilter;
+import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 
 public abstract class ConfigurationInterpreterBase<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
@@ -24,7 +25,8 @@ public abstract class ConfigurationInterpreterBase<T> {
         this.configurationType = configurationType;
     }
 
-    protected Object[] addConfig(int columnNumber, String subType, String description, Object parameter1) {
+    /** Transfer filters based on {@link TableModelRowFilterBase} from {@link #target} to {@link ConfigurationModel}. */
+    protected Object[] addConfig(int columnNumber, String subType, String description, Object parameter1, Object parameter2, Object parameter3) {
         String columnName = target.getTargetColumnName(columnNumber);
 
         Object[] row = target.createEmptyRow();
@@ -33,14 +35,18 @@ public abstract class ConfigurationInterpreterBase<T> {
         row[ColumnDefinition.col_subType] = subType;
         row[ColumnDefinition.col_description] = description;
         row[ColumnDefinition.col_parameter1] = parameter1;
+        row[ColumnDefinition.col_parameter2] = parameter2;
+        row[ColumnDefinition.col_parameter3] = parameter3;
+
+        target.addRow(row);
         return row;
     }
 
-    /** convert from configValue to configRow */
+    /** convert from T configValue in {@link #target} to Object[] configRow-s for {@link ConfigurationModel}*/
     public abstract void addConfig(@Nullable T configValue);
 
     /** convert from configRow to configValue */
-    public @NonNull T parse(@NonNull List<Object[]> configRows) {
+    @NonNull public T parse(@NonNull List<Object[]> configRows) {
         TableModelComparatorFilter filter = new TableModelComparatorFilter(
                 ColumnDefinition.col_configType, new StringIgnoreCaseComparator(),
                 this.configurationType, TableModelComparatorFilter.EQUALS);
@@ -70,7 +76,5 @@ public abstract class ConfigurationInterpreterBase<T> {
     }
 
     /** execute the parse on cnfigRows that match {@link #configurationType}  */
-    protected abstract @NonNull T parseImpl(@NonNull List<Object[]> myConfigRows);
-
-
+    @NonNull protected abstract T parseImpl(@NonNull List<Object[]> myConfigRows);
 }

@@ -12,12 +12,13 @@ import java.util.Date;
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
-public class DateFormatter implements FormatterApi<Date>, TableColumnComparatorFactoryImpl<Date> {
+public class DateFormatter extends FormatterBase<Date> implements TableColumnComparatorFactoryImpl<Date> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
     private final String formatPattern;
     private final DateFormat parser;
 
-    public DateFormatter(@NonNull String formatPattern, @NonNull DateFormat parser) {
+    public DateFormatter(@NonNull String formatPattern, @NonNull DateFormat parser, Boolean nullable) {
+        super(Date.class, formatPattern, nullable);
         this.formatPattern = formatPattern;
         this.parser = parser;
     }

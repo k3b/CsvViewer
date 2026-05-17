@@ -2,16 +2,12 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.NonNull;
 
-import java.util.List;
-
 import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 
 /**
  * Tablemodel to show the result of analyser run
  */
 public class AnalyserReport extends InMemoryTableModel {
-
-    private final TableColumnDefinition[] tableColumnDefinitions;
 
     private int nextRowId = 0;
     private int colNo;
@@ -37,9 +33,8 @@ public class AnalyserReport extends InMemoryTableModel {
                 "errorRowIds"};
     }
 
-    public AnalyserReport(TableColumnDefinition[] tableColumnDefinitions) {
+    public AnalyserReport() {
         super(ColumnDefinition.columnNames);
-        this.tableColumnDefinitions = tableColumnDefinitions;
     }
 
     public void defineColumn(int colNo, String colName) {
@@ -62,10 +57,5 @@ public class AnalyserReport extends InMemoryTableModel {
         result[ColumnDefinition.col_colName]=this.colName;
         return result;
     }
-
-    public List<TableColumnDefinition> getTableColumnDefinitions() {
-        return List.of(tableColumnDefinitions);
-    }
-
 }
 

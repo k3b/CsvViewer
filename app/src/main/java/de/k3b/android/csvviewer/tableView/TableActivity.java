@@ -26,7 +26,6 @@ import de.k3b.csvviewer.lib.csv.DemoData;
 import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
 import de.k3b.csvviewer.lib.data.TableModelUtils;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 
@@ -74,12 +73,7 @@ public class TableActivity extends AppCompatActivity {
 
         AnalyserReport analysed = TableModelUtils.analyse(model, 0);
 
-        List<TableColumnDefinition> tableColumnDefinitions = analysed.getTableColumnDefinitions();
-        TableModelUtils.convertColumns(model, tableColumnDefinitions, true);
-        int col = 0;
-        for (TableColumnDefinition def : tableColumnDefinitions) {
-            model.putColumnProperty(col++, COLUMN_INFOS.COLUMN_DEFINITIONS, def);
-        }
+        TableModelUtils.convertColumns(model, true);
 
         this.model = model;
 
@@ -131,7 +125,7 @@ public class TableActivity extends AppCompatActivity {
             dir ="^";
         }
 
-        this.model.sortBy(getInfo(COLUMN_INFOS.COLUMN_DEFINITIONS), sortOrder);
+        this.model.sortBy(sortOrder);
         Log.i(TAG, model.getColumnNames()[columnNumber] + dir + ": " + sortOrder);
         updateTableView();
     }

@@ -17,6 +17,9 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
     public static final String ISO_DATE_PATTERN = "yyyy-MM-dd";
     public static final String ISO_TIME_PATTERN = "HH:mm:ss";
     public static final String ISO_DATE_TIME_PATTERN = ISO_DATE_PATTERN + " " + ISO_TIME_PATTERN;
+    public static final String FMT_INTERNAL_DATE = "Date";
+    public static final String FMT_INTERNAL_TIME = "Time";
+    public static final String FMT_INTERNAL_DATE_TIME = "DateTime";
 
     static private class FormatterInfo extends ErrorInfo {
         final String formatPattern;
@@ -46,9 +49,9 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
             new FormatterInfo(ISO_DATE_PATTERN),
             new FormatterInfo(ISO_TIME_PATTERN),
             new FormatterInfo(ISO_DATE_TIME_PATTERN),
-            new FormatterInfo("Date",SimpleDateFormat.getDateInstance()),
-            new FormatterInfo("Time",SimpleDateFormat.getTimeInstance()),
-            new FormatterInfo("DateTime",SimpleDateFormat.getDateTimeInstance()),
+            new FormatterInfo(FMT_INTERNAL_DATE,SimpleDateFormat.getDateInstance()),
+            new FormatterInfo(FMT_INTERNAL_TIME,SimpleDateFormat.getTimeInstance()),
+            new FormatterInfo(FMT_INTERNAL_DATE_TIME,SimpleDateFormat.getDateTimeInstance()),
     };
 
     public DateAnalyser(int maxErrors) {
@@ -99,7 +102,7 @@ public class DateAnalyser extends AnalyserBase<Date, String> implements Analyser
                 }
             }
             if (resultParser != null) {
-                result = new DateFormatter(resultParser.formatPattern, resultParser.formatter);
+                result = new DateFormatter(resultParser.formatPattern, resultParser.formatter, true);
             }
         }
         return result;

@@ -12,7 +12,7 @@ import de.k3b.csvviewer.lib.data.formatter.ObjectFormatter;
 import de.k3b.csvviewer.lib.data.formatter.StringFormatter;
 
 /** analyse String content of a table column */
-public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements AnalyserApi<Object>, TableColumnDefinition {
+public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements AnalyserApi<Object>, TableColumnDefinitionApi {
     private final int MIN_SUCCESS_ITEMS = 1;
     private boolean nullable = false;
     private int minStringLength = Integer.MAX_VALUE;
@@ -106,7 +106,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         if (result == null) result = getBooleanFormatter();
         if (result == null) result = getIntegerFormatter();
         if (result == null) result = getLongFormatter();
-        if (result == null) result = new StringFormatter();
+        if (result == null) result = new StringFormatter(true, -1);
         result = new ObjectFormatter(result);
         return result;
     }
@@ -141,7 +141,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
                 && longIntegerAnalyser.getMin() != null
                 && longIntegerAnalyser.getMin() >= (long) Integer.MIN_VALUE
                 && longIntegerAnalyser.getMax() <= (long) Integer.MAX_VALUE) {
-                result = new IntegerFormatter();
+                result = new IntegerFormatter(true);
         }
         return result;
     }

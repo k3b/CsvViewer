@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
-public class BooleanFormatter implements FormatterApi<Boolean>, TableColumnComparatorFactoryImpl<Boolean> {
+public class BooleanFormatter extends FormatterBase<Boolean> implements TableColumnComparatorFactoryImpl<Boolean> {
     private final String trueValue;
     private final String falseValue;
     private final char trueChar;
@@ -47,7 +47,7 @@ public class BooleanFormatter implements FormatterApi<Boolean>, TableColumnCompa
                 yes = value1;
             }
             if (yes != null && no != null) {
-                result = new BooleanFormatter(yes, no);
+                result = new BooleanFormatter(yes, no, true);
             }
         }
         return result;
@@ -58,7 +58,8 @@ public class BooleanFormatter implements FormatterApi<Boolean>, TableColumnCompa
     }
 
 
-    public BooleanFormatter(String trueValue, String falseValue) {
+    public BooleanFormatter(String trueValue, String falseValue, boolean nullable) {
+        super(Boolean.class, trueValue+"|"+falseValue, nullable);
         this.trueValue = trueValue;
         this.falseValue = falseValue;
         trueChar = getChar(trueValue);

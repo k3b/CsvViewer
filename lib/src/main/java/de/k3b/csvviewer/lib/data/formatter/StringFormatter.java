@@ -8,7 +8,14 @@ import java.util.Comparator;
 import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
-public class StringFormatter implements FormatterApi<String>, TableColumnComparatorFactoryImpl<String> {
+public class StringFormatter extends FormatterBase<String> implements TableColumnComparatorFactoryImpl<String> {
+    private final int maxStringLength;
+
+    public StringFormatter(boolean nullable, int maxStringLength) {
+        super(String.class,null, nullable);
+        this.maxStringLength = maxStringLength;
+    }
+
     @Nullable @Override
     public String format(@Nullable String result) {
         return result;
@@ -28,5 +35,10 @@ public class StringFormatter implements FormatterApi<String>, TableColumnCompara
     @NonNull
     public Comparator<Object> getComparator() {
         return new StringIgnoreCaseComparator();
+    }
+
+    @Override
+    public int getMaxStringLength() {
+        return maxStringLength;
     }
 }

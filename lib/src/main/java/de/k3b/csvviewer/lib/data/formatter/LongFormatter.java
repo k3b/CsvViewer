@@ -7,8 +7,12 @@ import org.slf4j.LoggerFactory;
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
-public class LongFormatter implements FormatterApi<Long>, TableColumnComparatorFactoryImpl<Long> {
+public class LongFormatter extends FormatterBase<Long> implements TableColumnComparatorFactoryImpl<Long> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
+
+    public LongFormatter(boolean nullable) {
+        super(Long.class,null, nullable);
+    }
     /**
      * format a native value to a string
      */

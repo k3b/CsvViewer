@@ -10,7 +10,8 @@ import java.util.List;
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinition;
+import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
+import de.k3b.csvviewer.lib.data.configuration.ConfigurationInterpreterTableColumnDefinition;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
@@ -39,12 +40,12 @@ public class TableModelUtils {
         }
 
         // analyse rows.
-        LongFormatter idFormatter = new LongFormatter();
+        LongFormatter idFormatter = new LongFormatter(true);
         for (int row = 0; row < rowCount; row++) {
             @NonNull Object[] rowData = modelToAnalyse.getRow(row);
             for (int col = 0; col < columnCount; col++) {
 
-                // Try to get rowid from column 0. if not found use row-number insted.
+                // Try to get rowId from column 0. if not found use row-number instead.
                 Long id = getId(idFormatter, rowData);
                 if (id == null) {
                     id = (long) row;
@@ -55,9 +56,16 @@ public class TableModelUtils {
             }
         }
 
+        // transfer analyser result to source modelToAnalyse
+        for (int col = 0; col < columnCount; col++) {
+            modelToAnalyse.putColumnProperty(
+                    col, TableModelApi.PROPERTY_COLUMN_DEFINITION,
+                    analysers[col]);
+        }
+
         // create report.
         String[] columnNames = modelToAnalyse.getColumnNames();
-        AnalyserReport report = new AnalyserReport(analysers);
+        AnalyserReport report = new AnalyserReport();
         for (int col = 0; col < columnCount; col++) {
             report.defineColumn(col, columnNames[col]);
             analysers[col].addInfoRowsToReport(report);
@@ -79,24 +87,26 @@ public class TableModelUtils {
     }
 
     /**
-     * converts all String column values in {@link TableModelApi} to supported native typse via {@link TableColumnDefinition#getFormatter()}.
+     * converts all String column values in {@link TableModelApi} to supported native types via {@link TableColumnDefinitionApi#getFormatter()}.
+     *
      * @param modelToConvert model to be converted
-     * @param columnDefinitions used to determine the type
      */
-    public static void convertColumns(@NonNull TableModelApi modelToConvert, @NonNull List<TableColumnDefinition> columnDefinitions, boolean setNullIfError) {
+    public static void convertColumns(@NonNull TableModelApi modelToConvert, boolean setNullIfError) {
         int rowCount = modelToConvert.getRowCount();
         int columnCount = modelToConvert.getColumnCount();
 
         for (int row = 0; row < rowCount; row++) {
             Object[] rowData = modelToConvert.getRow(row);
             for (int col = 0; col < columnCount; col++) {
-                TableColumnDefinition columnDefinition = columnDefinitions.get(col);
+                TableColumnDefinitionApi columnDefinition = modelToConvert.getColumnProperty(
+                        col, TableModelApi.PROPERTY_COLUMN_DEFINITION);
                 Object oldValue = rowData[col];
                 if (oldValue instanceof String && columnDefinition != null && columnDefinition.getFormatter() != null) {
                     try {
                         rowData[col] = columnDefinition.getFormatter().parse((String) oldValue);
                     } catch (Exception ex) {
-                        LOGGER.error("TableModelUtils.convertColumns(row={},col={}, value) exception: {}", row, col, oldValue, ex.getMessage());
+                        LOGGER.error("TableModelUtils.convertColumns(row={},col={}, value='{}') exception: {}",
+                                row, col, oldValue, ex.getMessage());
                         if (setNullIfError) rowData[col] = null;
                     }
                 }
@@ -114,13 +124,32 @@ public class TableModelUtils {
             Object[] row = sourceModel.getRow(rowNo);
             if (TableModelRowFilterBase.match(excludeFilter, row) == null &&
                     (hasIncludes && TableModelRowFilterBase.match(excludeFilter, row) != null)) {
+                //!!! TODO
             }
         }
         return result;
     }
 
-    public static ConfigurationModel toConfigurationModel(@NonNull InMemoryTableModel sourceModel) {
+    public static ConfigurationModel toConfigurationModel_kaputt(@NonNull TableModelApi sourceModel) {
         ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
+        TableColumnDefinitionApi[] tableColumnDefinitions = sourceModel.getColumnProperties(
+                new TableColumnDefinitionApi[sourceModel.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
+            if (tableColumnDefinitions != null) {
+                ConfigurationInterpreterTableColumnDefinition colDef = new ConfigurationInterpreterTableColumnDefinition(result);
+                colDef.addConfig(tableColumnDefinitions);
+            }
+
+        return result;
+    }
+
+    public static ConfigurationModel toConfigurationModel(@NonNull TableModelApi sourceModel) {
+        ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
+        List<TableColumnDefinitionApi> tableColumnDefinitionList = sourceModel.getColumnProperties(
+                TableModelApi.PROPERTY_COLUMN_DEFINITION);
+        if (tableColumnDefinitionList != null) {
+                ConfigurationInterpreterTableColumnDefinition colDef = new ConfigurationInterpreterTableColumnDefinition(result);
+                colDef.addConfig(tableColumnDefinitionList);
+        }
 
         return result;
     }

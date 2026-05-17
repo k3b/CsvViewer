@@ -27,10 +27,13 @@ public class ConfigurationModel extends InMemoryTableModel {
         public static final int col_colName = 3;
         public static final int col_description = 4;
         public static final int col_parameter1 = 5;
+        public static final int col_parameter2 = 6;
+        public static final int col_parameter3 = 7;
 
         // col_Xxx corresponds to index in columnNames
         private static final String[] columnNames = new String[]{
-                "id","configType", "subType", "colName","description","parameter1"};
+                "id","configType", "subType", "colName","description"
+                ,"parameter1","parameter2","parameter3"};
     }
 
     public ConfigurationModel(@NonNull String[] targetColumnNames) {
@@ -46,7 +49,11 @@ public class ConfigurationModel extends InMemoryTableModel {
     /** translates target column name to column number or -1 if not found */
     public int getTargetColumnNumber(@NonNull String colName) {
         Integer columnNo = targetColumnName2ColumnNumber.get(colName);
-        return columnNo == null ? -1 : columnNo;
+        if (columnNo == null) {
+            LOGGER.warn("ConfigurationModel.getTargetColumnNumber(colName='{}') error: not found in {}", colName, targetColumnNames);
+            columnNo = -1;
+        }
+        return columnNo;
     }
 
     public @NonNull String[] getTargetColumnNames() {

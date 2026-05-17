@@ -5,7 +5,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
-import java.util.Date;
 
 import de.k3b.csvviewer.lib.data.analyser.DateAnalyser;
 import de.k3b.csvviewer.lib.data.formatter.BooleanFormatter;
@@ -18,10 +17,10 @@ import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
  * Translates between Object and String.
  */
 public enum TableColumnType {
-    Integer(new IntegerFormatter()),
-    Long(new LongFormatter()),
-    Boolean(new BooleanFormatter("1","0")),
-    Date(new DateFormatter(DateAnalyser.ISO_DATE_TIME_PATTERN, new SimpleDateFormat(DateAnalyser.ISO_DATE_TIME_PATTERN))),
+    Integer(new IntegerFormatter(true)),
+    Long(new LongFormatter(true)),
+    Boolean(new BooleanFormatter("1","0", true)),
+    Date(new DateFormatter(DateAnalyser.ISO_DATE_TIME_PATTERN, new SimpleDateFormat(DateAnalyser.ISO_DATE_TIME_PATTERN), true)),
     ;
 
     @NonNull private final FormatterApi<?> formatter;
@@ -32,6 +31,11 @@ public enum TableColumnType {
 
     @Nullable public String toStringInternal(@Nullable Object value) {
         return formatter.formatObject(value);
+    }
+
+    @Nullable public <T> T parseImpl(@Nullable Object object) {
+        if (object == null) return null;
+        return (T) formatter.parse(object.toString());
     }
 
     /** parse a string to a native value */

@@ -26,7 +26,7 @@ public class LongIntegerAnalyser extends AnalyserBase<Long, String> implements A
                 if (min == null || longValue < min) min = longValue;
                 result = true;
             } catch (NumberFormatException ex) {
-                LOGGER.error("LongIntegerAnalyser.analyse(rowId={},stringValue={}) exception: {}", rowId, stringValue, ex.getMessage());
+                LOGGER.info("LongIntegerAnalyser.analyse(rowId={},stringValue={}) exception: {}", rowId, stringValue, ex.getMessage());
                 addError(rowId, stringValue);
             }
         }
@@ -36,6 +36,6 @@ public class LongIntegerAnalyser extends AnalyserBase<Long, String> implements A
     @Override
     public @Nullable LongFormatter createFormatter() {
         if (!isEnabled()) return null;
-        return new LongFormatter();
+        return new LongFormatter(true);
     }
 }

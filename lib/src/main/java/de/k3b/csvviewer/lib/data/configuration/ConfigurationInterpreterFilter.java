@@ -19,12 +19,15 @@ import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.ColumnDefiniti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** {@link ConfigurationModel} interpreter for filters based on {@link TableModelRowFilterBase}  */
 public class ConfigurationInterpreterFilter extends ConfigurationInterpreterBase<@Nullable List<TableModelRowFilterBase>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
     public ConfigurationInterpreterFilter(@NonNull ConfigurationModel target, @NonNull String configurationType) {
         super(target, configurationType);
     }
 
+    /** Transfer filters based on {@link TableModelRowFilterBase} from {@link #target} to {@link ConfigurationModel}. */
+    @Override
     public void addConfig(@Nullable List<TableModelRowFilterBase> filterList) {
         if (filterList != null && !filterList.isEmpty()) {
             for (TableModelRowFilterBase filter : filterList) {
@@ -44,9 +47,8 @@ public class ConfigurationInterpreterFilter extends ConfigurationInterpreterBase
                     } else {
                         compareTyp = "???[" + filter.getClass().getSimpleName() + "]";
                         LOGGER.warn("ConfigurationInterpreterFilter.addConfig() : {}", compareTyp);
-
                     }
-                    addConfig(columnNumber, compareTyp, filterName, compareParameter);
+                    addConfig(columnNumber, compareTyp, filterName, compareParameter, null, null);
                 }
             }
 
@@ -54,13 +56,9 @@ public class ConfigurationInterpreterFilter extends ConfigurationInterpreterBase
 
     }
 
-    /**
-     * execute the parse on cnfigRows that match {@link #configurationType}
-     *
-     * @param myConfigRows
-     */
-    @Override
-    protected @Nullable List<TableModelRowFilterBase> parseImpl(@NonNull List<Object[]> myConfigRows) {
+    /** execute the parse on cnfigRows that match {@link #configurationType}  */
+    @Override @NonNull
+    protected List<TableModelRowFilterBase> parseImpl(@NonNull List<Object[]> myConfigRows) {
         List<TableModelRowFilterBase> result = new ArrayList<>();
         for(int rowNo = myConfigRows.size() - 1; rowNo >= 0; rowNo--) {
             Object[] configRow = myConfigRows.get(rowNo);
