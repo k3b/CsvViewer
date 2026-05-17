@@ -105,20 +105,6 @@ public interface TableModelApi {
         return allEmpty ? null : result;
     }
 
-    @Nullable default <VALUE> List<VALUE> getColumnProperties(@NonNull Object key)  {
-        List<VALUE> result = new ArrayList<>();
-        int columnCount = getColumnCount();
-        boolean allEmpty = true;
-        for (int col = 0; col < columnCount; col++) {
-            Object value = getColumnProperty(col, key);
-            result.add((VALUE) value);
-            if (value != null) {
-                allEmpty = false;
-            }
-        }
-        return allEmpty ? null : result;
-    }
-
     /** @return a valid version of rowCandidate. */
     @NonNull
     Object[] fixRow(@Nullable Object[] rowCandidate);

@@ -12,7 +12,6 @@ import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.CsvConfig;
 import de.k3b.csvviewer.lib.csv.DemoData;
 import de.k3b.csvviewer.lib.csv.TableModel2Csv;
-import de.k3b.csvviewer.lib.data.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.TableModelUtils;

@@ -130,7 +130,7 @@ public class TableModelUtils {
         return result;
     }
 
-    public static ConfigurationModel toConfigurationModel_kaputt(@NonNull TableModelApi sourceModel) {
+    public static ConfigurationModel toConfigurationModel(@NonNull TableModelApi sourceModel) {
         ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
         TableColumnDefinitionApi[] tableColumnDefinitions = sourceModel.getColumnProperties(
                 new TableColumnDefinitionApi[sourceModel.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
@@ -142,15 +142,4 @@ public class TableModelUtils {
         return result;
     }
 
-    public static ConfigurationModel toConfigurationModel(@NonNull TableModelApi sourceModel) {
-        ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
-        List<TableColumnDefinitionApi> tableColumnDefinitionList = sourceModel.getColumnProperties(
-                TableModelApi.PROPERTY_COLUMN_DEFINITION);
-        if (tableColumnDefinitionList != null) {
-                ConfigurationInterpreterTableColumnDefinition colDef = new ConfigurationInterpreterTableColumnDefinition(result);
-                colDef.addConfig(tableColumnDefinitionList);
-        }
-
-        return result;
-    }
 }

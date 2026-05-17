@@ -241,14 +241,11 @@ public class InMemoryTableModel implements TableModelApi {
     }
 
     public void sortBy(@NonNull List<Integer> columnNos) {
-        /*
         TableColumnDefinitionApi[] columnDefinitions = getColumnProperties(
                 new TableColumnDefinitionApi[getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
 
-         */
-        List<TableColumnDefinitionApi> columnDefinitions = getColumnProperties(TableModelApi.PROPERTY_COLUMN_DEFINITION);
         if (columnDefinitions != null && columnNos != null && !columnNos.isEmpty()) {
-            TableModelRowComparator sorter = TableModelRowComparator.create(null, columnDefinitions, columnNos);
+            TableModelRowComparator sorter = TableModelRowComparator.create(columnDefinitions, columnNos);
 
             if (sorter != null) {
                 // rows.sort(sorter); // note List.sort requires android api 24
