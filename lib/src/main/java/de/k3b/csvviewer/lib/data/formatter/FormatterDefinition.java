@@ -8,4 +8,12 @@ public interface FormatterDefinition {
     Boolean isNullable();
 
     Integer getMaxStringLength();
+
+    static String toString(FormatterDefinition t) {
+        return t.getElementClassName() +
+                "(formatPattern='" + t.getFormatPattern() + '\'' +
+                ", nullable=" + t.isNullable() +
+                ", maxStringLength=" + t.getMaxStringLength() +
+                ')';
+    }
 }

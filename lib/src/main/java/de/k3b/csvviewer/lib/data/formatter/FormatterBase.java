@@ -27,4 +27,10 @@ abstract class FormatterBase<T> implements FormatterApi<T> {
     public Boolean isNullable() {
         return nullable;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " +FormatterDefinition.toString(this);
+    }
+
 }

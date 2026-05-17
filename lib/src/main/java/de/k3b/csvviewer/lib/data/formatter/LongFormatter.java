@@ -37,9 +37,4 @@ public class LongFormatter extends FormatterBase<Long> implements TableColumnCom
         }
         return result;
     }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
 }

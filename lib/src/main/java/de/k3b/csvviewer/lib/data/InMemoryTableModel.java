@@ -13,6 +13,7 @@ import java.util.Map;
 
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
 import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
+import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
 /**
  * A {@link TableModelApi} implementation where all data is kept in memory.
@@ -241,8 +242,8 @@ public class InMemoryTableModel implements TableModelApi {
     }
 
     public void sortBy(@NonNull List<Integer> columnNos) {
-        TableColumnDefinitionApi[] columnDefinitions = getColumnProperties(
-                new TableColumnDefinitionApi[getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
+        FormatterApi<?>[] columnDefinitions = getColumnProperties(
+                new FormatterApi<?>[getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
 
         if (columnDefinitions != null && columnNos != null && !columnNos.isEmpty()) {
             TableModelRowComparator sorter = TableModelRowComparator.create(columnDefinitions, columnNos);

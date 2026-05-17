@@ -32,4 +32,6 @@ public class FormatterDefinitionDto implements FormatterDefinition {
     public Integer getMaxStringLength() {
         return maxStringLength;
     }
+
+
 }

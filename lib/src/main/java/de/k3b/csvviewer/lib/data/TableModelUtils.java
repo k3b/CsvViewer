@@ -11,9 +11,10 @@ import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
-import de.k3b.csvviewer.lib.data.configuration.ConfigurationInterpreterTableColumnDefinition;
+import de.k3b.csvviewer.lib.data.configuration.ConfigurationInterpreterTableColumnDefinitionNew;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
+import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 
 /** Utility methods for TableModelApi */
@@ -60,7 +61,7 @@ public class TableModelUtils {
         for (int col = 0; col < columnCount; col++) {
             modelToAnalyse.putColumnProperty(
                     col, TableModelApi.PROPERTY_COLUMN_DEFINITION,
-                    analysers[col]);
+                    analysers[col].getFormatter());
         }
 
         // create report.
@@ -87,7 +88,7 @@ public class TableModelUtils {
     }
 
     /**
-     * converts all String column values in {@link TableModelApi} to supported native types via {@link TableColumnDefinitionApi#getFormatter()}.
+     * converts all String column values in {@link TableModelApi} to supported native types via {@link FormatterApi<?>#getFormatter()}.
      *
      * @param modelToConvert model to be converted
      */
@@ -98,12 +99,12 @@ public class TableModelUtils {
         for (int row = 0; row < rowCount; row++) {
             Object[] rowData = modelToConvert.getRow(row);
             for (int col = 0; col < columnCount; col++) {
-                TableColumnDefinitionApi columnDefinition = modelToConvert.getColumnProperty(
+                FormatterApi<?> columnDefinition = modelToConvert.getColumnProperty(
                         col, TableModelApi.PROPERTY_COLUMN_DEFINITION);
                 Object oldValue = rowData[col];
-                if (oldValue instanceof String && columnDefinition != null && columnDefinition.getFormatter() != null) {
+                if (oldValue instanceof String && columnDefinition != null) {
                     try {
-                        rowData[col] = columnDefinition.getFormatter().parse((String) oldValue);
+                        rowData[col] = columnDefinition.parse((String) oldValue);
                     } catch (Exception ex) {
                         LOGGER.error("TableModelUtils.convertColumns(row={},col={}, value='{}') exception: {}",
                                 row, col, oldValue, ex.getMessage());
@@ -132,10 +133,10 @@ public class TableModelUtils {
 
     public static ConfigurationModel toConfigurationModel(@NonNull TableModelApi sourceModel) {
         ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
-        TableColumnDefinitionApi[] tableColumnDefinitions = sourceModel.getColumnProperties(
-                new TableColumnDefinitionApi[sourceModel.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
+        FormatterApi<?>[] tableColumnDefinitions = sourceModel.getColumnProperties(
+                new FormatterApi<?>[sourceModel.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
             if (tableColumnDefinitions != null) {
-                ConfigurationInterpreterTableColumnDefinition colDef = new ConfigurationInterpreterTableColumnDefinition(result);
+                ConfigurationInterpreterTableColumnDefinitionNew colDef = new ConfigurationInterpreterTableColumnDefinitionNew(result);
                 colDef.addConfig(tableColumnDefinitions);
             }
 

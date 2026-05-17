@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.Global;
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionDto;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.ColumnDefinition;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
@@ -44,7 +42,6 @@ public class ConfigurationInterpreterTableColumnDefinitionNew extends Configurat
             Object formatPattern = formatter.getFormatPattern();
             Object nullAble = formatter.isNullable() ? null : "0";
             Integer maxStringLen = formatter.getMaxStringLength();
-            if (maxStringLen == -1) maxStringLen = null;
             addConfig(columnNumber, subTyp, description, formatPattern, nullAble, maxStringLen);
         }
     }

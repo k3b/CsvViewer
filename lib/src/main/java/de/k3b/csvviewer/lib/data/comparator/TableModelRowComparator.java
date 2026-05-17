@@ -6,7 +6,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
-import de.k3b.csvviewer.lib.data.analyser.TableColumnDefinitionApi;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
 /** used to sort a TableModell by column numbers */
@@ -18,7 +17,7 @@ public class TableModelRowComparator implements Comparator<Object[]> {
     private final TableModelRowComparator next;
 
     /** create a TableModelRowComparator sorted by columns in columnNos. Negative columnNo means reverse order */
-    public static TableModelRowComparator create(@NonNull TableColumnDefinitionApi[] columnDefinitions, List<Integer> columnNos) {
+    public static TableModelRowComparator create(@NonNull FormatterApi<?>[] columnDefinitions, List<Integer> columnNos) {
         TableModelRowComparator result = null;
         for (int i = columnNos.size() - 1; i >= 0; i--) {
             boolean inverse = false;
@@ -29,12 +28,12 @@ public class TableModelRowComparator implements Comparator<Object[]> {
             }
             if(columnNo >= columnDefinitions.length) columnNo = 0;
 
-            TableColumnDefinitionApi columnDefinition = columnDefinitions[columnNo];
+            FormatterApi<?> columnDefinition = columnDefinitions[columnNo];
             Comparator<Object> comparator;
             if (columnDefinition == null) {
                 comparator = null;
             } else {
-                FormatterApi<?> formatter = columnDefinition.getFormatter();
+                FormatterApi<?> formatter = columnDefinition;
                 comparator = formatter == null ? null : formatter.getComparator();
             }
             if (comparator != null) {

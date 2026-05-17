@@ -6,13 +6,14 @@ import org.jspecify.annotations.Nullable;
 import de.k3b.csvviewer.lib.data.formatter.BooleanFormatter;
 import de.k3b.csvviewer.lib.data.formatter.DateFormatter;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
+import de.k3b.csvviewer.lib.data.formatter.FormatterDefinition;
 import de.k3b.csvviewer.lib.data.formatter.IntegerFormatter;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 import de.k3b.csvviewer.lib.data.formatter.ObjectFormatter;
 import de.k3b.csvviewer.lib.data.formatter.StringFormatter;
 
 /** analyse String content of a table column */
-public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements AnalyserApi<Object>, TableColumnDefinitionApi {
+public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements AnalyserApi<Object> {
     private final int MIN_SUCCESS_ITEMS = 1;
     private boolean nullable = false;
     private int minStringLength = Integer.MAX_VALUE;
@@ -33,7 +34,6 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         longIntegerAnalyser = new LongIntegerAnalyser(maxErrors);
     }
 
-    @Override
     public boolean isNullable() {
         return nullable;
     }
@@ -42,7 +42,6 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return minStringLength;
     }
 
-    @Override
     public int getMaxStringLength() {
         return maxStringLength;
     }
@@ -100,7 +99,6 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return result;
     }
 
-    @Override
     public @Nullable FormatterApi<?> getFormatter() {
         FormatterApi<?> result = getDateFormatter();
         if (result == null) result = getBooleanFormatter();

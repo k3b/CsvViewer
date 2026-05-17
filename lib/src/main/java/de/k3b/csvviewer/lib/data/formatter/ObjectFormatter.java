@@ -51,7 +51,7 @@ public class ObjectFormatter implements FormatterApi<Object> {
 
     @Override
     public Integer getMaxStringLength() {
-        return formatterImpl == null ? -1 :formatterImpl.getMaxStringLength();
+        return formatterImpl == null ? null :formatterImpl.getMaxStringLength();
     }
 
     @Override
