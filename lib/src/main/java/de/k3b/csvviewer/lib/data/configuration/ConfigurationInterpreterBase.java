@@ -10,7 +10,7 @@ import java.util.List;
 
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
-import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.ColumnDefinition;
+import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.DomainColumnModel;
 import de.k3b.csvviewer.lib.data.filter.TableModelComparatorFilter;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 
@@ -30,13 +30,13 @@ public abstract class ConfigurationInterpreterBase<T> {
         String columnName = target.getTargetColumnName(columnNumber);
 
         Object[] row = target.createEmptyRow();
-        row[ColumnDefinition.col_colName]=columnName;
-        row[ColumnDefinition.col_configType] = configurationType;
-        row[ColumnDefinition.col_subType] = subType;
-        row[ColumnDefinition.col_description] = description;
-        row[ColumnDefinition.col_parameter1] = parameter1;
-        row[ColumnDefinition.col_parameter2] = parameter2;
-        row[ColumnDefinition.col_parameter3] = parameter3;
+        row[ConfigurationModel.DomainColumnModel.col_colName]=columnName;
+        row[DomainColumnModel.col_configType] = configurationType;
+        row[ConfigurationModel.DomainColumnModel.col_subType] = subType;
+        row[DomainColumnModel.col_description] = description;
+        row[DomainColumnModel.col_parameter1] = parameter1;
+        row[DomainColumnModel.col_parameter2] = parameter2;
+        row[ConfigurationModel.DomainColumnModel.col_parameter3] = parameter3;
 
         target.addRow(row);
         return row;
@@ -48,7 +48,7 @@ public abstract class ConfigurationInterpreterBase<T> {
     /** convert from configRow to configValue */
     @NonNull public T parse(@NonNull List<Object[]> configRows) {
         TableModelComparatorFilter filter = new TableModelComparatorFilter(
-                ColumnDefinition.col_configType, new StringIgnoreCaseComparator(),
+                ConfigurationModel.DomainColumnModel.col_configType, new StringIgnoreCaseComparator(),
                 this.configurationType, TableModelComparatorFilter.EQUALS);
 
         List<Object[]> myConfigRows = new ArrayList<>();
@@ -62,11 +62,11 @@ public abstract class ConfigurationInterpreterBase<T> {
 
         /*
         for (int i = 0; i < configRows.size(); i++) {
-        String columnName = (String) configRow[ColumnDefinition.col_colName];
+        String columnName = (String) configRow[DomainColumnModel.col_colName];
         int columnNumber = target.getTargetColumnNumber(columnName);
-        String description = (String) configRow[ColumnDefinition.col_description];
-        String subType = (String) configRow[ColumnDefinition.col_subType];
-        Object parameter1 = configRow[ColumnDefinition.col_parameter1];
+        String description = (String) configRow[DomainColumnModel.col_description];
+        String subType = (String) configRow[DomainColumnModel.col_subType];
+        Object parameter1 = configRow[DomainColumnModel.col_parameter1];
         return parse(columnNumber, columnName, subType, description, parameter1);
 
     public T parse(int columnNumber, String columnName, String subType, String description, Object parameter1) {

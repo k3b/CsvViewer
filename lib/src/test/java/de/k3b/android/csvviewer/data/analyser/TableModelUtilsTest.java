@@ -12,9 +12,9 @@ import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.CsvConfig;
 import de.k3b.csvviewer.lib.csv.DemoData;
 import de.k3b.csvviewer.lib.csv.TableModel2Csv;
-import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
-import de.k3b.csvviewer.lib.data.TableModelUtils;
+import de.k3b.csvviewer.lib.data.model.TableModelUtils;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
 
 public class TableModelUtilsTest {
@@ -34,10 +34,10 @@ public class TableModelUtilsTest {
             print("Analyse report", report);
 
             AnalyserReport reportOfReport = TableModelUtils.analyse(report, 0);
-            reportOfReport.sortBy(List.of(AnalyserReport.ColumnDefinition.col_subParser));
+            reportOfReport.sortBy(List.of(AnalyserReport.DomainColumnModel.col_subParser));
             print("Analyse report of Analyse report  sorted by subParser", reportOfReport);
 
-            ConfigurationModel config = TableModelUtils.toConfigurationModel(model);
+            ConfigurationModel config = TableModelUtils.toConfigurationModel(model, );
             print("model config", config);
         } catch (Exception e) {
             LOGGER.error("csv2html_isCorrect exception", e);

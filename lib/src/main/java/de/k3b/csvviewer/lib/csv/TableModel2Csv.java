@@ -5,9 +5,8 @@ import com.opencsv.CSVWriter;
 import org.jspecify.annotations.NonNull;
 
 import java.io.Writer;
-import java.text.DecimalFormat;
 
-import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.model.TableModelApi;
 
 public class TableModel2Csv {
     @NonNull

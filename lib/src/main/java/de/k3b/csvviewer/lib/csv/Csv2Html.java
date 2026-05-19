@@ -5,7 +5,7 @@ import org.jspecify.annotations.NonNull;
 import java.io.IOException;
 import java.io.Reader;
 
-import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.model.TableModelApi;
 
 public class Csv2Html {
     @NonNull

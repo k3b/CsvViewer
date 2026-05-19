@@ -7,7 +7,7 @@ import java.io.IOException;
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.DemoData;
 import de.k3b.csvviewer.lib.csv.TableModel2Html;
-import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.model.TableModelApi;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

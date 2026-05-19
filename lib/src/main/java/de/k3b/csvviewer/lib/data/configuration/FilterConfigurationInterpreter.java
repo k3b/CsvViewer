@@ -14,15 +14,15 @@ import de.k3b.csvviewer.lib.data.filter.TableModelNotNullFilter;
 import de.k3b.csvviewer.lib.data.filter.TableModelNullFilter;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 
-import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.ColumnDefinition;
+import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.DomainColumnModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** {@link ConfigurationModel} interpreter for filters based on {@link TableModelRowFilterBase}  */
-public class ConfigurationInterpreterFilter extends ConfigurationInterpreterBase<@Nullable List<TableModelRowFilterBase>> {
+public class FilterConfigurationInterpreter extends ConfigurationInterpreterBase<@Nullable List<TableModelRowFilterBase>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
-    public ConfigurationInterpreterFilter(@NonNull ConfigurationModel target, @NonNull String configurationType) {
+    public FilterConfigurationInterpreter(@NonNull ConfigurationModel target, @NonNull String configurationType) {
         super(target, configurationType);
     }
 
@@ -46,7 +46,7 @@ public class ConfigurationInterpreterFilter extends ConfigurationInterpreterBase
                         compareTyp = TableModelNotNullFilter.compareTyp;
                     } else {
                         compareTyp = "???[" + filter.getClass().getSimpleName() + "]";
-                        LOGGER.warn("ConfigurationInterpreterFilter.addConfig() : {}", compareTyp);
+                        LOGGER.warn("FilterConfigurationInterpreter.addConfig() : {}", compareTyp);
                     }
                     addConfig(columnNumber, compareTyp, filterName, compareParameter, null, null);
                 }
@@ -63,10 +63,10 @@ public class ConfigurationInterpreterFilter extends ConfigurationInterpreterBase
         for(int rowNo = myConfigRows.size() - 1; rowNo >= 0; rowNo--) {
             Object[] configRow = myConfigRows.get(rowNo);
 
-            Object parameter1 = configRow[ColumnDefinition.col_parameter1];
-            String description = (String) configRow[ColumnDefinition.col_description];
-            String subType = (String) configRow[ColumnDefinition.col_subType];
-            String columnName = (String) configRow[ColumnDefinition.col_colName];
+            Object parameter1 = configRow[ConfigurationModel.DomainColumnModel.col_parameter1];
+            String description = (String) configRow[ConfigurationModel.DomainColumnModel.col_description];
+            String subType = (String) configRow[ConfigurationModel.DomainColumnModel.col_subType];
+            String columnName = (String) configRow[DomainColumnModel.col_colName];
             int columnNumber = target.getTargetColumnNumber(columnName);
 
             TableModelRowFilterBase filter = createFilter(subType, columnNumber, parameter1);

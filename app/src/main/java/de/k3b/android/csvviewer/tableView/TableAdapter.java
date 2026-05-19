@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import de.k3b.android.csvviewer.R;
-import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.model.TableModelApi;
 
 public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolder> {
 

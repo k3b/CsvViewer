@@ -2,7 +2,8 @@ package de.k3b.csvviewer.lib.data.analyser;
 
 import org.jspecify.annotations.NonNull;
 
-import de.k3b.csvviewer.lib.data.InMemoryTableModel;
+import de.k3b.csvviewer.lib.data.model.ColumnModel;
+import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 
 /**
  * Tablemodel to show the result of analyser run
@@ -13,7 +14,7 @@ public class AnalyserReport extends InMemoryTableModel {
     private int colNo;
     private String colName;
 
-    public static class ColumnDefinition {
+    public static class DomainColumnModel implements ColumnModel  {
         public static final int col_id = 0;
         public static final int col_colNo = 1;
         public static final int col_colName = 2;
@@ -31,10 +32,15 @@ public class AnalyserReport extends InMemoryTableModel {
                 "id","colNo", "colName","parser","subParser",
                 "result","enabled","min","max", "success",
                 "errorRowIds"};
+        @Override
+        @NonNull public String[] getColumnNames() {
+            return columnNames;
+        }
+
     }
 
     public AnalyserReport() {
-        super(ColumnDefinition.columnNames);
+        super(DomainColumnModel.columnNames);
     }
 
     public void defineColumn(int colNo, String colName) {
@@ -44,17 +50,17 @@ public class AnalyserReport extends InMemoryTableModel {
 
     public Object[] addReportRow(String parser, String subParser) {
         Object[] result = createEmptyRow();
-        result[ColumnDefinition.col_parser]=parser;
-        result[ColumnDefinition.col_subParser]=subParser;
+        result[DomainColumnModel.col_parser]=parser;
+        result[DomainColumnModel.col_subParser]=subParser;
         addRow(result);
         return result;
     }
     @Override @NonNull
     public Object[] createEmptyRow() {
         Object[] result = super.createEmptyRow();
-        result[ColumnDefinition.col_id]=nextRowId++;
-        result[ColumnDefinition.col_colNo]=this.colNo;
-        result[ColumnDefinition.col_colName]=this.colName;
+        result[DomainColumnModel.col_id]=nextRowId++;
+        result[DomainColumnModel.col_colNo]=this.colNo;
+        result[DomainColumnModel.col_colName]=this.colName;
         return result;
     }
 }

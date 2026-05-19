@@ -15,7 +15,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import de.k3b.csvviewer.lib.Global;
-import de.k3b.csvviewer.lib.data.InMemoryTableModel;
+import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 
 public class Csv2TableModel implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);

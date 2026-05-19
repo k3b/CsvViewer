@@ -1,4 +1,4 @@
-package de.k3b.csvviewer.lib.data;
+package de.k3b.csvviewer.lib.data.model;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -10,7 +10,9 @@ import java.util.List;
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
-import de.k3b.csvviewer.lib.data.configuration.ConfigurationInterpreterTableColumnDefinitionNew;
+import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
+import de.k3b.csvviewer.lib.data.configuration.FilterConfigurationInterpreter;
+import de.k3b.csvviewer.lib.data.configuration.FormatterConfigurationInterpreter;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
@@ -115,8 +117,8 @@ public class TableModelUtils {
     }
 
     public static @NonNull InMemoryTableModel filter(@NonNull InMemoryTableModel sourceModel,
-                                            @Nullable List<TableModelRowFilterBase> includeFilter,
-                                            @Nullable List<TableModelRowFilterBase> excludeFilter) {
+                                                     @Nullable List<TableModelRowFilterBase> includeFilter,
+                                                     @Nullable List<TableModelRowFilterBase> excludeFilter) {
         InMemoryTableModel result = sourceModel.createEmptyClone();
         int rowCount = sourceModel.getRowCount();
         boolean hasIncludes = includeFilter != null && !includeFilter.isEmpty();
@@ -124,20 +126,31 @@ public class TableModelUtils {
             Object[] row = sourceModel.getRow(rowNo);
             if (TableModelRowFilterBase.match(excludeFilter, row) == null &&
                     (hasIncludes && TableModelRowFilterBase.match(excludeFilter, row) != null)) {
-                //!!! TODO
+                result.addRow(row);
             }
         }
+        result.putColumnProperty(-1, TableModelApi.PROPERTY_INCLUDE_FILTER, includeFilter);
+        result.putColumnProperty(-1, TableModelApi.PROPERTY_INCLUDE_FILTER, excludeFilter);
         return result;
     }
 
+    public static final String CONFIGURATION_FILTER_INCLUDE = "columnFilterInclude";
+    public static final String CONFIGURATION_FILTER_EXCLUDE = "columnFilterExclude";
+    public static final String CONFIGURATION_SORT = "columnSort";
     public static ConfigurationModel toConfigurationModel(@NonNull TableModelApi sourceModel) {
+
         ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
-        FormatterApi<?>[] tableColumnDefinitions = sourceModel.getColumnProperties(
+        FormatterApi<?>[] tableColumnFormatters = sourceModel.getColumnProperties(
                 new FormatterApi<?>[sourceModel.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
-            if (tableColumnDefinitions != null) {
-                ConfigurationInterpreterTableColumnDefinitionNew colDef = new ConfigurationInterpreterTableColumnDefinitionNew(result);
-                colDef.addConfig(tableColumnDefinitions);
+            if (tableColumnFormatters != null) {
+                FormatterConfigurationInterpreter colDef = new FormatterConfigurationInterpreter(result);
+                colDef.addConfig(tableColumnFormatters);
             }
+
+        TableModelRowComparator sorter = sourceModel.getColumnProperty(-1, TableModelApi.PROPERTY_SORT_ORDER);
+        if (sorter != null) {
+            FilterConfigurationInterpreter filterInterpreter = new FilterConfigurationInterpreter(result, CONFIGURATION_FILTER_INCLUDE);
+        }
 
         return result;
     }

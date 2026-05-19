@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import de.k3b.csvviewer.lib.Global;
-import de.k3b.csvviewer.lib.data.InMemoryTableModel;
+import de.k3b.csvviewer.lib.data.model.ColumnModel;
+import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 
 /**
  * Tablemodel to show the result of analyser run
@@ -20,7 +21,7 @@ public class ConfigurationModel extends InMemoryTableModel {
     private final @NonNull String[] targetColumnNames;
     private int nextRowId = 0;
 
-    public static class ColumnDefinition {
+    public static class DomainColumnModel implements ColumnModel {
         public static final int col_id = 0;
         public static final int col_configType = 1;
         public static final int col_subType = 2;
@@ -34,11 +35,17 @@ public class ConfigurationModel extends InMemoryTableModel {
         private static final String[] columnNames = new String[]{
                 "id","configType", "subType", "colName","description"
                 ,"parameter1","parameter2","parameter3"};
+
+        @Override
+        @NonNull public String[] getColumnNames() {
+            return columnNames;
+        }
+
     }
 
     public ConfigurationModel(@NonNull String[] targetColumnNames) {
         // columns of ConfigurationModel
-        super(ColumnDefinition.columnNames);
+        super(DomainColumnModel.columnNames);
 
         this.targetColumnNames = targetColumnNames;
         for(int i = 0; i < targetColumnNames.length;i++) {
@@ -74,7 +81,7 @@ public class ConfigurationModel extends InMemoryTableModel {
     @Override @NonNull
     public Object[] createEmptyRow() {
         Object[] result = super.createEmptyRow();
-        result[ColumnDefinition.col_id]=nextRowId++;
+        result[DomainColumnModel.col_id]=nextRowId++;
         return result;
     }
 }

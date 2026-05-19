@@ -1,4 +1,4 @@
-package de.k3b.csvviewer.lib.data;
+package de.k3b.csvviewer.lib.data.model;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -6,10 +6,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
@@ -17,12 +15,7 @@ import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 /**
  * A {@link TableModelApi} implementation where all data is kept in memory.
  */
-public class InMemoryTableModel implements TableModelApi {
-
-    /** names of the columns */
-    @NonNull private final String[] columnNames;
-
-    private final Map[] columnProperties;
+public class InMemoryTableModel extends TableModelBase {
 
     /** names of the columns  */
     private int[] columnWidths = null;
@@ -44,8 +37,7 @@ public class InMemoryTableModel implements TableModelApi {
      * @param rowData           the data for the new table
      */
     public InMemoryTableModel(@NonNull final String[] columnNames, final Object[]... rowData) {
-        this.columnNames = columnNames;
-        this.columnProperties = new Map[columnNames.length];
+        super(columnNames);
         if (rowData != null) {
             for (Object[] row : rowData) {
                 if (row != null) {
@@ -57,18 +49,23 @@ public class InMemoryTableModel implements TableModelApi {
 
     public InMemoryTableModel createEmptyClone() {
         InMemoryTableModel result = new InMemoryTableModel(getColumnNames());
-        System.arraycopy(result.columnProperties,0, this.columnProperties, 0, result.columnProperties.length);
-        if (this.columnWidths != null) {
-            result.columnWidths = new int[this.columnWidths.length];
-            System.arraycopy(result.columnWidths,0, this.columnWidths, 0, result.columnWidths.length);
-        }
+        result.copyPropertiesFrom(this);
         return result;
     }
 
-    /** @return  names of the columns */
-    @NonNull public String[] getColumnNames() {
-        return columnNames;
+    /** implementation detail of {@link #createEmptyClone()} */
+    protected void copyPropertiesFrom (@NonNull TableModelBase from) {
+        super.copyPropertiesFrom(from);
+        InMemoryTableModel to = this;
+        if (from instanceof InMemoryTableModel) {
+            InMemoryTableModel from_ = (InMemoryTableModel) from;
+            if (from_.columnWidths != null) {
+                to.columnWidths = new int[from_.columnWidths.length];
+                System.arraycopy(from_.columnWidths, 0, to.columnWidths, 0, from_.columnWidths.length);
+            }
+        }
     }
+
 
     /**
      * @return names of the columns
@@ -86,8 +83,8 @@ public class InMemoryTableModel implements TableModelApi {
     private int[] inferColumnWidths(int numberOfRowsToAnalyse) {
         int[] columnWidths = new int[getColumnCount()];
 
-        for (int col = 0;col < columnNames.length; col++) {
-            int min = columnNames[col].length();
+        for (int columnNumber = 0; columnNumber < getColumnCount(); columnNumber++) {
+            int min = getColumnNames()[columnNumber].length();
             int sum = min;
             int max = min;
 
@@ -95,8 +92,8 @@ public class InMemoryTableModel implements TableModelApi {
             int count = getRowCount();
             if (count > numberOfRowsToAnalyse) count = numberOfRowsToAnalyse;
 
-            for (int row = 0;row < count; row++) {
-                Object value = getValueAt(row, col);
+            for (int rowNumber = 0;rowNumber < count; rowNumber++) {
+                Object value = getValueAt(rowNumber, columnNumber);
                 if (value != null) {
                     int len = value.toString().length();
                         sum += len;
@@ -108,7 +105,7 @@ public class InMemoryTableModel implements TableModelApi {
 
             int average = sum / nonEmpty;
 
-            columnWidths[col] = average;
+            columnWidths[columnNumber] = average;
 
         }
         return columnWidths;
@@ -145,23 +142,6 @@ public class InMemoryTableModel implements TableModelApi {
         return this.rows.add(row);
     }
 
-    /** throws IllegalArgumentException if row is not valid */
-    private void check(Object[] row) {
-        if (row == null || row.length < getColumnCount()) {
-            throw new IllegalArgumentException(String.format("Row %s must have at least %d columns", Arrays.toString(row), getColumnCount()));
-        }
-    }
-
-    /** throws IllegalArgumentException if row or column is not valid */
-    private void check(int row, int column) {
-        if (column < 0  || column >= getColumnCount()) {
-            throw new IllegalArgumentException(String.format("Column %d must be between 0 and %d", row, getColumnCount() - 1));
-        }
-        if (row < 0  || row >= getRowCount()) {
-            throw new IllegalArgumentException(String.format("Row %d must be between 0 and %d", row, getRowCount() - 1));
-        }
-    }
-
     /**
      * Returns the number of rows that can be shown in the
      * <code>JTable</code>, given unlimited space.
@@ -173,71 +153,61 @@ public class InMemoryTableModel implements TableModelApi {
     public int getRowCount() { return rows.size(); }
 
     /**
-     * Returns the number of columns in the column model. Note that this may
-     * be different from the number of columns in the table model.
-     *
-     * @return  the number of columns in the table
-     * @see #getRowCount
-     */
-    @Override
-    public int getColumnCount() { return columnNames.length; }
-
-    /**
-     * Returns the cell value at <code>row</code> and <code>column</code>.
+     * Returns the cell value at <code>rowNumber</code> and <code>columnNumber</code>.
      * <p>
-     * <b>Note</b>: The column is specified in the table view's display
-     * order, and not in the <code>TableModel</code>'s column
+     * <b>Note</b>: The columnNumber is specified in the table view's display
+     * order, and not in the <code>TableModel</code>'s columnNumber
      * order.  This is an important distinction because as the
      * user rearranges the columns in the table,
-     * the column at a given index in the view will change.
+     * the columnNumber at a given index in the view will change.
      * Meanwhile the user's actions never affect the model's
-     * column ordering.
+     * columnNumber ordering.
      *
-     * @param row    the row whose value is to be queried
-     * @param column the column whose value is to be queried
+     * @param rowNumber    the rowNumber whose value is to be queried
+     * @param columnNumber the columnNumber whose value is to be queried
      * @return the Object at the specified cell
-     * @throws IllegalArgumentException if row or column is not valid. See {@link #check(int, int)} )}
+     * @throws IllegalArgumentException if rowNumber or columnNumber is not valid. See {@link #check(int, int)} )}
      */
     @Override @Nullable
-    public Object getValueAt(int row, int column) {
-        check(row, column);
-        return getRow(row)[column];
+    public Object getValueAt(int rowNumber, int columnNumber) {
+        check(rowNumber, columnNumber);
+        return getRow(rowNumber)[columnNumber];
     }
 
     /**
-     * @param row - row number to be retrieved.
-     * @return the row data at specified row number
+     * @param rowNumber - rowNumber number to be retrieved.
+     * @return the row data at specified rowNumber number
      */
     @Override
-    public Object[] getRow(int row) {
-        check(row, 0);
-        return rows.get(row);
+    public Object[] getRow(int rowNumber) {
+        check(rowNumber, 0);
+        return rows.get(rowNumber);
     }
 
     /**
-     * Sets the value for the cell in the table model at <code>row</code>
-     * and <code>column</code>.
+     * Sets the value for the cell in the table model at <code>rowNumber</code>
+     * and <code>columnNumber</code>.
      * <p>
-     * <b>Note</b>: The column is specified in the table view's display
-     * order, and not in the <code>TableModel</code>'s column
+     * <b>Note</b>: The columnNumber is specified in the table view's display
+     * order, and not in the <code>TableModel</code>'s columnNumber
      * order.  This is an important distinction because as the
      * user rearranges the columns in the table,
-     * the column at a given index in the view will change.
+     * the columnNumber at a given index in the view will change.
      * Meanwhile the user's actions never affect the model's
-     * column ordering.
+     * columnNumber ordering.
      * <p>
      * <code>aValue</code> is the new value.
      *
      * @param value the new value
-     * @param row    the row of the cell to be changed
-     * @param column the column of the cell to be changed
+     * @param rowNumber    the rowNumber of the cell to be changed
+     * @param columnNumber the columnNumber of the cell to be changed
      * @see #getValueAt
-     * @throws IllegalArgumentException if row or column is not valid. See {@link #check(int, int)} )}
+     * @throws IllegalArgumentException if rowNumber or columnNumber is not valid. See {@link #check(int, int)} )}
      */
     @Override
-    public void setValueAt(@Nullable Object value, int row, int column) {
-        check(row, column);
-        getRow(row)[column] = value;
+    public void setValueAt(@Nullable Object value, int rowNumber, int columnNumber) {
+        check(rowNumber, columnNumber);
+        getRow(rowNumber)[columnNumber] = value;
     }
 
     public void sortBy(@NonNull List<Integer> columnNos) {
@@ -251,6 +221,8 @@ public class InMemoryTableModel implements TableModelApi {
                 // rows.sort(sorter); // note List.sort requires android api 24
                 sort(rows, sorter);
             }
+            putColumnProperty(-1, TableModelApi.PROPERTY_SORT_ORDER, sorter);
+            // TableModelRowComparator sorter =
         }
     }
 
@@ -266,25 +238,4 @@ public class InMemoryTableModel implements TableModelApi {
         }
     }
 
-    /** put column specific propery */
-    @Override
-    public void putColumnProperty(int column, @NonNull Object key, Object value) {
-        getMap(column).put(key,value);
-    }
-
-    /** return column specific propery */
-    @Override
-    public @Nullable <VALUE> VALUE getColumnProperty(int column, @NonNull Object key) {
-        return (VALUE) getMap(column).get(key);
-    }
-
-    private Map<Object, Object> getMap(int column) {
-        check(0,column);
-        Map<Object,Object> properties = (Map<Object,Object>) columnProperties[column]; // .put(key,value);
-        if (properties == null) {
-            properties = new HashMap<Object,Object>();
-            columnProperties[column] = properties;
-        }
-        return properties;
-    }
 }

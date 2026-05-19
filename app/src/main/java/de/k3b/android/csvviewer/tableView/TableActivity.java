@@ -23,10 +23,10 @@ import de.k3b.android.csvviewer.R;
 import de.k3b.android.csvviewer.util.IntentUtil;
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.DemoData;
-import de.k3b.csvviewer.lib.data.InMemoryTableModel;
-import de.k3b.csvviewer.lib.data.TableModelApi;
+import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
+import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
-import de.k3b.csvviewer.lib.data.TableModelUtils;
+import de.k3b.csvviewer.lib.data.model.TableModelUtils;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 
 public class TableActivity extends AppCompatActivity {
