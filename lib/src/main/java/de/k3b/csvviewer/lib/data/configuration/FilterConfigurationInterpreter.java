@@ -15,6 +15,9 @@ import de.k3b.csvviewer.lib.data.filter.TableModelNullFilter;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.DomainColumnModel;
+import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
+import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
+import de.k3b.csvviewer.lib.data.model.TableModelUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,4 +97,15 @@ public class FilterConfigurationInterpreter extends ConfigurationInterpreterBase
         return filter;
     }
 
+    public static List<TableModelRowFilterBase> parseExpression(InMemoryTableModel model, String expression) {
+        List<TableModelRowFilterBase> result = new ArrayList<>();
+        for (int columnNumber = model.getColumnCount()-1;columnNumber >= 0; columnNumber--) {
+            FormatterApi<?> columnFormatter = TableModelUtils.getColumnFormatter(model,columnNumber);
+            // columnFormatter.getMaxStringLength();
+
+            // TODO !!!
+        }
+
+        return result;
+    }
 }

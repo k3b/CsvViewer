@@ -2,6 +2,7 @@ package de.k3b.android.csvviewer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -12,9 +13,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import de.k3b.csvviewer.lib.data.formatter.IntegerFormatter;
 import de.k3b.csvviewer.lib.data.formatter.ObjectFormatter;
@@ -27,45 +32,52 @@ import de.k3b.csvviewer.lib.data.formatter.StringFormatter;
  * Object[] tableRow → editable values (EditText).
  *
  */
+@NullMarked // all elements that have no (Non)Null-annotation are assumted to be NonNull
 public class TableRowEditorActivity extends AppCompatActivity {
+    /** intent extra parameter to put into */
+    private static final String EXTRA_DATA = "data";
 
-    public static final String EXTRA_DATA = "data";
+    private static final String TYPE_DATE = Date.class.getSimpleName();
+    private static final List<String> TYPE_NUMBERS = Arrays.asList(Integer.class.getSimpleName(), Long.class.getSimpleName());
 
     /**
      * Data to be transfered between calling activity and {@link TableRowEditorActivity}
+     *
+     * note: @Nullable Object @NonNull [] row; means row is non null but its elements can be null
      */
     private static class Data implements Serializable {
-        @NonNull
-        final String[] labels;
-        @NonNull
-        final Object[] row;
-        @NonNull
-        final ObjectFormatter[] formatters;
+        final String[]  labels;
+        
+        // row cannot be null but can contain null elements
+        final @Nullable Object[] row;
+        final @Nullable ObjectFormatter [] formatters;
 
-        Data(@NonNull String[] labels, @NonNull Object[] row, @NonNull ObjectFormatter[] formatters) {
+        Data(String[] labels,
+             @Nullable Object[] row,
+             @Nullable ObjectFormatter[] formatters) {
+            assert row.length == labels.length ;
+            assert row.length == formatters.length ;
+
             this.labels = labels;
             this.row = row;
             this.formatters = formatters;
+
         }
 
-        Data(@NonNull Data tableDefinition, @NonNull Object[] row) {
+        Data(Data tableDefinition, @Nullable Object[] row) {
             this(tableDefinition.labels, row, tableDefinition.formatters);
         }
     }
 
-    public static void startActivity(@NonNull AppCompatActivity parent, int requestCode,
-                              @NonNull String[] headers, @NonNull Object[] row,
-                              @NonNull ObjectFormatter[] rowFormatters) {
+    public static void startActivity(AppCompatActivity parent, int requestCode,
+                                     String[] labels,
+                                     @Nullable Object[] row,
+                                     @Nullable ObjectFormatter[] formatters) {
 
         Intent intent = new Intent(parent, TableRowEditorActivity.class);
 
-        /*
-        String[] headers = {"Name", "Age", "City"};
-        Object[] row = {"John", 30, "Berlin"};
-        */
-
-        Data tableDefinition = new Data(headers, row, rowFormatters);
-        intent.putExtra(EXTRA_DATA, tableDefinition);
+        Data data = new Data(labels, row, formatters);
+        intent.putExtra(EXTRA_DATA, data);
 
         parent.startActivityForResult(intent, requestCode);
     }
@@ -79,7 +91,7 @@ public class TableRowEditorActivity extends AppCompatActivity {
             Object[] row = {"John", 30, "Berlin"};
             ObjectFormatter stringFormatter = new ObjectFormatter(new StringFormatter(true, 20));
             ObjectFormatter intFormatter = new ObjectFormatter(new IntegerFormatter(false));
-            ObjectFormatter[] rowFormatters = {stringFormatter,intFormatter,stringFormatter};
+            ObjectFormatter[] rowFormatters = {null,intFormatter,stringFormatter};
 
             TableRowEditorActivity.startActivity(this, REQUEST_CODE, headers, row, rowFormatters);
         }
@@ -95,25 +107,26 @@ public class TableRowEditorActivity extends AppCompatActivity {
         }
     }
 
-    public static @NonNull Object[] getResult(@NonNull Intent intent) {
+    public static  @Nullable Object[] getResult(Intent intent) {
         Data data = (Data) intent.getSerializableExtra(EXTRA_DATA);
 
         assert data != null;
         return data.row;
     }
 
-    private EditText[] editTexts;
-    Data data;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private @Nullable TextView @Nullable [] valueViews = null;
+    private @Nullable  Data data;
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
         Data data = (Data) intent.getSerializableExtra(EXTRA_DATA);
 
+        assert data != null;
         int columnCount = data.row.length;
-        editTexts = new EditText[columnCount];
+        valueViews = new EditText[columnCount];
 
         // Root ScrollView (for long forms)
         ScrollView scrollView = new ScrollView(this);
@@ -125,30 +138,23 @@ public class TableRowEditorActivity extends AppCompatActivity {
 
         scrollView.addView(container);
 
-        if (data.labels != null && data.row != null) {
+        for (int i = 0; i < data.labels.length; i++) {
 
-            for (int i = 0; i < data.labels.length; i++) {
+            // Label
+            TextView label = new TextView(this);
+            label.setText(data.labels[i]);
+            label.setTextSize(16f);
+            container.addView(label);
 
-                // Label
-                TextView label = new TextView(this);
-                label.setText(data.labels[i]);
-                label.setTextSize(16f);
-                container.addView(label);
+            // EditText
+            TextView editText = createValueView(data.row[i], data.formatters[i]);
+            editText.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
 
-                // EditText
-                EditText editText = new EditText(this);
-                if (i < data.row.length && data.row[i] != null) {
-                    editText.setText(data.formatters[i].format(data.row[i]));
-                }
-
-                editText.setLayoutParams(new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                ));
-
-                container.addView(editText);
-                editTexts[i]  = editText;
-            }
+            container.addView(editText);
+            valueViews[i]  = editText;
         }
 
         // Save Button
@@ -162,17 +168,38 @@ public class TableRowEditorActivity extends AppCompatActivity {
         setContentView(scrollView);
     }
 
+    private TextView createValueView(@Nullable Object nativeValue, @Nullable ObjectFormatter formatter) {
+        TextView valueView;
+        String stringValue;
+        if (formatter == null) {
+            // no formatter means readonly
+            valueView = new TextView(this);
+            stringValue = nativeValue == null ? "" : nativeValue.toString();
+        } else {
+            valueView = new EditText(this);
+            stringValue = formatter.format(nativeValue);
+            String elementClassName = formatter.getElementClassName();
+            if (TYPE_NUMBERS.contains(elementClassName)) {
+                valueView.setInputType(InputType.TYPE_CLASS_NUMBER);
+            } else if (TYPE_DATE.equals(elementClassName)) {
+                valueView.setInputType(InputType.TYPE_CLASS_DATETIME);
+            }
+        }
+        valueView.setText(stringValue);
+
+        return valueView;
+    }
+
     private int dp(int value) {
         float density = getResources().getDisplayMetrics().density;
         return (int) (value * density);
     }
 
     private void onSave(View v) {
-        Object[] row = new Object[editTexts.length];
+        Object[] row = new Object[valueViews.length];
 
-        for (int i = 0; i < editTexts.length; i++) {
-            String stringValue = editTexts[i].getText().toString();
-            row[i] = data.formatters[i].parse(stringValue);
+        for (int i = 0; i < valueViews.length; i++) {
+            row[i] = getNativeValue(valueViews[i].getText().toString(), data.formatters[i], data.row[i]);
         }
 
         // Return result
@@ -180,5 +207,21 @@ public class TableRowEditorActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_DATA, new Data(data, row));
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Nullable
+    private static Object getNativeValue(@Nullable String stringValue, @Nullable ObjectFormatter formatter, @Nullable Object oldNativeValue) {
+        Object nativeValue = null;
+        if (formatter != null) {
+            if (stringValue != null && !stringValue.isEmpty() ) {
+                nativeValue = formatter.parse(stringValue);
+            }
+            if (nativeValue == null && !formatter.isNullable()) {
+                nativeValue = oldNativeValue;
+            }
+        } else {
+            nativeValue = oldNativeValue;
+        }
+        return nativeValue;
     }
 }

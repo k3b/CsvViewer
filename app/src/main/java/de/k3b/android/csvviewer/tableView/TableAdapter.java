@@ -50,9 +50,9 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
 
             Object[] row = model.getRow(rowIndex);
 
-            for (int i = 0; i < row.length; i++) {
-                Object cell = row[i];
-                TextView tv = TableHelper.createTextView(itemView.getContext(), cell, model.getColumnWidth(i));
+            for (int columnNumber = 0; columnNumber < row.length; columnNumber++) {
+                Object cell = row[columnNumber];
+                TextView tv = GuiHelper.createTextView(itemView.getContext(), cell, model.getColumnWidth(columnNumber), columnNumber);
 
                 rowContainer.addView(tv);
             }

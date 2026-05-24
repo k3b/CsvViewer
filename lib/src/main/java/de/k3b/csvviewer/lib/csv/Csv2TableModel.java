@@ -84,14 +84,16 @@ public class Csv2TableModel implements AutoCloseable {
                     String[] rawRow;
                     while (null != (rawRow = readNextCsvColumnLine())) {
                         Object[] row;
+                        int cols = Math.min(headers.length, rawRow.length);
                         if (idColumn < 0) {
                             // insert COL_ID at position 0
-                            row = new Object[headers.length + 1];
-                            System.arraycopy(rawRow, 0, row, 1, rawRow.length);
+
+                            row = new Object[cols + 1];
+                            System.arraycopy(rawRow, 0, row, 1, cols);
                             row[0] = m_lineNumber;
                         } else {
-                            row = new Object[headers.length];
-                            System.arraycopy(rawRow, 0, row, 0, rawRow.length);
+                            row = new Object[cols];
+                            System.arraycopy(rawRow, 0, row, 0, cols);
                             if (idColumn > 0) {
                                 // swap position 0 and idColumn
                                 Object temp = row[idColumn];

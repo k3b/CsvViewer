@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -42,6 +44,7 @@ public class TableActivity extends AppCompatActivity {
     private List<TableModelRowFilterBase> includeFilter = new ArrayList<>();
     private List<TableModelRowFilterBase> excludeFilter = new ArrayList<>();
 
+    @Nullable private int[] columnWidthsInPixel = null;
     private enum COLUMN_INFOS {
         COLUMN_DEFINITIONS
     }
@@ -77,7 +80,16 @@ public class TableActivity extends AppCompatActivity {
 
         this.model = model;
 
+        columnWidthsInPixel = calculateColumnWidths(model, analysed);
         updateTableView();
+    }
+
+    private int[] calculateColumnWidths(InMemoryTableModel model,AnalyserReport analysed) {
+        int columnCount = model.getColumnCount();
+        int[] result = new int[columnCount];
+        for(int columnNumber = columnCount -1; columnNumber >= 0; columnNumber--) {
+            // TODO!!!!
+        }
     }
 
     private void updateTableView() {
@@ -90,15 +102,15 @@ public class TableActivity extends AppCompatActivity {
 
         String[] columns = model.getColumnNames();
 
-        for (int i = 0; i < columns.length; i++) {
-            String text = columns[i];
-            if (sortOrder.contains(i)) text += " v";
-            else if (sortOrder.contains(negate(i))) text += " ^";
+        for (int columnNumber = 0; columnNumber < columns.length; columnNumber++) {
+            String text = columns[columnNumber];
+            if (sortOrder.contains(columnNumber)) text += " v";
+            else if (sortOrder.contains(negate(columnNumber))) text += " ^";
 
-            TextView tv = TableHelper.createTextView(this, text, model.getColumnWidth(i));
-            // tv.setTypeface(Typeface.DEFAULT_BOLD);
+            TextView tv = GuiHelper.createTextView(this, text, model.getColumnWidth(columnNumber), columnNumber);
+            tv.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
             headerRow.addView(tv);
-            int finalI = i;
+            int finalI = columnNumber;
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

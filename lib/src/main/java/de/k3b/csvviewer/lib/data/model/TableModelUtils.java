@@ -5,9 +5,12 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.StringWriter;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.csv.CsvConfig;
+import de.k3b.csvviewer.lib.csv.TableModel2Csv;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
 import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
@@ -88,6 +91,19 @@ public class TableModelUtils {
         return id;
     }
 
+    /** @return formatter that belongs to model[columnNumber] */
+    public static @Nullable FormatterApi<?>  getColumnFormatter(@NonNull TableModelApi model, int columnNumber) {
+        return model.getColumnProperty(columnNumber, TableModelApi.PROPERTY_COLUMN_DEFINITION);
+
+    }
+
+    /** @return formatters that belongs to model, one per column. */
+    public static @Nullable FormatterApi<?>[]  getColumnFormatters(@NonNull TableModelApi model) {
+        FormatterApi<?>[] tableColumnFormatters = model.getColumnProperties(
+                new FormatterApi<?>[model.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
+        return tableColumnFormatters;
+    }
+
     /**
      * converts all String column values in {@link TableModelApi} to supported native types via {@link FormatterApi<?>#getFormatter()}.
      *
@@ -100,8 +116,7 @@ public class TableModelUtils {
         for (int row = 0; row < rowCount; row++) {
             Object[] rowData = modelToConvert.getRow(row);
             for (int col = 0; col < columnCount; col++) {
-                FormatterApi<?> columnDefinition = modelToConvert.getColumnProperty(
-                        col, TableModelApi.PROPERTY_COLUMN_DEFINITION);
+                FormatterApi<?> columnDefinition = getColumnFormatter(modelToConvert,col);
                 Object oldValue = rowData[col];
                 if (oldValue instanceof String && columnDefinition != null) {
                     try {
@@ -140,8 +155,7 @@ public class TableModelUtils {
     public static ConfigurationModel toConfigurationModel(@NonNull TableModelApi sourceModel) {
 
         ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
-        FormatterApi<?>[] tableColumnFormatters = sourceModel.getColumnProperties(
-                new FormatterApi<?>[sourceModel.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
+        FormatterApi<?>[] tableColumnFormatters = TableModelUtils.getColumnFormatters(sourceModel);
             if (tableColumnFormatters != null) {
                 FormatterConfigurationInterpreter colDef = new FormatterConfigurationInterpreter(result);
                 colDef.addConfig(tableColumnFormatters);
@@ -153,6 +167,22 @@ public class TableModelUtils {
         }
 
         return result;
+    }
+
+    public static void printDebug2Console(String header, TableModelApi model) throws Exception {
+        StringWriter resultWriter = new StringWriter();
+        TableModel2Csv.write(resultWriter, CsvConfig.DEFAULT, model);
+        System.out.println("# " + header);
+        int columnCount = model.getColumnCount();
+
+        for (int col = 0; col < columnCount; col++) {
+            FormatterApi<?> columnDefinition = getColumnFormatter(model, col);
+            if (columnDefinition != null) {
+                System.out.println("# " + model.getColumnNames()[col] + ": " + columnDefinition);
+            }
+        }
+        System.out.println(resultWriter);
+        System.out.println("------------------");
     }
 
 }

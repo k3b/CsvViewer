@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-/** used to sort a TableModel by column numbers */
+/** used to filter a TableModel by column values */
 public abstract class TableModelRowFilterBase {
     protected final int columnNumber;
 

@@ -211,8 +211,7 @@ public class InMemoryTableModel extends TableModelBase {
     }
 
     public void sortBy(@NonNull List<Integer> columnNos) {
-        FormatterApi<?>[] columnDefinitions = getColumnProperties(
-                new FormatterApi<?>[getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
+        FormatterApi<?>[] columnDefinitions = TableModelUtils.getColumnFormatters(this);
 
         if (columnDefinitions != null && columnNos != null && !columnNos.isEmpty()) {
             TableModelRowComparator sorter = TableModelRowComparator.create(columnDefinitions, columnNos);
