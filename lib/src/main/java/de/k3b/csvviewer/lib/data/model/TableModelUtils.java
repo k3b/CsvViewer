@@ -68,8 +68,7 @@ public class TableModelUtils {
 
         // transfer analyser result to source modelToAnalyse
         for (int col = 0; col < columnCount; col++) {
-            modelToAnalyse.putColumnProperty(
-                    col, TableModelApi.PROPERTY_COLUMN_DEFINITION,
+            setColumnFormatter(modelToAnalyse,col,
                     analysers[col].getFormatter());
         }
 
@@ -101,6 +100,21 @@ public class TableModelUtils {
     public static @Nullable FormatterApi<?>  getColumnFormatter(@NonNull TableModelApi model, int columnNumber) {
         return model.getColumnProperty(columnNumber, TableModelApi.PROPERTY_COLUMN_DEFINITION);
 
+    }
+
+    /** @return formatter that belongs to model[columnNumber] */
+    public static void setColumnFormatter(@NonNull TableModelApi model, int columnNumber, @Nullable FormatterApi<?> formatter) {
+        model.putColumnProperty(columnNumber, TableModelApi.PROPERTY_COLUMN_DEFINITION, formatter);
+    }
+
+    /** @return filterList that belongs to model */
+    public static @Nullable List<@Nullable TableModelRowFilterBase>  getColumnFilterList(@NonNull TableModelApi model) {
+        return model.getColumnProperty(-1, TableModelApi.PROPERTY_FILTER);
+    }
+
+    /** @return filterList that belongs to model */
+    public static void setColumnFilterList(@NonNull TableModelApi model, @Nullable List<@Nullable TableModelRowFilterBase>  filterList) {
+        model.putColumnProperty(-1, TableModelApi.PROPERTY_FILTER, filterList);
     }
 
     /** @return formatters that belongs to model, one per column. */
@@ -138,32 +152,25 @@ public class TableModelUtils {
     }
 
     public static @NonNull InMemoryTableModel filter(@NonNull InMemoryTableModel sourceModel,
-                                                     @Nullable List<TableModelRowFilterBase> includeFilter,
-                                                     @Nullable List<TableModelRowFilterBase> excludeFilter) {
-        InMemoryTableModel result = sourceModel.createEmptyClone();
+                                                     @Nullable List<@Nullable TableModelRowFilterBase> filterList) {
+        InMemoryTableModel result = sourceModel.createEmptyClone(sourceModel.getName() + "->Filtered");
         int rowCount = sourceModel.getRowCount();
-        boolean hasIncludes = includeFilter != null && !includeFilter.isEmpty();
+        boolean hasIncludes = filterList != null && !filterList.isEmpty();
         for(int rowNo = 0; rowNo < rowCount; rowNo++) {
             Object[] row = sourceModel.getRow(rowNo);
-            if (TableModelRowFilterBase.match(excludeFilter, row) == null &&
-                    (hasIncludes && TableModelRowFilterBase.match(excludeFilter, row) != null)) {
+            if (hasIncludes && TableModelRowFilterBase.match(filterList, row) != null) {
                 result.addRow(row);
             }
         }
-        result.putColumnProperty(-1, TableModelApi.PROPERTY_INCLUDE_FILTER, includeFilter);
-        result.putColumnProperty(-1, TableModelApi.PROPERTY_INCLUDE_FILTER, excludeFilter);
+        setColumnFilterList(result, filterList);
         return result;
     }
-
-    public static final String CONFIGURATION_FILTER_INCLUDE = "columnFilterInclude";
-    public static final String CONFIGURATION_FILTER_EXCLUDE = "columnFilterExclude";
-    public static final String CONFIGURATION_SORT = "columnSort";
 
     public static void applyConfiguration(@NonNull InMemoryTableModel targetModel, @NonNull ConfigurationModel configModel) {
         int col_configType = ConfigurationModel.DomainColumnModel.col_configType;
         TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
                 FormatterConfigurationProcessor.CONFIGURATION_TYPE);
-        InMemoryTableModel columnDefinitions = TableModelUtils.filter(configModel, Collections.singletonList(filter), null);
+        InMemoryTableModel columnDefinitions = TableModelUtils.filter(configModel, Collections.singletonList(filter));
 
         int rowCount = columnDefinitions.getRowCount();
 
@@ -209,10 +216,21 @@ public class TableModelUtils {
         return result;
     }
 
-    public static void printDebug2Console(String header, @NonNull TableModelApi model) throws Exception {
+    public static void printDebug2Console(String header, @NonNull TableModelApi model) {
         StringWriter resultWriter = new StringWriter();
-        TableModel2Csv.write(resultWriter, CsvConfig.DEFAULT, model);
+        try {
+            TableModel2Csv.write(resultWriter, CsvConfig.DEFAULT, model);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("# '" + model.getName() + "' " + header);
+
+        List<TableModelRowFilterBase> filterList = getColumnFilterList(model);
+        if (filterList != null) {
+            for(TableModelRowFilterBase filter : filterList) {
+                System.out.println("# filter '" + filter + "' " + header);
+            }
+        }
         int columnCount = model.getColumnCount();
 
         for (int col = 0; col < columnCount; col++) {

@@ -51,13 +51,13 @@ public class InMemoryTableModel extends TableModelBase {
         }
     }
 
-    public InMemoryTableModel createEmptyClone() {
-        InMemoryTableModel result = new InMemoryTableModel("", getColumnNames());
+    public InMemoryTableModel createEmptyClone(String name) {
+        InMemoryTableModel result = new InMemoryTableModel(name, getColumnNames());
         result.copyPropertiesFrom(this);
         return result;
     }
 
-    /** implementation detail of {@link #createEmptyClone()} */
+    /** implementation detail of {@link #createEmptyClone(String)} */
     protected void copyPropertiesFrom (@NonNull TableModelBase from) {
         super.copyPropertiesFrom(from);
         InMemoryTableModel to = this;
@@ -249,8 +249,8 @@ public class InMemoryTableModel extends TableModelBase {
     public String toString() {
         return "InMemoryTableModel{" +
                 "name='" + name + '\'' +
-                ", columns={" + getColumnNames() + '}' +
                 ", rows=" + rows.size() +
+                ", columns=" + Arrays.toString(getColumnNames()) +
                 '}';
     }
 }

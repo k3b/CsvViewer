@@ -14,6 +14,7 @@ import de.k3b.csvviewer.lib.data.formatter.FormatterDefinition;
 import de.k3b.csvviewer.lib.data.formatter.FormatterDefinitionDto;
 import de.k3b.csvviewer.lib.data.formatter.FormatterFactory;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
+import de.k3b.csvviewer.lib.data.model.TableModelUtils;
 
 /** {@link ConfigurationModel} interpreter for filters based on {@link TableModelRowFilterBase}  */
 public class FormatterConfigurationProcessor extends ConfigurationProcessorBase<@Nullable FormatterDefinition[]> {
@@ -43,6 +44,7 @@ public class FormatterConfigurationProcessor extends ConfigurationProcessorBase<
         if (formatter != null) {
             if (result == null) result = new FormatterDefinition[targetModel.getColumnCount()];
             result[columnNumber] = formatter;
+            TableModelUtils.setColumnFormatter(targetModel, columnNumber, formatter);
         }
     }
 

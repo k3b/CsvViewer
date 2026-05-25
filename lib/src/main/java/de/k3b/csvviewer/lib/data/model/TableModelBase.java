@@ -12,11 +12,13 @@ public abstract class TableModelBase implements TableModelApi {
     /** names of the columns */
     @NonNull
     private final String[] columnNames;
+
+    /** has one element more than columnNames. the last element "-1" is used for globale values */
     private final Map[] columnProperties;
 
     public TableModelBase(@NonNull final String[] columnNames) {
         this.columnNames = columnNames;
-        this.columnProperties = new Map[columnNames.length];
+        this.columnProperties = new Map[columnNames.length+1];
     }
 
     /** @return  names of the columns */
@@ -48,7 +50,11 @@ public abstract class TableModelBase implements TableModelApi {
     }
 
     private Map<Object, Object> getMap(int column) {
-        check(0,column);
+        if (column == -1) {
+            column = columnProperties.length -1;
+        } else {
+            check(0, column);
+        }
         Map<Object,Object> properties = (Map<Object,Object>) columnProperties[column]; // .put(key,value);
         if (properties == null) {
             properties = new HashMap<Object,Object>();

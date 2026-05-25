@@ -167,4 +167,11 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
     public @NonNull Object getCompareValue() {
         return compareValue;
     }
+
+    @Override
+    public String toString() {
+        return "TableModelColumnFilter{" +
+                comparatorTyp.toString("col[" + getColumnNumber() + "] ", compareValueString) +
+                '}';
+    }
 }

@@ -55,10 +55,11 @@ public abstract class ConfigurationProcessorBase<T> {
     /** apply configuration to targetModel */
     public T applyConfiguration(@NonNull InMemoryTableModel targetModel) {
         int col_configType = ConfigurationModel.DomainColumnModel.col_configType;
+        String expression = this.configurationModel.getColumnNames()[col_configType] + "=" + configurationType;
         TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
-                configurationType);
+                expression);
 
-        InMemoryTableModel configurationRows = TableModelUtils.filter(this.configurationModel, Collections.singletonList(filter), null);
+        InMemoryTableModel configurationRows = TableModelUtils.filter(this.configurationModel, Collections.singletonList(filter));
 
         int rowCount = configurationRows.getRowCount();
 
