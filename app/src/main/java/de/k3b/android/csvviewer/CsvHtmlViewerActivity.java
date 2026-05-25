@@ -166,7 +166,7 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
         if (uri != null) {
             this.lastCsvSource = uri.toString();
             try (Reader csvReader = new InputStreamReader(getContentResolver().openInputStream(uri))) {
-                html = Csv2Html.toHtmlTable(csvReader, options);
+                html = Csv2Html.toHtmlTable(uri.toString(), csvReader, options);
             }
         } else {
             this.lastCsvSource = "";
@@ -176,7 +176,7 @@ public class CsvHtmlViewerActivity extends AppCompatActivity {
                 csvText = extraValue.toString();
             }
 
-            html = Csv2Html.toHtmlTable(csvText, options);
+            html = Csv2Html.toHtmlTable(DemoData.demoCsvName, csvText, options);
         }
         Log.i(LOG_TAG, html);
         return html;

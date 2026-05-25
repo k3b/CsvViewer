@@ -13,4 +13,13 @@ public class StringIgnoreCaseComparator implements Comparator<Object> {
             return ((String)var1).compareToIgnoreCase((String) var2);
         }
     }
+
+    public int indexOf(String[] values, String searchValue) {
+        if (values != null && searchValue != null) {
+            for (int i=0; i < values.length; i++) {
+                if (compare(values[i], searchValue) == 0) return i;
+            }
+        }
+        return -1;
+    }
 }

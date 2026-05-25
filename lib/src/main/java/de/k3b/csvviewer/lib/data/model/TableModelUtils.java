@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.Global;
@@ -13,12 +14,16 @@ import de.k3b.csvviewer.lib.csv.CsvConfig;
 import de.k3b.csvviewer.lib.csv.TableModel2Csv;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
-import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
-import de.k3b.csvviewer.lib.data.configuration.FilterConfigurationInterpreter;
-import de.k3b.csvviewer.lib.data.configuration.FormatterConfigurationInterpreter;
+import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
+import de.k3b.csvviewer.lib.data.configuration.FormatterConfigurationProcessor;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
+import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
+import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
+import de.k3b.csvviewer.lib.data.formatter.FormatterDefinition;
+import de.k3b.csvviewer.lib.data.formatter.FormatterDefinitionDto;
+import de.k3b.csvviewer.lib.data.formatter.FormatterFactory;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 
 /** Utility methods for TableModelApi */
@@ -70,7 +75,8 @@ public class TableModelUtils {
 
         // create report.
         String[] columnNames = modelToAnalyse.getColumnNames();
-        AnalyserReport report = new AnalyserReport();
+        AnalyserReport report = new AnalyserReport(
+                modelToAnalyse.getName() +"->AnalyserReport");
         for (int col = 0; col < columnCount; col++) {
             report.defineColumn(col, columnNames[col]);
             analysers[col].addInfoRowsToReport(report);
@@ -152,27 +158,61 @@ public class TableModelUtils {
     public static final String CONFIGURATION_FILTER_INCLUDE = "columnFilterInclude";
     public static final String CONFIGURATION_FILTER_EXCLUDE = "columnFilterExclude";
     public static final String CONFIGURATION_SORT = "columnSort";
+
+    public static void applyConfiguration(@NonNull InMemoryTableModel targetModel, @NonNull ConfigurationModel configModel) {
+        int col_configType = ConfigurationModel.DomainColumnModel.col_configType;
+        TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
+                FormatterConfigurationProcessor.CONFIGURATION_TYPE);
+        InMemoryTableModel columnDefinitions = TableModelUtils.filter(configModel, Collections.singletonList(filter), null);
+
+        int rowCount = columnDefinitions.getRowCount();
+
+        String[] targetColumnNames = targetModel.getColumnNames();
+        StringIgnoreCaseComparator stringComparator = new StringIgnoreCaseComparator();
+
+        for(int rowNumber = 0; rowNumber < rowCount; rowNumber ++) {
+            Object[] configColumnDefinition = columnDefinitions.getRow(rowNumber);
+            String columnName = (String) configColumnDefinition[ConfigurationModel.DomainColumnModel.col_colName];
+            int columnNumber = stringComparator.indexOf(targetColumnNames, columnName);
+            if (columnNumber >= 0) {
+                FormatterApi<?> formatter = FormatterFactory.createFormatter(getFormatterDefinition(configColumnDefinition));
+            }
+        }
+    }
+
+    private static FormatterDefinition getFormatterDefinition(Object[] configRow) {
+        String subType = (String) configRow[ConfigurationModel.DomainColumnModel.col_subType];
+        String formatPattern = (String) configRow[ConfigurationModel.DomainColumnModel.col_parameter1];
+        Boolean nullable = TableColumnType.Boolean.parseImpl(configRow[ConfigurationModel.DomainColumnModel.col_parameter2]);
+        Integer maxStringLength = TableColumnType.Integer.parseImpl(configRow[ConfigurationModel.DomainColumnModel.col_parameter3]);
+        return new FormatterDefinitionDto(subType, formatPattern, nullable, maxStringLength);
+    }
+
     public static ConfigurationModel toConfigurationModel(@NonNull TableModelApi sourceModel) {
 
-        ConfigurationModel result = new ConfigurationModel(sourceModel.getColumnNames());
+        ConfigurationModel result = new ConfigurationModel(
+                sourceModel.getName() + "->Config",
+                sourceModel.getColumnNames());
         FormatterApi<?>[] tableColumnFormatters = TableModelUtils.getColumnFormatters(sourceModel);
             if (tableColumnFormatters != null) {
-                FormatterConfigurationInterpreter colDef = new FormatterConfigurationInterpreter(result);
+                FormatterConfigurationProcessor colDef = new FormatterConfigurationProcessor(result);
                 colDef.addConfig(tableColumnFormatters);
             }
 
+/*     TODO !!!
         TableModelRowComparator sorter = sourceModel.getColumnProperty(-1, TableModelApi.PROPERTY_SORT_ORDER);
         if (sorter != null) {
-            FilterConfigurationInterpreter filterInterpreter = new FilterConfigurationInterpreter(result, CONFIGURATION_FILTER_INCLUDE);
+            FilterConfigurationProcessor filterInterpreter = new FilterConfigurationProcessor(result, CONFIGURATION_FILTER_INCLUDE);
         }
+*/
 
         return result;
     }
 
-    public static void printDebug2Console(String header, TableModelApi model) throws Exception {
+    public static void printDebug2Console(String header, @NonNull TableModelApi model) throws Exception {
         StringWriter resultWriter = new StringWriter();
         TableModel2Csv.write(resultWriter, CsvConfig.DEFAULT, model);
-        System.out.println("# " + header);
+        System.out.println("# '" + model.getName() + "' " + header);
         int columnCount = model.getColumnCount();
 
         for (int col = 0; col < columnCount; col++) {

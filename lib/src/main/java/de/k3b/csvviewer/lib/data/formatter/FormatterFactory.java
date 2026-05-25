@@ -1,5 +1,8 @@
 package de.k3b.csvviewer.lib.data.formatter;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,7 +10,12 @@ import java.util.Date;
 import de.k3b.csvviewer.lib.data.analyser.DateAnalyser;
 
 public class FormatterFactory {
-    @SuppressWarnings("SimpleDateFormat")
+    public static FormatterApi<?> createFormatter(@NonNull FormatterDefinition formatterDefinition) {
+        return createFormatter(formatterDefinition.getElementClassName(), formatterDefinition.getFormatPattern(), formatterDefinition.isNullable(), formatterDefinition.getMaxStringLength());
+    }
+
+        @SuppressWarnings("SimpleDateFormat")
+    @Nullable
     public static FormatterApi<?> createFormatter(String subType, String formatPattern, Boolean nullable, Integer maxStringLength) {
         FormatterApi<?> formatter = null;
 

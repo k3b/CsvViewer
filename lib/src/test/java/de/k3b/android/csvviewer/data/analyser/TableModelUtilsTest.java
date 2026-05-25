@@ -22,7 +22,7 @@ public class TableModelUtilsTest {
     public void csv2html_isCorrect() throws IOException {
         TableModelApi model = null;
         try(Csv2TableModel csv = new Csv2TableModel(Csv2TableModel.OPTION_ALL)) {
-            model = csv.toTableModel(DemoData.demoCsv);
+            model = csv.toTableModel(DemoData.demoCsvName, DemoData.demoCsv);
 
             TableModelUtils.printDebug2Console("model", model);
 

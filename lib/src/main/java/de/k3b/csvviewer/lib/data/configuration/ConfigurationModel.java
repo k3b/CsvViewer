@@ -33,8 +33,25 @@ public class ConfigurationModel extends InMemoryTableModel {
 
         // col_Xxx corresponds to index in columnNames
         private static final String[] columnNames = new String[]{
-                "id","configType", "subType", "colName","description"
-                ,"parameter1","parameter2","parameter3"};
+                "id",
+                "configType",
+                "subType",
+                "colName",
+                "description"
+                ,"parameter1",
+                "parameter2",
+                "parameter3"};
+        /* !!! TODO
+        private static final FormatterApi<?>[] formatters = new FormatterApi<?>[]{
+                TableColumnType.Integer,
+                TableColumnType.String,
+                TableColumnType.String, // "subType",
+                TableColumnType.String, // "colName",
+                TableColumnType.String, // "description"
+                TableColumnType.String, // ,"parameter1",
+                TableColumnType.String, // "parameter2",
+                TableColumnType.String, // "parameter3"};
+*/
 
         @Override
         @NonNull public String[] getColumnNames() {
@@ -43,9 +60,9 @@ public class ConfigurationModel extends InMemoryTableModel {
 
     }
 
-    public ConfigurationModel(@NonNull String[] targetColumnNames) {
+    public ConfigurationModel(String name, @NonNull String[] targetColumnNames) {
         // columns of ConfigurationModel
-        super(DomainColumnModel.columnNames);
+        super(name, DomainColumnModel.columnNames);
 
         this.targetColumnNames = targetColumnNames;
         for(int i = 0; i < targetColumnNames.length;i++) {

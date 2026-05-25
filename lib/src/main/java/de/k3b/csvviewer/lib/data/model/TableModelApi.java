@@ -107,4 +107,5 @@ public interface TableModelApi {
     @NonNull
     Object[] fixRow(@Nullable Object[] rowCandidate);
 
+    String getName();
 }

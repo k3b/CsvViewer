@@ -8,10 +8,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Comparator;
 
 import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
-public class TableModelComparatorFilter extends TableModelRowFilterBase {
+public class TableModelColumnFilter extends TableModelRowFilterBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
 
     /** to define compare result as lamda expression */
@@ -69,6 +70,7 @@ public class TableModelComparatorFilter extends TableModelRowFilterBase {
                 int found = expression.indexOf(code);
                 if (found > 0) return expression.substring(0,found).trim();
             }
+            LOGGER.warn("TableModelColumnFilter.ComparatorTyp.getFieldName('{}') : not found", expression);
             return null;
         }
 
@@ -94,66 +96,72 @@ public class TableModelComparatorFilter extends TableModelRowFilterBase {
                     if (expression.contains(candidate.code)) return candidate;
                 }
             }
+            LOGGER.warn("TableModelColumnFilter.ComparatorTyp.parseExpression('{}') : no matching comparator found", expression);
             return null;
         }
     }
 
-    public static final int GREATER_OR_EQUAL = 0;
-    public static final int LESS_OR_EQUAL = 1;
-    public static final int NOT_EQUALS = 2; // not EQUALS
     public static final int EQUALS = 3;
-    public static final int LESS_THAN = 4; // not GREATER_OR_EQUAL
-    public static final int GREATER_THAN = 5; // not LESS_OR_EQUAL
     public static String[] toComparatorString = new String[]{">=","<=","!=","=","<",">"};
 
+    @NonNull private final ComparatorTyp comparatorTyp;
     @NonNull private final Comparator<Object> comparator;
-    @NonNull private final Object compareValue;
-    private final int comparatorMode;
+    @Nullable private final Object compareValue;
+    @Nullable private final String compareValueString;
 
-    public TableModelComparatorFilter(int col, @NonNull Comparator<Object> comparator, @NonNull Object compareValue, int comparatorMode) {
-        super(col);
-        this.comparator = comparator;
-        this.compareValue = compareValue;
-        this.comparatorMode = comparatorMode;
+    /** @return filter for columnNumber, formatter, expression */
+    public static TableModelColumnFilter create(String[] columnNames, @NonNull FormatterApi<?>[] formatters, @NonNull String expression) {
+        TableModelColumnFilter result = null;
+
+        ComparatorTyp typ = ComparatorTyp.parseExpression(expression);
+        String fieldName = typ== null ? null : typ.getFieldName(expression);
+        int columnNumber = fieldName == null ? -1 :  new StringIgnoreCaseComparator().indexOf(columnNames, fieldName);
+        if (columnNumber >= 0) result = create(columnNumber, formatters[columnNumber], expression);
+        return result;
     }
 
+    /** @return filter for columnNumber, formatter, expression */
+    public static TableModelColumnFilter create(int columnNumber, @NonNull FormatterApi<?> formatter, @NonNull String expression) {
+        TableModelColumnFilter result = null;
+        ComparatorTyp typ = ComparatorTyp.parseExpression(expression);
+        if (typ != null) {
+            String fieldName = typ.getFieldName(expression);
+            String compareValueString = typ.getCompareValue(expression);
+            Object compareValue = typ.getCompareValue(expression, formatter);
+            result = new TableModelColumnFilter(columnNumber, formatter.getComparator(), compareValue, compareValueString, typ);
+        }
+        return result;
+    }
+
+    public TableModelColumnFilter(int columnNumber, @NonNull Comparator<Object> comparator, @Nullable Object compareValue, String compareValueString,@NonNull ComparatorTyp comparatorTyp) {
+        super(columnNumber);
+        this.comparator = comparator;
+        this.compareValue = compareValue;
+        this.compareValueString = compareValueString;
+        this.comparatorTyp = comparatorTyp;
+    }
+
+    @Deprecated
     public static int getModeByTypeString(@NonNull String subTypeName) {
         for (int i = toComparatorString.length-1; i >= 0; i--) {
             if (toComparatorString[i].compareToIgnoreCase(subTypeName) == 0) return i;
         }
-        LOGGER.warn("TableModelComparatorFilter.getModeByTypeString('{}') : not in {}", subTypeName, toComparatorString);
+        LOGGER.warn("TableModelColumnFilter.getModeByTypeString('{}') : not in {}", subTypeName, toComparatorString);
 
         return -1;
     }
 
     protected boolean matchImpl(@Nullable Object value) {
-        if (value == null) return false;
-        int compareResult = comparator.compare(value, getCompareValue());
-        if (compareResult == 0 && comparatorMode == EQUALS) return true;
-        if (compareResult <= 0 && comparatorMode == LESS_OR_EQUAL) return true;
-        if (compareResult >= 0 && comparatorMode == GREATER_OR_EQUAL) return true;
-        return false;
+        return comparatorTyp.compareTo(this.comparator, value, this.compareValue);
     }
 
     public @NonNull String toString(@Nullable String[] columnNames) {
         StringBuilder result = super.toStringBuilder(columnNames, getCompareValue());
 
         result
-            .append(getComparatorModeName())
-            .append(" ")
-            .append(TableColumnType.toString(getCompareValue()));
+            .append(comparatorTyp.toString("", compareValueString))
+            ;
         return result.toString();
-    }
-
-    public String getComparatorModeName() {
-        String op;
-        if (comparatorMode >= 0 && comparatorMode < toComparatorString.length) {
-            op = toComparatorString[comparatorMode];
-        } else {
-            op = "???[comparatorMode=" + comparatorMode + "]";
-            LOGGER.warn("TableModelComparatorFilter.getComparatorModeName() : {}. Not in {}", op, toComparatorString);
-        }
-        return op;
     }
 
     public @NonNull Object getCompareValue() {

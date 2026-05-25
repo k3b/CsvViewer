@@ -20,7 +20,7 @@ public class CsvHtmlIntegrationTest {
     public void csv2html_isCorrect() throws IOException {
         TableModelApi model = null;
         try(Csv2TableModel csv = new Csv2TableModel(Csv2TableModel.OPTION_ALL)) {
-            model = csv.toTableModel(DemoData.demoCsv);
+            model = csv.toTableModel(DemoData.demoCsvName, DemoData.demoCsv);
             String html = TableModel2Html.toHtmlTable(model, null, null, 0);
             System.out.println(html);
             // assertEquals(4, 2 + 2);

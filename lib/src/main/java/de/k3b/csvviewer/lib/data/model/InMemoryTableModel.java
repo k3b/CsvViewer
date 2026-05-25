@@ -17,6 +17,7 @@ import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
  */
 public class InMemoryTableModel extends TableModelBase {
 
+    private final String name;
     /** names of the columns  */
     private int[] columnWidths = null;
 
@@ -33,11 +34,14 @@ public class InMemoryTableModel extends TableModelBase {
      * <p>
      * All rows must be of the same length as <code>columnNames</code>.
      * <p>
-     * @param columnNames       names of each column
-     * @param rowData           the data for the new table
+     *
+     * @param name
+     * @param columnNames names of each column
+     * @param rowData     the data for the new table
      */
-    public InMemoryTableModel(@NonNull final String[] columnNames, final Object[]... rowData) {
+    public InMemoryTableModel(String name, @NonNull final String[] columnNames, final Object[]... rowData) {
         super(columnNames);
+        this.name = name;
         if (rowData != null) {
             for (Object[] row : rowData) {
                 if (row != null) {
@@ -48,7 +52,7 @@ public class InMemoryTableModel extends TableModelBase {
     }
 
     public InMemoryTableModel createEmptyClone() {
-        InMemoryTableModel result = new InMemoryTableModel(getColumnNames());
+        InMemoryTableModel result = new InMemoryTableModel("", getColumnNames());
         result.copyPropertiesFrom(this);
         return result;
     }
@@ -237,4 +241,16 @@ public class InMemoryTableModel extends TableModelBase {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "InMemoryTableModel{" +
+                "name='" + name + '\'' +
+                ", columns={" + getColumnNames() + '}' +
+                ", rows=" + rows.size() +
+                '}';
+    }
 }

@@ -39,8 +39,8 @@ public class AnalyserReport extends InMemoryTableModel {
 
     }
 
-    public AnalyserReport() {
-        super(DomainColumnModel.columnNames);
+    public AnalyserReport(String name) {
+        super(name, DomainColumnModel.columnNames);
     }
 
     public void defineColumn(int colNo, String colName) {

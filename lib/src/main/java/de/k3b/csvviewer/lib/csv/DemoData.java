@@ -2,6 +2,7 @@ package de.k3b.csvviewer.lib.csv;
 
 /** simple csv test data */
 public class DemoData {
+    public static final String demoCsvName = "DemoData";
     public static final String demoCsv = "# some comment\n" +
             // ' is optional string delimiter
             "'name',greeting,html,birthday\n" +

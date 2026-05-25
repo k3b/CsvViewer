@@ -170,7 +170,7 @@ public class TableActivity extends AppCompatActivity {
             this.lastCsvSource = uri.toString();
             try (Reader csvReader = new InputStreamReader(getContentResolver().openInputStream(uri))) {
                 try(Csv2TableModel parser = new Csv2TableModel(options)) {
-                    return parser.toTableModel(csvReader);
+                    return parser.toTableModel("DemoData", csvReader);
                 }
             }
         } else {
@@ -182,7 +182,7 @@ public class TableActivity extends AppCompatActivity {
             }
 
             try(Csv2TableModel parser = new Csv2TableModel(options)) {
-                return parser.toTableModel(csvText);
+                return parser.toTableModel(DemoData.demoCsvName, csvText);
             }
         }
     }
@@ -196,7 +196,7 @@ public class TableActivity extends AppCompatActivity {
                 {2, "Bob", 30},
                 {3, "Charlie", 28}
         };
-        InMemoryTableModel model = new InMemoryTableModel(headers);
+        InMemoryTableModel model = new InMemoryTableModel("SampleData", headers);
         for (Object[] row : rows) {
             model.addRow(row);
         }
