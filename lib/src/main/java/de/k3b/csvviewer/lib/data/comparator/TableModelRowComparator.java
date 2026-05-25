@@ -57,4 +57,14 @@ public class TableModelRowComparator implements Comparator<Object[]> {
         }
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "TableModelRowComparator{" +
+                "col=" + col +
+                ", comparator=" + (comparator == null ? "" : comparator.getClass().getSimpleName()) +
+                ", inverse=" + inverse +
+                ", next=" + next +
+                '}';
+    }
 }

@@ -15,6 +15,7 @@ import de.k3b.csvviewer.lib.csv.TableModel2Csv;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
 import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
+import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
 import de.k3b.csvviewer.lib.data.configuration.FormatterConfigurationProcessor;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
@@ -68,7 +69,7 @@ public class TableModelUtils {
 
         // transfer analyser result to source modelToAnalyse
         for (int col = 0; col < columnCount; col++) {
-            setColumnFormatter(modelToAnalyse,col,
+            TableProperties.setColumnFormatter(modelToAnalyse,col,
                     analysers[col].getFormatter());
         }
 
@@ -96,33 +97,7 @@ public class TableModelUtils {
         return id;
     }
 
-    /** @return formatter that belongs to model[columnNumber] */
-    public static @Nullable FormatterApi<?>  getColumnFormatter(@NonNull TableModelApi model, int columnNumber) {
-        return model.getColumnProperty(columnNumber, TableModelApi.PROPERTY_COLUMN_DEFINITION);
-
-    }
-
-    /** @return formatter that belongs to model[columnNumber] */
-    public static void setColumnFormatter(@NonNull TableModelApi model, int columnNumber, @Nullable FormatterApi<?> formatter) {
-        model.putColumnProperty(columnNumber, TableModelApi.PROPERTY_COLUMN_DEFINITION, formatter);
-    }
-
-    /** @return filterList that belongs to model */
-    public static @Nullable List<@Nullable TableModelRowFilterBase>  getColumnFilterList(@NonNull TableModelApi model) {
-        return model.getColumnProperty(-1, TableModelApi.PROPERTY_FILTER);
-    }
-
-    /** @return filterList that belongs to model */
-    public static void setColumnFilterList(@NonNull TableModelApi model, @Nullable List<@Nullable TableModelRowFilterBase>  filterList) {
-        model.putColumnProperty(-1, TableModelApi.PROPERTY_FILTER, filterList);
-    }
-
-    /** @return formatters that belongs to model, one per column. */
-    public static @Nullable FormatterApi<?>[]  getColumnFormatters(@NonNull TableModelApi model) {
-        FormatterApi<?>[] tableColumnFormatters = model.getColumnProperties(
-                new FormatterApi<?>[model.getColumnCount()], TableModelApi.PROPERTY_COLUMN_DEFINITION);
-        return tableColumnFormatters;
-    }
+    //             putColumnProperty(-1, TableModelApi.PROPERTY_SORT_ORDER, sorter);
 
     /**
      * converts all String column values in {@link TableModelApi} to supported native types via {@link FormatterApi<?>#getFormatter()}.
@@ -136,7 +111,7 @@ public class TableModelUtils {
         for (int row = 0; row < rowCount; row++) {
             Object[] rowData = modelToConvert.getRow(row);
             for (int col = 0; col < columnCount; col++) {
-                FormatterApi<?> columnDefinition = getColumnFormatter(modelToConvert,col);
+                FormatterApi<?> columnDefinition = TableProperties.getColumnFormatter(modelToConvert,col);
                 Object oldValue = rowData[col];
                 if (oldValue instanceof String && columnDefinition != null) {
                     try {
@@ -162,7 +137,7 @@ public class TableModelUtils {
                 result.addRow(row);
             }
         }
-        setColumnFilterList(result, filterList);
+        TableProperties.setColumnFilterList(result, filterList);
         return result;
     }
 
@@ -200,7 +175,7 @@ public class TableModelUtils {
         ConfigurationModel result = new ConfigurationModel(
                 sourceModel.getName() + "->Config",
                 sourceModel.getColumnNames());
-        FormatterApi<?>[] tableColumnFormatters = TableModelUtils.getColumnFormatters(sourceModel);
+        FormatterApi<?>[] tableColumnFormatters = TableProperties.getColumnFormatters(sourceModel);
             if (tableColumnFormatters != null) {
                 FormatterConfigurationProcessor colDef = new FormatterConfigurationProcessor(result);
                 colDef.addConfig(tableColumnFormatters);
@@ -217,27 +192,34 @@ public class TableModelUtils {
     }
 
     public static void printDebug2Console(String header, @NonNull TableModelApi model) {
-        StringWriter resultWriter = new StringWriter();
-        try {
-            TableModel2Csv.write(resultWriter, CsvConfig.DEFAULT, model);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         System.out.println("# '" + model.getName() + "' " + header);
 
-        List<TableModelRowFilterBase> filterList = getColumnFilterList(model);
+        List<TableModelRowFilterBase> filterList = TableProperties.getColumnFilterList(model);
         if (filterList != null) {
             for(TableModelRowFilterBase filter : filterList) {
                 System.out.println("# filter '" + filter + "' " + header);
             }
         }
+
+        TableModelRowComparator sorter = TableProperties.getColumnSorter(model);
+        if (sorter != null) {
+            System.out.println("# sorter '" + sorter + "'");
+        }
+
         int columnCount = model.getColumnCount();
 
         for (int col = 0; col < columnCount; col++) {
-            FormatterApi<?> columnDefinition = getColumnFormatter(model, col);
+            FormatterApi<?> columnDefinition = TableProperties.getColumnFormatter(model, col);
             if (columnDefinition != null) {
                 System.out.println("# " + model.getColumnNames()[col] + ": " + columnDefinition);
             }
+        }
+
+        StringWriter resultWriter = new StringWriter();
+        try {
+            TableModel2Csv.write(resultWriter, CsvConfig.DEFAULT, model);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         System.out.println(resultWriter);
         System.out.println("------------------");

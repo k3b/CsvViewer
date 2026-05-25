@@ -5,8 +5,6 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
@@ -14,7 +12,7 @@ import de.k3b.csvviewer.lib.data.formatter.FormatterDefinition;
 import de.k3b.csvviewer.lib.data.formatter.FormatterDefinitionDto;
 import de.k3b.csvviewer.lib.data.formatter.FormatterFactory;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
-import de.k3b.csvviewer.lib.data.model.TableModelUtils;
+import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 /** {@link ConfigurationModel} interpreter for filters based on {@link TableModelRowFilterBase}  */
 public class FormatterConfigurationProcessor extends ConfigurationProcessorBase<@Nullable FormatterDefinition[]> {
@@ -44,7 +42,7 @@ public class FormatterConfigurationProcessor extends ConfigurationProcessorBase<
         if (formatter != null) {
             if (result == null) result = new FormatterDefinition[targetModel.getColumnCount()];
             result[columnNumber] = formatter;
-            TableModelUtils.setColumnFormatter(targetModel, columnNumber, formatter);
+            TableProperties.setColumnFormatter(targetModel, columnNumber, formatter);
         }
     }
 

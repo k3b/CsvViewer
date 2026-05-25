@@ -18,6 +18,7 @@ import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.model.TableModelUtils;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
+import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 public class TableModelUtilsTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TableModelUtilsTest.class);
@@ -35,6 +36,21 @@ public class TableModelUtilsTest {
         AnalyserReport reportOfReport = TableModelUtils.analyse(report, 0);
         reportOfReport.sortBy(List.of(AnalyserReport.DomainColumnModel.col_subParser));
         TableModelUtils.printDebug2Console("Analyse report of Analyse report  sorted by subParser", (TableModelApi) reportOfReport);
+
+    }
+
+    /** integration test to parse csv, analyse and sort */
+    @Test
+    public void sorting() throws IOException {
+        InMemoryTableModel model = getDemoModel(DemoData.demoCsvName);
+        AnalyserReport report = TableModelUtils.analyse(model, 0);
+
+        TableModelUtils.printDebug2Console("Analyse report", report);
+
+        AnalyserReport reportOfReport = TableModelUtils.analyse(report, 0);
+        TableProperties.setColumnFormatter(reportOfReport,AnalyserReport.DomainColumnModel.col_subParser, TableColumnType.String.getFormatter());
+        reportOfReport.sortBy(List.of(AnalyserReport.DomainColumnModel.col_subParser));
+        TableModelUtils.printDebug2Console("Analyse report of Analyse report  sorted by subParser", reportOfReport);
 
     }
 

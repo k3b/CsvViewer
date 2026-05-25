@@ -9,7 +9,7 @@ import java.io.Writer;
 
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
-import de.k3b.csvviewer.lib.data.model.TableModelUtils;
+import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 public class TableModel2Csv {
     @NonNull
@@ -26,7 +26,7 @@ public class TableModel2Csv {
      */
     public static void write(@NonNull Writer resultWriter, @NonNull CsvConfig config, @NonNull TableModelApi model)
             throws Exception {
-        TableModel2Csv csvExporter = new TableModel2Csv(resultWriter, config, TableModelUtils.getColumnFormatters(model));
+        TableModel2Csv csvExporter = new TableModel2Csv(resultWriter, config, TableProperties.getColumnFormatters(model));
 
         csvExporter.writeCsvLine(model.getColumnNames());
 

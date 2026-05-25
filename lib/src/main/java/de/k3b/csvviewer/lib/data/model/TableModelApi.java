@@ -10,9 +10,6 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * Inspired by java swing JTable */
 public interface TableModelApi {
-    static final String PROPERTY_COLUMN_DEFINITION = "colDef";
-    static final String PROPERTY_SORT_ORDER = "colSort";
-    static final String PROPERTY_FILTER = "filter";
 
     /**
      * Returns the cell value at <code>rowNumber</code> and <code>columnNumber</code>.

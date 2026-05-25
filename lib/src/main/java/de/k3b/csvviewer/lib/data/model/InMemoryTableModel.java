@@ -215,7 +215,7 @@ public class InMemoryTableModel extends TableModelBase {
     }
 
     public void sortBy(@NonNull List<Integer> columnNos) {
-        FormatterApi<?>[] columnDefinitions = TableModelUtils.getColumnFormatters(this);
+        FormatterApi<?>[] columnDefinitions = TableProperties.getColumnFormatters(this);
 
         if (columnDefinitions != null && columnNos != null && !columnNos.isEmpty()) {
             TableModelRowComparator sorter = TableModelRowComparator.create(columnDefinitions, columnNos);
@@ -224,7 +224,8 @@ public class InMemoryTableModel extends TableModelBase {
                 // rows.sort(sorter); // note List.sort requires android api 24
                 sort(rows, sorter);
             }
-            putColumnProperty(-1, TableModelApi.PROPERTY_SORT_ORDER, sorter);
+            TableProperties.setColumnSorterList(this, sorter);
+            putColumnProperty(-1, TableProperties.PROPERTY_SORT_ORDER, sorter);
             // TableModelRowComparator sorter =
         }
     }
