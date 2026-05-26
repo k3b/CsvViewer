@@ -21,7 +21,7 @@ public class TableHelper {
         ));
         tv.setPadding(16, 16, 16, 16);
         tv.setGravity(Gravity.LEFT);
-        tv.setBackgroundResource(R.drawable.table_cell);
+        // tv.setBackgroundResource(R.drawable.table_cell);
         tv.setText(text == null ? "" : text.toString());
         if (widthInChars > 0) {
             /** todo how to convert from chars to pixels
