@@ -2,22 +2,41 @@
 
 ### api
 
+> ColumnModel
+* Domain (or logical) ColumnModel is defined by the Domain (i.e. AnalyserReport, ConfigurationModel)
+* CSV (or Physical) ColumnModel: is defined by header of the physical Csv file (there may ignored (not in Domain ColumnModel) or missing columns)
+* Gui (or View) ColumnModel: is defined by the display (columns may be hidden or in different order. There may be virtual or calculated columns)
+
 TableModelUtils
-    analyse
-    convertColumns
-	filter
+* analyse
+* convertColumns
+* filter+sort
+
+TableModelBase-class 
 
 InMemoryTableModel
-    sorter
+* sorter
 
-Analyser DateFormatterEx 
-	parser mit suffix, wenn zu kurz
-	format ohne time wenn time==null
+ObjectFormatter
+* ReadOnlyObjectFormatter
+* Add support for (non-)Nullable
+* DateFormatterEx
+    * parser mit suffix, wenn zu kurz
+    * format ohne time wenn time==null
+* 
+TableRowEditorActivity
+* ? started from TableActivity
+
+ConfigurationModel (s=save, r=read)
+* s FormatterConfigurationInterpreter
+* > FilterConfigurationInterpreter
+* ? SorterConfigurationInterpreter  
+
 	
 
 ### Android gui
 
-+ sort via header
+v sort via header
 - todo filter
 - save when rotation
 

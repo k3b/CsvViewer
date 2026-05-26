@@ -27,8 +27,9 @@ public class GuiHelper {
         // bug: issue when multiline cell neighbours single line cell.
         textView.setBackgroundResource(R.drawable.table_cell);
         textView.setText(text == null ? "" : text.toString());
-        new StringBuilder("-",20);
-        textView.setWidth(2 * (columnNumber+1)); // GuiHelper.getWithInPixel(tv, text));
+        // !!! TODO how to set column width ?
+        // new StringBuilder("-",20);
+        textView.setWidth(50 * (columnNumber+1)); // GuiHelper.getWithInPixel(tv, text));
 
         if (widthInChars > 0) {
             /** todo how to convert from chars to pixels
