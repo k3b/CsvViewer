@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+java {
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+}
+
+test {
+    useJUnit()  // JUnit 4
+}
+
+group = 'example'
+version = '1.0'
+
+application {
+    mainClass = 'de.k3b.swing_app.Main'
+}
+
+dependencies {
+    // No external dependencies required
+    implementation(libs.bundles.old.java) {
+        // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
+
+    implementation project(':lib')
+
+    testImplementation libs.test.java.junit
+    testImplementation project(':lib')
+
+    testImplementation libs.test.java.junit
+    testImplementation libs.slf4j.j2se
+}
+
+tasks.named('test', Test) {
+    // useJUnitPlatform() for junit 5
+
+    maxHeapSize = '1G'
+
+    testLogging {
+        events "passed"
+    }
+}
