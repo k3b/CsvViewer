@@ -59,7 +59,7 @@ public abstract class ConfigurationProcessorBase<T> {
         TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
                 expression);
 
-        InMemoryTableModel configurationRows = TableModelUtils.filter(this.configurationModel, Collections.singletonList(filter));
+        InMemoryTableModel configurationRows = TableModelUtils.filter(this.configurationModel, filter);
 
         int rowCount = configurationRows.getRowCount();
 

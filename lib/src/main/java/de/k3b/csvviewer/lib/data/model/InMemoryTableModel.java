@@ -70,51 +70,6 @@ public class InMemoryTableModel extends TableModelBase {
         }
     }
 
-
-    /**
-     * @return names of the columns
-     */
-    @Override
-    public int getColumnWidth(int column) {
-        int result = -1;
-        if (columnWidths != null && column >= 0 && column < getColumnCount()) {
-            result =  columnWidths[column];
-        }
-
-        return result;
-    }
-
-    private int[] inferColumnWidths(int numberOfRowsToAnalyse) {
-        int[] columnWidths = new int[getColumnCount()];
-
-        for (int columnNumber = 0; columnNumber < getColumnCount(); columnNumber++) {
-            int min = getColumnNames()[columnNumber].length();
-            int sum = min;
-            int max = min;
-
-            int nonEmpty = 1;
-            int count = getRowCount();
-            if (count > numberOfRowsToAnalyse) count = numberOfRowsToAnalyse;
-
-            for (int rowNumber = 0;rowNumber < count; rowNumber++) {
-                Object value = getValueAt(rowNumber, columnNumber);
-                if (value != null) {
-                    int len = value.toString().length();
-                        sum += len;
-                        if (len > max) max = len;
-                        if (len > 0) nonEmpty++;
-                }
-
-            }
-
-            int average = sum / nonEmpty;
-
-            columnWidths[columnNumber] = average;
-
-        }
-        return columnWidths;
-    }
-
     /**
      * Creates a row with no values. Use {@link #addRow(Object[])} to add it to this.
      */

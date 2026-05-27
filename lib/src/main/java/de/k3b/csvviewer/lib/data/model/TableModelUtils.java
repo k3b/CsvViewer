@@ -71,6 +71,7 @@ public class TableModelUtils {
         for (int col = 0; col < columnCount; col++) {
             TableProperties.setColumnFormatter(modelToAnalyse,col,
                     analysers[col].getFormatter());
+            TableProperties.setColumnMaxWidth(modelToAnalyse, col, analysers[col].getMaxStringLength());
         }
 
         // create report.
@@ -127,8 +128,18 @@ public class TableModelUtils {
     }
 
     public static @NonNull InMemoryTableModel filter(@NonNull InMemoryTableModel sourceModel,
+                                                     @Nullable TableModelRowFilterBase filter) {
+        return TableModelUtils.filter(sourceModel, Collections.singletonList(filter));
+    }
+
+    public static @NonNull InMemoryTableModel filter(@NonNull InMemoryTableModel sourceModel,
                                                      @Nullable List<@Nullable TableModelRowFilterBase> filterList) {
-        InMemoryTableModel result = sourceModel.createEmptyClone(sourceModel.getName() + "->Filtered");
+        String name = sourceModel.getName() + "->Filtered";
+        if (filterList != null && filterList.size() == 1) {
+            TableModelRowFilterBase filter = filterList.get(0);
+            if (filter != null) name += "[" + filter +"]";
+        }
+        InMemoryTableModel result = sourceModel.createEmptyClone(name);
         int rowCount = sourceModel.getRowCount();
         boolean hasIncludes = filterList != null && !filterList.isEmpty();
         for(int rowNo = 0; rowNo < rowCount; rowNo++) {
@@ -145,7 +156,7 @@ public class TableModelUtils {
         int col_configType = ConfigurationModel.DomainColumnModel.col_configType;
         TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
                 FormatterConfigurationProcessor.CONFIGURATION_TYPE);
-        InMemoryTableModel columnDefinitions = TableModelUtils.filter(configModel, Collections.singletonList(filter));
+        InMemoryTableModel columnDefinitions = TableModelUtils.filter(configModel, filter);
 
         int rowCount = columnDefinitions.getRowCount();
 
@@ -211,7 +222,9 @@ public class TableModelUtils {
         for (int col = 0; col < columnCount; col++) {
             FormatterApi<?> columnDefinition = TableProperties.getColumnFormatter(model, col);
             if (columnDefinition != null) {
-                System.out.println("# " + model.getColumnNames()[col] + ": " + columnDefinition);
+                System.out.println("# " + model.getColumnNames()[col] + ": "
+                        + columnDefinition
+                        + " width " + model.getColumnMaxWidth(col));
             }
         }
 

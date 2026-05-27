@@ -21,6 +21,7 @@ dependencies {
     }
 
     testImplementation libs.test.java.junit
+    testImplementation libs.slf4j.api
     testImplementation libs.slf4j.j2se
 }
 

@@ -76,8 +76,8 @@ public interface TableModelApi {
     /**
      * @return width of given columnNumber in chars. 0 means hidden. -1 means automatic width
      */
-    default int getColumnWidth(int columnNumber) {
-        return -1;
+    default Integer getColumnMaxWidth(int columnNumber) {
+        return TableProperties.getColumnMaxWidth(this, columnNumber);
     }
 
     /** return columnNumber specific propery */

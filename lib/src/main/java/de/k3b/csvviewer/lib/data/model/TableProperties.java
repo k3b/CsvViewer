@@ -13,14 +13,24 @@ public class TableProperties {
     public static final String PROPERTY_COLUMN_DEFINITION = "colDef";
     public static final String PROPERTY_SORT_ORDER = "colSort";
     public static final String PROPERTY_FILTER = "filter";
+    public static final String PROPERTY_MAX_WIDTH = "maxWidth";
+
+    /** @return MaxWidth that belongs to model[columnNumber] */
+    public static @Nullable Integer getColumnMaxWidth(@NonNull TableModelApi model, int columnNumber) {
+        return model.getColumnProperty(columnNumber, PROPERTY_MAX_WIDTH);
+    }
+
+    /** set MaxWidth for model[columnNumber] */
+    public static void setColumnMaxWidth(@NonNull TableModelApi model, int columnNumber, @Nullable Integer maxWidth) {
+        model.putColumnProperty(columnNumber, PROPERTY_MAX_WIDTH, maxWidth);
+    }
 
     /** @return formatter that belongs to model[columnNumber] */
     public static @Nullable FormatterApi<?> getColumnFormatter(@NonNull TableModelApi model, int columnNumber) {
         return model.getColumnProperty(columnNumber, PROPERTY_COLUMN_DEFINITION);
-
     }
 
-    /** @return formatter that belongs to model[columnNumber] */
+    /** sets formatter for model[columnNumber] */
     public static void setColumnFormatter(@NonNull TableModelApi model, int columnNumber, @Nullable FormatterApi<?> formatter) {
         model.putColumnProperty(columnNumber, PROPERTY_COLUMN_DEFINITION, formatter);
     }
@@ -37,13 +47,12 @@ public class TableProperties {
         return model.getColumnProperty(-1, PROPERTY_FILTER);
     }
 
-    /** @return filterList that belongs to model */
+    /** sets filterList for model */
     public static void setColumnFilterList(@NonNull TableModelApi model, @Nullable List<@Nullable TableModelRowFilterBase>  filterList) {
         model.putColumnProperty(-1, PROPERTY_FILTER, filterList);
     }
 
-
-    /** @return sorter that belongs to model */
+    /** set sorter for model */
     public static void setColumnSorterList(@NonNull TableModelApi model, TableModelRowComparator sorter) {
         model.putColumnProperty(-1, PROPERTY_SORT_ORDER, sorter);
     }

@@ -52,7 +52,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
 
             for (int columnNumber = 0; columnNumber < row.length; columnNumber++) {
                 Object cell = row[columnNumber];
-                TextView tv = GuiHelper.createTextView(itemView.getContext(), cell, model.getColumnWidth(columnNumber), columnNumber);
+                TextView tv = GuiHelper.createTextView(itemView.getContext(), cell, model.getColumnMaxWidth(columnNumber));
 
                 rowContainer.addView(tv);
             }

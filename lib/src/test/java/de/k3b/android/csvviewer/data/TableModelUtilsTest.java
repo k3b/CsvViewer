@@ -65,7 +65,7 @@ public class TableModelUtilsTest {
         TableModelColumnFilter filter = TableModelColumnFilter.create(1, TableColumnType.String.getFormatter(),
                 expression);
 
-        InMemoryTableModel filteredModel = TableModelUtils.filter(model, Collections.singletonList(filter));
+        InMemoryTableModel filteredModel = TableModelUtils.filter(model, filter);
         TableModelUtils.printDebug2Console(" after filtering", filteredModel);
 
     }

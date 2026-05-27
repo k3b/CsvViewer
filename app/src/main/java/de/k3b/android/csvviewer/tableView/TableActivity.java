@@ -25,6 +25,9 @@ import de.k3b.android.csvviewer.R;
 import de.k3b.android.csvviewer.util.IntentUtil;
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.DemoData;
+import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
+import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
+import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
@@ -87,9 +90,17 @@ public class TableActivity extends AppCompatActivity {
     private int[] calculateColumnWidths(InMemoryTableModel model,AnalyserReport analysed) {
         int columnCount = model.getColumnCount();
         int[] result = new int[columnCount];
+
+        int col_configType = AnalyserReport.DomainColumnModel.col_parser;
+        String expression = analysed.getColumnNames()[col_configType] + "=" + TableColumnAnalyser.class.getSimpleName();
+        TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
+                expression);
+
+        InMemoryTableModel filtered = TableModelUtils.filter(analysed,filter);
         for(int columnNumber = columnCount -1; columnNumber >= 0; columnNumber--) {
             // TODO!!!!
         }
+        return result;
     }
 
     private void updateTableView() {
@@ -107,7 +118,7 @@ public class TableActivity extends AppCompatActivity {
             if (sortOrder.contains(columnNumber)) text += " v";
             else if (sortOrder.contains(negate(columnNumber))) text += " ^";
 
-            TextView tv = GuiHelper.createTextView(this, text, model.getColumnWidth(columnNumber), columnNumber);
+            TextView tv = GuiHelper.createTextView(this, text, model.getColumnMaxWidth(columnNumber));
             tv.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
             headerRow.addView(tv);
             int finalI = columnNumber;
