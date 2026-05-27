@@ -47,19 +47,6 @@ public class TableActivity extends AppCompatActivity {
     private List<TableModelRowFilterBase> includeFilter = new ArrayList<>();
     private List<TableModelRowFilterBase> excludeFilter = new ArrayList<>();
 
-    @Nullable private int[] columnWidthsInPixel = null;
-    private enum COLUMN_INFOS {
-        COLUMN_DEFINITIONS
-    }
-
-    private <T>  List<T> getInfo(COLUMN_INFOS key) {
-        List<T> result = new ArrayList<>(model.getColumnCount());
-        for (int col = 0; col < model.getColumnCount(); col++) {
-            result.add(model.getColumnProperty(col, key));
-        }
-        return result;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,24 +70,7 @@ public class TableActivity extends AppCompatActivity {
 
         this.model = model;
 
-        columnWidthsInPixel = calculateColumnWidths(model, analysed);
         updateTableView();
-    }
-
-    private int[] calculateColumnWidths(InMemoryTableModel model,AnalyserReport analysed) {
-        int columnCount = model.getColumnCount();
-        int[] result = new int[columnCount];
-
-        int col_configType = AnalyserReport.DomainColumnModel.col_parser;
-        String expression = analysed.getColumnNames()[col_configType] + "=" + TableColumnAnalyser.class.getSimpleName();
-        TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
-                expression);
-
-        InMemoryTableModel filtered = TableModelUtils.filter(analysed,filter);
-        for(int columnNumber = columnCount -1; columnNumber >= 0; columnNumber--) {
-            // TODO!!!!
-        }
-        return result;
     }
 
     private void updateTableView() {
@@ -115,8 +85,8 @@ public class TableActivity extends AppCompatActivity {
 
         for (int columnNumber = 0; columnNumber < columns.length; columnNumber++) {
             String text = columns[columnNumber];
-            if (sortOrder.contains(columnNumber)) text += " v";
-            else if (sortOrder.contains(negate(columnNumber))) text += " ^";
+            if (sortOrder.contains(columnNumber)) text += " ^";
+            else if (sortOrder.contains(negate(columnNumber))) text += " v";
 
             TextView tv = GuiHelper.createTextView(this, text, model.getColumnMaxWidth(columnNumber));
             tv.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);

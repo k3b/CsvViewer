@@ -5,8 +5,8 @@ import org.jspecify.annotations.Nullable;
 
 import de.k3b.csvviewer.lib.data.formatter.BooleanFormatter;
 import de.k3b.csvviewer.lib.data.formatter.DateFormatter;
+import de.k3b.csvviewer.lib.data.formatter.DoubleFormatter;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
-import de.k3b.csvviewer.lib.data.formatter.FormatterDefinition;
 import de.k3b.csvviewer.lib.data.formatter.IntegerFormatter;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 import de.k3b.csvviewer.lib.data.formatter.ObjectFormatter;
@@ -104,6 +104,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         if (result == null) result = getBooleanFormatter();
         if (result == null) result = getIntegerFormatter();
         if (result == null) result = getLongFormatter();
+        if (result == null) result = getDoubleFormatter();
         if (result == null) result = new StringFormatter(true, -1);
         result = new ObjectFormatter(result);
         return result;
@@ -125,9 +126,17 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
         return result;
     }
 
+    @Nullable public DoubleFormatter getDoubleFormatter() {
+        DoubleFormatter result = null;
+        if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS && longIntegerAnalyser.isDouble()) {
+            result = new DoubleFormatter(true);
+        }
+        return result;
+    }
+
     @Nullable public LongFormatter getLongFormatter() {
         LongFormatter result = null;
-        if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS) {
+        if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS && !longIntegerAnalyser.isDouble()) {
             result = longIntegerAnalyser.createFormatter();
         }
         return result;
@@ -136,6 +145,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
     @Nullable public IntegerFormatter getIntegerFormatter() {
         IntegerFormatter result = null;
         if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS
+                && !longIntegerAnalyser.isDouble()
                 && longIntegerAnalyser.getMin() != null
                 && longIntegerAnalyser.getMin() >= (long) Integer.MIN_VALUE
                 && longIntegerAnalyser.getMax() <= (long) Integer.MAX_VALUE) {
