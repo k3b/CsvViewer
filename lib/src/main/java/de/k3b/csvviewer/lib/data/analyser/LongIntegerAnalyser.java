@@ -12,6 +12,8 @@ import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
 public class LongIntegerAnalyser extends AnalyserBase<Long, String> implements AnalyserApi<String>, FormatterFactoryApi<Long> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
 
+    private boolean isDouble = false;
+
     public LongIntegerAnalyser(int maxErrors) {
         super(maxErrors);
     }
@@ -21,7 +23,9 @@ public class LongIntegerAnalyser extends AnalyserBase<Long, String> implements A
         boolean result = false;
         if (isEnabled()) {
             try {
-                long longValue = Long.parseLong(stringValue);
+                double d = Double.parseDouble(stringValue);
+                long longValue = (long) d;
+                if (d != longValue) isDouble = true;
                 if (max == null || longValue > max) max = longValue;
                 if (min == null || longValue < min) min = longValue;
                 result = true;
@@ -31,6 +35,10 @@ public class LongIntegerAnalyser extends AnalyserBase<Long, String> implements A
             }
         }
         return result;
+    }
+
+    public boolean isDouble() {
+        return isDouble;
     }
 
     @Override
