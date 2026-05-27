@@ -24,7 +24,7 @@ public class GuiHelper {
         int width = ViewGroup.LayoutParams.WRAP_CONTENT;
         if (widthInChars != null && widthInChars > 0) {
             if (widthInChars > MAX_COLUMN_WIDTH) widthInChars= MAX_COLUMN_WIDTH;
-            width = (int) Math.ceil(widthInChars * textView.getPaint().measureText("h"))
+            width = (int) Math.ceil(widthInChars * textView.getPaint().measureText("O"))
                     + textView.getPaddingLeft()
                     + textView.getPaddingRight();
         }

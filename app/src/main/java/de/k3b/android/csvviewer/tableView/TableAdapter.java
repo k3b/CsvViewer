@@ -9,7 +9,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import de.k3b.android.csvviewer.R;
+import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
+import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolder> {
 
@@ -52,6 +54,8 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
 
             for (int columnNumber = 0; columnNumber < row.length; columnNumber++) {
                 Object cell = row[columnNumber];
+                FormatterApi<?> formatter = TableProperties.getColumnFormatter(model, columnNumber);
+                if (formatter != null) cell = formatter.formatObject(cell);
                 TextView tv = GuiHelper.createTextView(itemView.getContext(), cell, model.getColumnMaxWidth(columnNumber));
 
                 rowContainer.addView(tv);
