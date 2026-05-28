@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jspecify.annotations.NonNull;
+
 import de.k3b.android.csvviewer.R;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
@@ -47,7 +49,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
             rowContainer = itemView.findViewById(R.id.rowContainer);
         }
 
-        void bind(TableModelApi model, int rowIndex) {
+        void bind(@NonNull final TableModelApi model, final int rowIndex) {
             rowContainer.removeAllViews();
 
             Object[] row = model.getRow(rowIndex);
@@ -58,8 +60,19 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
                 if (formatter != null) cell = formatter.formatObject(cell);
                 TextView tv = GuiHelper.createTextView(itemView.getContext(), cell, model.getColumnMaxWidth(columnNumber));
 
+                final int finalColumnNumber = columnNumber;
+                tv.setOnLongClickListener(view -> onCellLongClick(model, rowIndex, finalColumnNumber));
                 rowContainer.addView(tv);
             }
+        }
+
+        @FunctionalInterface
+        public interface CellLongClickListener {
+            boolean onCellLongClick(@NonNull TableModelApi model, int rowIndex, int columnNumber);
+        }
+        private boolean onCellLongClick(@NonNull TableModelApi model, int rowIndex, int columnNumber) {
+            FormatterApi<?> formatter = TableProperties.getColumnFormatter(model, columnNumber);
+            return true;
         }
     }
 }

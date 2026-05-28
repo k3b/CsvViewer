@@ -23,7 +23,9 @@ ObjectFormatter
 * DateFormatterEx
     * parser mit suffix, wenn zu kurz
     * format ohne time wenn time==null
-* 
+* > TODO !!! DoubleFormat mit verschiedenen patterns zum probieren
+***** DoubleAnalyser analog zu DateAnalyser mit verschiedenen Formaten  
+
 TableRowEditorActivity
 * ? started from TableActivity
 
@@ -37,7 +39,8 @@ ConfigurationModel (s=save, r=read)
 ### Android gui
 
 v sort via header
-- todo filter
+- !!! TODO cell contextmenu
+---- !!! todo filter
 - save when rotation
 
 ### html gui
