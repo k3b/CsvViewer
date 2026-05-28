@@ -9,6 +9,7 @@ import java.util.Comparator;
 import de.k3b.csvviewer.lib.data.analyser.DateAnalyser;
 import de.k3b.csvviewer.lib.data.formatter.BooleanFormatter;
 import de.k3b.csvviewer.lib.data.formatter.DateFormatter;
+import de.k3b.csvviewer.lib.data.formatter.DoubleFormatter;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.formatter.IntegerFormatter;
 import de.k3b.csvviewer.lib.data.formatter.LongFormatter;
@@ -23,7 +24,8 @@ public enum TableColumnType {
     Long(new LongFormatter(true)),
     Boolean(new BooleanFormatter("1","0", true)),
     Date(new DateFormatter(DateAnalyser.ISO_DATE_TIME_PATTERN, new SimpleDateFormat(DateAnalyser.ISO_DATE_TIME_PATTERN), true)),
-    String(new StringFormatter(true, 0))
+    String(new StringFormatter(true, 0)),
+    Double(new DoubleFormatter(null, null, true))
     ;
 
     @NonNull private final FormatterApi<?> formatter;

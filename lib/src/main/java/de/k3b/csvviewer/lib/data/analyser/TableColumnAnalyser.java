@@ -129,7 +129,7 @@ public class TableColumnAnalyser extends AnalyserBase<Object,Object> implements 
     @Nullable public DoubleFormatter getDoubleFormatter() {
         DoubleFormatter result = null;
         if (longIntegerAnalyser.isEnabled() && nonNullStringCount >= MIN_SUCCESS_ITEMS && longIntegerAnalyser.isDouble()) {
-            result = new DoubleFormatter(true);
+            result = new DoubleFormatter(null, null,true);
         }
         return result;
     }
