@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.text.NumberFormat;
 
 import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
 public class DoubleFormatter extends FormatterBase<Double> implements TableColumnComparatorFactoryImpl<Double> {
@@ -17,7 +18,7 @@ public class DoubleFormatter extends FormatterBase<Double> implements TableColum
 
 
     public DoubleFormatter(@Nullable String formatPattern, @Nullable NumberFormat parser, Boolean nullable) {
-        super(Double.class,formatPattern, nullable);
+        super(Double.class,formatPattern, nullable, ComparatorTyp.VALUE_COMPLEX);
         this.formatPattern = formatPattern;
         this.parser = parser;
     }

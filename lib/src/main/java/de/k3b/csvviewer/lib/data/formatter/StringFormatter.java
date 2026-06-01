@@ -5,6 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Comparator;
 
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
@@ -12,7 +13,7 @@ public class StringFormatter extends FormatterBase<String> implements TableColum
     private final Integer maxStringLength;
 
     public StringFormatter(boolean nullable, int maxStringLength) {
-        super(String.class,null, nullable);
+        super(String.class,null, nullable, ComparatorTyp.VALUE_SIMPLE);
         this.maxStringLength = maxStringLength;
     }
 

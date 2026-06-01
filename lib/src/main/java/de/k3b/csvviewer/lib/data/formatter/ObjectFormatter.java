@@ -4,6 +4,9 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.List;
+
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 
 public class ObjectFormatter implements FormatterApi<Object> {
     @NonNull private final FormatterApi<?> formatterImpl;
@@ -52,6 +55,13 @@ public class ObjectFormatter implements FormatterApi<Object> {
     @Override
     public Integer getMaxStringLength() {
         return formatterImpl == null ? null :formatterImpl.getMaxStringLength();
+    }
+
+    @Override
+    public @NonNull List<@NonNull ComparatorTyp> getAllowedComparators() {
+        return formatterImpl == null
+                ? ComparatorTyp.VALUE_SIMPLE
+                : formatterImpl.getAllowedComparators();
     }
 
     @Override

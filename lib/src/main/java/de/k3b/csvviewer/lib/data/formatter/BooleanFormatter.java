@@ -3,6 +3,7 @@ package de.k3b.csvviewer.lib.data.formatter;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
 public class BooleanFormatter extends FormatterBase<Boolean> implements TableColumnComparatorFactoryImpl<Boolean> {
@@ -59,7 +60,7 @@ public class BooleanFormatter extends FormatterBase<Boolean> implements TableCol
 
 
     public BooleanFormatter(String trueValue, String falseValue, boolean nullable) {
-        super(Boolean.class, trueValue+"|"+falseValue, nullable);
+        super(Boolean.class, trueValue+"|"+falseValue, nullable, ComparatorTyp.VALUE_SIMPLE);
         this.trueValue = trueValue;
         this.falseValue = falseValue;
         trueChar = getChar(trueValue);

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Comparator;
 
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
-import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter.ComparatorTyp;
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
 public class ComparatorTypTests {

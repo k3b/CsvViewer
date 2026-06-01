@@ -57,6 +57,12 @@ public class InMemoryTableModel extends TableModelBase {
         return result;
     }
 
+    public InMemoryTableModel createClone(String name) {
+        InMemoryTableModel result = createEmptyClone(name);
+        result.rows.addAll(this.rows);
+        return result;
+    }
+
     /** implementation detail of {@link #createEmptyClone(String)} */
     protected void copyPropertiesFrom (@NonNull TableModelBase from) {
         super.copyPropertiesFrom(from);

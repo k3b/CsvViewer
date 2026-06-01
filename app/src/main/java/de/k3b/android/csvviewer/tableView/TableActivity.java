@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -20,29 +24,34 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import de.k3b.android.csvviewer.R;
 import de.k3b.android.csvviewer.util.IntentUtil;
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.DemoData;
-import de.k3b.csvviewer.lib.data.analyser.TableColumnAnalyser;
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
 import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
+import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.model.TableModelUtils;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
+import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 public class TableActivity extends AppCompatActivity {
     private static final String TAG = TableActivity.class.getSimpleName();
+    private static final int DYNAMIC_MENU_FIRST = View.generateViewId();
 
     private RecyclerView recyclerView;
     private LinearLayout headerRow;
 
     /** last loaded csv data source for error message */
     private String lastCsvSource;
-    private InMemoryTableModel model;
+    private InMemoryTableModel modelFiltered;
+    private InMemoryTableModel modelLoaded;
     private List<Integer> sortOrder = new ArrayList<>();
     private List<TableModelRowFilterBase> includeFilter = new ArrayList<>();
     private List<TableModelRowFilterBase> excludeFilter = new ArrayList<>();
@@ -68,14 +77,19 @@ public class TableActivity extends AppCompatActivity {
 
         TableModelUtils.convertColumns(model, true);
 
-        this.model = model;
+        this.modelLoaded = model;
 
+        updateTableView(model.createClone(model.getName()));
+    }
+
+    private void updateTableView(@NonNull InMemoryTableModel modifiedModel) {
+        modelFiltered = modifiedModel;
         updateTableView();
     }
 
     private void updateTableView() {
-        setupHeader(model);
-        setupRecycler(model);
+        setupHeader(modelFiltered);
+        setupRecycler(modelFiltered);
     }
 
     private void setupHeader(TableModelApi model) {
@@ -118,8 +132,8 @@ public class TableActivity extends AppCompatActivity {
             dir ="^";
         }
 
-        this.model.sortBy(sortOrder);
-        Log.i(TAG, model.getColumnNames()[columnNumber] + dir + ": " + sortOrder);
+        this.modelFiltered.sortBy(sortOrder);
+        Log.i(TAG, modelFiltered.getColumnNames()[columnNumber] + dir + ": " + sortOrder);
         updateTableView();
     }
 
@@ -130,8 +144,72 @@ public class TableActivity extends AppCompatActivity {
 
     private void setupRecycler(TableModelApi model) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new TableAdapter(model));
+        TableAdapter adapter = new TableAdapter(model);
+        adapter.registerLongCellClickEvent(new TableAdapter.LongCellClickListener() {
+            @Override
+            public boolean onCellLongClick(TextView tv, @NonNull TableModelApi model, int rowIndex, int columnNumber) {
+                return TableActivity.this.onCellLongClick(tv, model, rowIndex, columnNumber);
+            }
+        });
+        recyclerView.setAdapter(adapter);
     }
+
+    private void renameMenuItem(@NonNull TreeMap<Integer, String> menuDefintion,
+                                @NonNull ComparatorTyp typ,@Nullable String newMenuText) {
+        if (menuDefintion.get(typ.getMenuOffset()) != null) {
+            menuDefintion.put(typ.getMenuOffset(), newMenuText);
+        }
+    }
+
+    private boolean onCellLongClick(TextView tv, @NonNull TableModelApi model, int rowIndex, int columnNumber) {
+        FormatterApi<?> formatter = TableProperties.getColumnFormatter(model, columnNumber);
+        if (formatter != null) {
+            List<ComparatorTyp> allowed = formatter.getAllowedComparators();
+            String stringValue = tv.getText().toString();
+            @NonNull TreeMap<Integer, String> menuDefintion = ComparatorTyp.createMenu(stringValue, allowed);
+
+            // translate non symbol menu titles
+            renameMenuItem(menuDefintion, ComparatorTyp.IS_NULL, getString(R.string.empty));
+            renameMenuItem(menuDefintion, ComparatorTyp.IS_NOT_NULL, getString(R.string.non_empty));
+
+            // convert into android menu
+            PopupMenu popup = new PopupMenu(this, tv);
+            Menu menu = popup.getMenu();
+            for (Integer id : menuDefintion.keySet()) {
+                for (ComparatorTyp comparatorTyp : allowed) {
+                    String title = comparatorTyp.toString("", stringValue);
+                    menu.add(Menu.NONE, DYNAMIC_MENU_FIRST + id, id, title);
+                }
+
+                // This activity implements OnMenuItemClickListener.
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        ComparatorTyp comparatorTyp = ComparatorTyp.getComparatorTyp(menuItem.getItemId() - DYNAMIC_MENU_FIRST);
+                        if (comparatorTyp != null) {
+                            String expression = comparatorTyp.toString(model.getColumnNames()[columnNumber], stringValue);
+                            TableModelColumnFilter filter = TableModelColumnFilter.create(columnNumber, TableColumnType.String.getFormatter(),
+                                    expression);
+                            List<TableModelRowFilterBase> filterList = TableProperties.getColumnFilterList(model);
+                            if (filterList == null) {
+                                filterList = new ArrayList<>();
+                                TableProperties.setColumnFilterList(model, filterList);
+                            }
+                            filterList.add(filter);
+                            TableActivity.this.updateTableView(TableModelUtils.filter(TableActivity.this.modelLoaded,filterList));
+                        }
+                        return true;
+                    }
+                });
+
+                // int menuRes = R.menu.cell_popup_numeric;
+                // popup.getMenuInflater().inflate(menuRes, popup.getMenu());
+                popup.show();
+                return true;
+            } // for (Integer id : menuDefintion.keySet())
+        } // if (formatter != null)
+        return false;
+    } // onCellLongClick
 
     /**
      *

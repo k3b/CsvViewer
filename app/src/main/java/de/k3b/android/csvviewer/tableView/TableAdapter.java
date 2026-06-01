@@ -16,8 +16,13 @@ import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolder> {
+    @FunctionalInterface
+    public interface LongCellClickListener {
+        boolean onCellLongClick(TextView tv, @NonNull TableModelApi model, int rowIndex, int columnNumber);
+    }
 
     private final TableModelApi model;
+    private TableAdapter.LongCellClickListener longCellClickListener = null;
 
     public TableAdapter(TableModelApi model) {
         this.model = model;
@@ -32,7 +37,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
 
     @Override
     public void onBindViewHolder(RowViewHolder holder, int position) {
-        holder.bind(model, position);
+        holder.bind(model, position, longCellClickListener);
     }
 
     @Override
@@ -40,7 +45,11 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
         return model.getRowCount();
     }
 
-    static class RowViewHolder extends RecyclerView.ViewHolder {
+    public void registerLongCellClickEvent(LongCellClickListener eventHandler) {
+        this.longCellClickListener = eventHandler;
+    }
+
+    public static class RowViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout rowContainer;
 
@@ -49,7 +58,8 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
             rowContainer = itemView.findViewById(R.id.rowContainer);
         }
 
-        void bind(@NonNull final TableModelApi model, final int rowIndex) {
+        void bind(@NonNull final TableModelApi model, final int rowIndex,
+                  final LongCellClickListener longCellClickListener) {
             rowContainer.removeAllViews();
 
             Object[] row = model.getRow(rowIndex);
@@ -58,21 +68,17 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.RowViewHolde
                 Object cell = row[columnNumber];
                 FormatterApi<?> formatter = TableProperties.getColumnFormatter(model, columnNumber);
                 if (formatter != null) cell = formatter.formatObject(cell);
-                TextView tv = GuiHelper.createTextView(itemView.getContext(), cell, model.getColumnMaxWidth(columnNumber));
+                final TextView tv = GuiHelper.createTextView(itemView.getContext(), cell, model.getColumnMaxWidth(columnNumber));
 
-                final int finalColumnNumber = columnNumber;
-                tv.setOnLongClickListener(view -> onCellLongClick(model, rowIndex, finalColumnNumber));
+                if (longCellClickListener != null) {
+                    final int finalColumnNumber = columnNumber;
+                    tv.setOnLongClickListener(view -> longCellClickListener.onCellLongClick(tv, model, rowIndex, finalColumnNumber));
+                } else {
+                    tv.setOnLongClickListener(null);
+                }
                 rowContainer.addView(tv);
             }
         }
 
-        @FunctionalInterface
-        public interface CellLongClickListener {
-            boolean onCellLongClick(@NonNull TableModelApi model, int rowIndex, int columnNumber);
-        }
-        private boolean onCellLongClick(@NonNull TableModelApi model, int rowIndex, int columnNumber) {
-            FormatterApi<?> formatter = TableProperties.getColumnFormatter(model, columnNumber);
-            return true;
-        }
     }
 }

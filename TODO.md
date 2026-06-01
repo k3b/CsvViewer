@@ -1,4 +1,5 @@
-// how to implement an android java eventhandler that is connected to a link inside a android html view
+### next
+    gui-filter funktioniert noch nicht richtig.
 
 ### api
 
@@ -26,6 +27,54 @@ ObjectFormatter
 * > TODO !!! DoubleFormat mit verschiedenen patterns zum probieren
 ***** DoubleAnalyser analog zu DateAnalyser mit verschiedenen Formaten  
 
+
+String text = "1.234,56"; // deutsches Format
+
+Locale.US
+NumberFormat nf = NumberFormat.getInstance(Locale.GERMANY);
+
+try {
+Number number = nf.parse(text);
+double value = number.doubleValue();
+System.out.println(value); // 1234.56
+} catch (ParseException e) {
+e.printStackTrace();
+}
+----
+double valDe = NumberFormat.getInstance(Locale.GERMANY).parse(de).doubleValue();
+// java.text.NumberFormat#getInstance
+-----
+
+String de = "1.234,56";
+String us = "1,234.56";
+
+double valDe = NumberFormat.getInstance(Locale.GERMANY).parse(de).doubleValue();
+double valUs = NumberFormat.getInstance(Locale.US).parse(us).doubleValue();
+
+----
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
+DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);
+DecimalFormat df = new DecimalFormat("#,##0.###", symbols);
+
+double value = df.parse("1.234,56").doubleValue();
+System.out.println(value);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 TableRowEditorActivity
 * ? started from TableActivity
 
@@ -41,6 +90,13 @@ ConfigurationModel (s=save, r=read)
 v sort via header
 - !!! TODO cell contextmenu
 ---- !!! todo filter
+- is Boolean : true/false/null/non-null
+- is String : =/!=/null/non-null
+- is Number(int, long, double)/Date : =/<=/>=/</>/!=/null/non-null
+
+
+
+
 - save when rotation
 
 ### html gui

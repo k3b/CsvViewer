@@ -1,9 +1,12 @@
 package de.k3b.csvviewer.lib.data.formatter;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.List;
 
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactory;
 
 /**
@@ -21,4 +24,6 @@ public interface FormatterApi<T> extends FormatterDefinition, TableColumnCompara
     @Nullable T parse(@Nullable String string);
 
     default Integer getMaxStringLength() {return null;}
+
+    @NonNull List<@NonNull ComparatorTyp> getAllowedComparators();
 }

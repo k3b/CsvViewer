@@ -5,13 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
 public class IntegerFormatter extends FormatterBase<Integer> implements TableColumnComparatorFactoryImpl<Integer> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
 
     public IntegerFormatter(boolean nullable) {
-        super(Integer.class,null, nullable);
+        super(Integer.class,null, nullable, ComparatorTyp.VALUE_COMPLEX);
     }
     /**
      * format a native value to a string

@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.comparator.TableColumnComparatorFactoryImpl;
 
 public class DateFormatter extends FormatterBase<Date> implements TableColumnComparatorFactoryImpl<Date> {
@@ -18,7 +19,7 @@ public class DateFormatter extends FormatterBase<Date> implements TableColumnCom
     private final DateFormat parser;
 
     public DateFormatter(@NonNull String formatPattern, @NonNull DateFormat parser, Boolean nullable) {
-        super(Date.class, formatPattern, nullable);
+        super(Date.class, formatPattern, nullable, ComparatorTyp.VALUE_COMPLEX);
         this.formatPattern = formatPattern;
         this.parser = parser;
     }
