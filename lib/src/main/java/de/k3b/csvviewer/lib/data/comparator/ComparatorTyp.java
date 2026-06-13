@@ -30,7 +30,7 @@ public enum ComparatorTyp {
 
     private final int menuOffset;
     private final @NonNull String code;
-    private final TableModelColumnFilter.CompareResult compareResult;
+    private final @NonNull CompareResult compareResult;
 
     /** can be applied to null value */
     public static final List<ComparatorTyp> VALUE_NULL = Arrays.asList(IS_NOT_NULL,IS_NULL);
@@ -41,7 +41,7 @@ public enum ComparatorTyp {
     /** can be applied to Integer, Long, Double, Date */
     public static final List<ComparatorTyp> VALUE_COMPLEX = Arrays.asList(ComparatorTyp.values());
 
-    private ComparatorTyp(int menuOffset, @NonNull String code, TableModelColumnFilter.CompareResult compareResult) {
+    private ComparatorTyp(int menuOffset, @NonNull String code, @NonNull CompareResult compareResult) {
         this.menuOffset = menuOffset;
         this.code = code;
         this.compareResult = compareResult;

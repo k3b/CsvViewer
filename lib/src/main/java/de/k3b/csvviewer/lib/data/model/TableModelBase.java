@@ -14,7 +14,7 @@ public abstract class TableModelBase implements TableModelApi {
     private final String[] columnNames;
 
     /** has one element more than columnNames. the last element "-1" is used for globale values */
-    private final Map[] columnProperties;
+    @NonNull private final Map<?,?>[] columnProperties;
 
     public TableModelBase(@NonNull final String[] columnNames) {
         this.columnNames = columnNames;
@@ -57,7 +57,7 @@ public abstract class TableModelBase implements TableModelApi {
         }
         Map<Object,Object> properties = (Map<Object,Object>) columnProperties[column]; // .put(key,value);
         if (properties == null) {
-            properties = new HashMap<Object,Object>();
+            properties = new HashMap<>();
             columnProperties[column] = properties;
         }
         return properties;

@@ -15,12 +15,6 @@ import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 public class TableModelColumnFilter extends TableModelRowFilterBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
 
-    /** to define compare result as lamda expression */
-    @FunctionalInterface
-    public interface CompareResult {
-        boolean apply(Comparator<Object> comparator, Object fieldValue, Object compareValue);
-    }
-
     @NonNull private final ComparatorTyp comparatorTyp;
     @NonNull private final Comparator<Object> comparator;
     @Nullable private final Object compareValue;
@@ -42,7 +36,6 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
         TableModelColumnFilter result = null;
         ComparatorTyp typ = ComparatorTyp.parseExpression(expression);
         if (typ != null) {
-            String fieldName = typ.getFieldName(expression);
             String compareValueString = typ.getCompareValue(expression);
             Object compareValue = typ.getCompareValue(expression, formatter);
             result = new TableModelColumnFilter(columnNumber, formatter.getComparator(), compareValue, compareValueString, typ);
@@ -50,7 +43,7 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
         return result;
     }
 
-    public TableModelColumnFilter(int columnNumber, @NonNull Comparator<Object> comparator, @Nullable Object compareValue, String compareValueString,@NonNull ComparatorTyp comparatorTyp) {
+    public TableModelColumnFilter(int columnNumber, @NonNull Comparator<Object> comparator, @Nullable Object compareValue,@Nullable  String compareValueString,@NonNull ComparatorTyp comparatorTyp) {
         super(columnNumber);
         this.comparator = comparator;
         this.compareValue = compareValue;
@@ -71,7 +64,7 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
         return result.toString();
     }
 
-    public @NonNull Object getCompareValue() {
+    public @Nullable  Object getCompareValue() {
         return compareValue;
     }
 
