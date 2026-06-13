@@ -12,9 +12,14 @@ android {
         // minSdk 21 // required for WebView and request
         // minSdk 23 // WebView instable with minSdk 21
         targetSdk = 36
+        applicationId = "de.k3b.android.csvviewer"
         versionCode = 1000 // increment in 1000 steps
         versionName = "0.1"
-        applicationId = "de.k3b.android.csvviewer"
+
+        /*
+        Version history
+            0.1(1000): Initial Version
+         */
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
