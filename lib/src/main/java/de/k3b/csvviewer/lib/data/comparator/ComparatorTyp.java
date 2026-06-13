@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.TreeMap;
 
 import de.k3b.csvviewer.lib.Global;
-import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
 public enum ComparatorTyp {
@@ -41,7 +40,7 @@ public enum ComparatorTyp {
     /** can be applied to Integer, Long, Double, Date */
     public static final List<ComparatorTyp> VALUE_COMPLEX = Arrays.asList(ComparatorTyp.values());
 
-    private ComparatorTyp(int menuOffset, @NonNull String code, @NonNull CompareResult compareResult) {
+    ComparatorTyp(int menuOffset, @NonNull String code, @NonNull CompareResult compareResult) {
         this.menuOffset = menuOffset;
         this.code = code;
         this.compareResult = compareResult;

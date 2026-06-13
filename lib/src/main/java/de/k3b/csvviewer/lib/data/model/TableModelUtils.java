@@ -101,7 +101,7 @@ public class TableModelUtils {
     //             putColumnProperty(-1, TableModelApi.PROPERTY_SORT_ORDER, sorter);
 
     /**
-     * converts all String column values in {@link TableModelApi} to supported native types via {@link FormatterApi<?>#getFormatter()}.
+     * converts all String column values in {@link TableModelApi} to supported native types via {@link FormatterApi<>#getFormatter()}.
      *
      * @param modelToConvert model to be converted
      */
