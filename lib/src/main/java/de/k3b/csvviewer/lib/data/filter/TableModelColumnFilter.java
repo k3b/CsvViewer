@@ -66,7 +66,7 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
         StringBuilder result = super.toStringBuilder(columnNames, getCompareValue());
 
         result
-            .append(comparatorTyp.toString("", compareValueString))
+            .append(comparatorTyp.toExpression("", compareValueString))
             ;
         return result.toString();
     }
@@ -78,7 +78,7 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
     @Override
     public String toString() {
         return "TableModelColumnFilter{" +
-                comparatorTyp.toString("col[" + getColumnNumber() + "] ", compareValueString) +
+                comparatorTyp.toExpression("col[" + getColumnNumber() + "] ", compareValueString) +
                 '}';
     }
 }

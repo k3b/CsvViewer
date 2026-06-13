@@ -1,5 +1,6 @@
 package de.k3b.csvviewer.lib.data.comparator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public enum ComparatorTyp {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
 
     private final int menuOffset;
-    private final String code;
+    private final @NonNull String code;
     private final TableModelColumnFilter.CompareResult compareResult;
 
     /** can be applied to null value */
@@ -40,7 +41,7 @@ public enum ComparatorTyp {
     /** can be applied to Integer, Long, Double, Date */
     public static final List<ComparatorTyp> VALUE_COMPLEX = Arrays.asList(ComparatorTyp.values());
 
-    private ComparatorTyp(int menuOffset, String code, TableModelColumnFilter.CompareResult compareResult) {
+    private ComparatorTyp(int menuOffset, @NonNull String code, TableModelColumnFilter.CompareResult compareResult) {
         this.menuOffset = menuOffset;
         this.code = code;
         this.compareResult = compareResult;
@@ -51,27 +52,32 @@ public enum ComparatorTyp {
     }
 
     @NonNull
-    public String toString(@NonNull String fieldName, String compareValue) {
-        if (compareValue == null || this.equals(IS_NOT_NULL) || this.equals(IS_NULL))
-            return fieldName + " " + code;
-        return fieldName + " " + code + " " + compareValue;
+    public String toExpression(@Nullable String fieldName, @Nullable String compareValue) {
+        StringBuilder result = new StringBuilder();
+        if (!StringUtils.isEmpty(fieldName)) result.append(fieldName).append(" ");
+        result.append(code);
+        if (!StringUtils.isEmpty(compareValue) && !this.equals(IS_NOT_NULL) && !this.equals(IS_NULL)) {
+            result.append(" ").append(compareValue).toString();
+        }
+        return result.toString();
     }
 
     @NonNull
-    public String toString(@NonNull String fieldName, Object compareValue, @Nullable FormatterApi<?> formatter) {
-        return toString(fieldName, getString(compareValue, formatter));
+    public String toExpression(@Nullable String fieldName, @Nullable Object compareValue, @Nullable FormatterApi<?> formatter) {
+        return toExpression(fieldName, toString(compareValue, formatter));
     }
 
-    private static String getString(Object compareValue, FormatterApi<?> formatter) {
-        String stringValue = null;
+    @Nullable
+    private static String toString(@Nullable Object compareValue, @Nullable FormatterApi<?> formatter) {
+        String result = null;
         if (compareValue != null) {
             if (formatter != null) {
-                stringValue = formatter.formatObject(compareValue);
+                result = formatter.formatObject(compareValue);
             } else {
-                stringValue = compareValue.toString();
+                result = compareValue.toString();
             }
         }
-        return stringValue;
+        return result;
     }
 
     @Nullable
@@ -87,8 +93,8 @@ public enum ComparatorTyp {
     @Nullable
     public String getCompareValue(@Nullable String expression) {
         if (expression != null) {
-            int found = expression.indexOf(code);
-            if (found > 0) return expression.substring(found + code.length()).trim();
+            int found = expression.indexOf(code+" ");
+            if (found >= 0) return expression.substring(found + code.length() + 1); // .trim();
         }
         return null;
     }
@@ -112,13 +118,13 @@ public enum ComparatorTyp {
         }
 
         for (ComparatorTyp comparatorTyp : allowedComparatorTypes) {
-            result.put(comparatorTyp.menuOffset,comparatorTyp.toString("", compareString));
+            result.put(comparatorTyp.menuOffset,comparatorTyp.toExpression(null, compareString));
         }
         return result;
     }
 
     @Nullable
-    public static ComparatorTyp parseExpression(String expression) {
+    public static ComparatorTyp parseExpression(@Nullable String expression) {
         if (expression != null) {
             for (ComparatorTyp candidate : ComparatorTyp.values()) {
                 if (expression.contains(candidate.code)) return candidate;

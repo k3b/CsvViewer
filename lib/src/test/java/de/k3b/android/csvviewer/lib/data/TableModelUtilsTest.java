@@ -1,11 +1,10 @@
-package de.k3b.android.csvviewer.data;
+package de.k3b.android.csvviewer.lib.data;
 
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;

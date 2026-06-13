@@ -1,4 +1,4 @@
-package de.k3b.android.csvviewer;
+package de.k3b.android.csvviewer.lib;
 
 import org.junit.Test;
 

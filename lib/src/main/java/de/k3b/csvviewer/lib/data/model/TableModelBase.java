@@ -53,7 +53,7 @@ public abstract class TableModelBase implements TableModelApi {
         if (column == -1) {
             column = columnProperties.length -1;
         } else {
-            check(0, column);
+            checkColumnNumber(column);
         }
         Map<Object,Object> properties = (Map<Object,Object>) columnProperties[column]; // .put(key,value);
         if (properties == null) {
@@ -76,12 +76,17 @@ public abstract class TableModelBase implements TableModelApi {
     }
 
     /** throws IllegalArgumentException if rowNumber or columnNumber is not valid */
-    protected void check(int rowNumber, int columnNumber) {
-        if (columnNumber < 0  || columnNumber >= getColumnCount()) {
-            throw new IllegalArgumentException(String.format("Column %d must be between 0 and %d", rowNumber, getColumnCount() - 1));
-        }
+    protected void check(Integer rowNumber, int columnNumber) {
+        checkColumnNumber(columnNumber);
         if (rowNumber < 0  || rowNumber >= getRowCount()) {
             throw new IllegalArgumentException(String.format("Row %d must be between 0 and %d", rowNumber, getRowCount() - 1));
+        }
+    }
+
+    /** throws IllegalArgumentException if rowNumber or columnNumber is not valid */
+    private void checkColumnNumber(int columnNumber) {
+        if (columnNumber < 0  || columnNumber >= getColumnCount()) {
+            throw new IllegalArgumentException(String.format("Column %d must be between 0 and %d", columnNumber, getColumnCount() - 1));
         }
     }
 }

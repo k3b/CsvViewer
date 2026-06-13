@@ -43,7 +43,7 @@ import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 public class TableActivity extends AppCompatActivity {
     private static final String TAG = TableActivity.class.getSimpleName();
-    private static final int DYNAMIC_MENU_FIRST = View.generateViewId();
+    private static final int DYNAMIC_MENU_FIRST = 32411; // View.generateViewId();
 
     private RecyclerView recyclerView;
     private LinearLayout headerRow;
@@ -53,8 +53,6 @@ public class TableActivity extends AppCompatActivity {
     private InMemoryTableModel modelFiltered;
     private InMemoryTableModel modelLoaded;
     private List<Integer> sortOrder = new ArrayList<>();
-    private List<TableModelRowFilterBase> includeFilter = new ArrayList<>();
-    private List<TableModelRowFilterBase> excludeFilter = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,52 +162,71 @@ public class TableActivity extends AppCompatActivity {
     private boolean onCellLongClick(TextView tv, @NonNull TableModelApi model, int rowIndex, int columnNumber) {
         FormatterApi<?> formatter = TableProperties.getColumnFormatter(model, columnNumber);
         if (formatter != null) {
-            List<ComparatorTyp> allowed = formatter.getAllowedComparators();
             String stringValue = tv.getText().toString();
-            @NonNull TreeMap<Integer, String> menuDefintion = ComparatorTyp.createMenu(stringValue, allowed);
+            PopupMenu popup = createOnCellLongClickMenu(tv, formatter, stringValue);
 
-            // translate non symbol menu titles
-            renameMenuItem(menuDefintion, ComparatorTyp.IS_NULL, getString(R.string.empty));
-            renameMenuItem(menuDefintion, ComparatorTyp.IS_NOT_NULL, getString(R.string.non_empty));
+            // This activity implements OnMenuItemClickListener.
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    List<TableModelRowFilterBase> filterList = TableProperties.getColumnFilterList(model);
+                    if (filterList == null) {
+                        filterList = new ArrayList<>();
+                        TableProperties.setColumnFilterList(model, filterList);
+                    }
 
-            // convert into android menu
-            PopupMenu popup = new PopupMenu(this, tv);
-            Menu menu = popup.getMenu();
-            for (Integer id : menuDefintion.keySet()) {
-                for (ComparatorTyp comparatorTyp : allowed) {
-                    String title = comparatorTyp.toString("", stringValue);
-                    menu.add(Menu.NONE, DYNAMIC_MENU_FIRST + id, id, title);
-                }
-
-                // This activity implements OnMenuItemClickListener.
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        ComparatorTyp comparatorTyp = ComparatorTyp.getComparatorTyp(menuItem.getItemId() - DYNAMIC_MENU_FIRST);
+                    int itemId = menuItem.getItemId();
+                    if (itemId == R.id.action_clear_filter) {
+                        filterList.clear();
+                        TableActivity.this.updateTableView(TableModelUtils.filter(TableActivity.this.modelLoaded, filterList));
+                    } else {
+                        ComparatorTyp comparatorTyp = ComparatorTyp.getComparatorTyp(itemId - DYNAMIC_MENU_FIRST);
                         if (comparatorTyp != null) {
-                            String expression = comparatorTyp.toString(model.getColumnNames()[columnNumber], stringValue);
+                            String expression = comparatorTyp.toExpression(model.getColumnNames()[columnNumber], stringValue);
                             TableModelColumnFilter filter = TableModelColumnFilter.create(columnNumber, TableColumnType.String.getFormatter(),
                                     expression);
-                            List<TableModelRowFilterBase> filterList = TableProperties.getColumnFilterList(model);
-                            if (filterList == null) {
-                                filterList = new ArrayList<>();
-                                TableProperties.setColumnFilterList(model, filterList);
-                            }
                             filterList.add(filter);
-                            TableActivity.this.updateTableView(TableModelUtils.filter(TableActivity.this.modelLoaded,filterList));
+                            TableActivity.this.updateTableView(TableModelUtils.filter(TableActivity.this.modelLoaded, filterList));
                         }
-                        return true;
                     }
-                });
+                    return true;
+                }
+            });
 
-                // int menuRes = R.menu.cell_popup_numeric;
-                // popup.getMenuInflater().inflate(menuRes, popup.getMenu());
-                popup.show();
-                return true;
-            } // for (Integer id : menuDefintion.keySet())
+            // int menuRes = R.menu.cell_popup_numeric;
+            // popup.getMenuInflater().inflate(menuRes, popup.getMenu());
+            popup.show();
+            return true;
         } // if (formatter != null)
         return false;
     } // onCellLongClick
+
+    @NonNull
+    private PopupMenu createOnCellLongClickMenu(TextView tv, FormatterApi<?> formatter, String stringValue) {
+        List<ComparatorTyp> allowed = formatter.getAllowedComparators();
+        final TreeMap<Integer, String> menuDefinition = ComparatorTyp.createMenu(stringValue, allowed);
+
+        // translate non symbol menu titles
+        renameMenuItem(menuDefinition, ComparatorTyp.IS_NULL, getString(R.string.empty));
+        renameMenuItem(menuDefinition, ComparatorTyp.IS_NOT_NULL, getString(R.string.non_empty));
+
+        // convert into android menu
+        PopupMenu popup = new PopupMenu(this, tv);
+        Menu menu = popup.getMenu();
+        for (Integer id : menuDefinition.keySet()) {
+            ComparatorTyp comparatorTyp = ComparatorTyp.getComparatorTyp(id);
+            if (comparatorTyp != null) {
+                String title = comparatorTyp.toExpression("", stringValue);
+                // groupId,itemId,order,title)
+                menu.add(Menu.NONE, DYNAMIC_MENU_FIRST + id, 5, title);
+            }
+        } // for (Integer id : menuDefinition.keySet())
+
+        popup.getMenuInflater().inflate(R.menu.cell_popup_menu_common,
+                popup.getMenu());
+
+        return popup;
+    }
 
     /**
      *

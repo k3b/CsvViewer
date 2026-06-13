@@ -1,4 +1,4 @@
-package de.k3b.android.csvviewer.data.filter;
+package de.k3b.android.csvviewer.lib.data.filter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -52,13 +52,13 @@ public class ComparatorTypTests {
         Comparator<Object> comparator = formatter == null ? null : formatter.getComparator();
         boolean trueResult = typ.compareTo(comparator, trueFieldValue, compareValue);
         boolean falseResult = typ.compareTo(comparator, falseFieldValue, compareValue);
-        String toString = typ.toString(fieldName,compareValue, formatter).replace(" ","");
+        String toString = typ.toExpression(fieldName,compareValue, formatter).replace(" ","");
 
         assertEquals("typ", expectedTyp, typ);
         assertEquals("fieldName", expectedFieldName, fieldName);
         assertEquals("compareValue", expectedCompareValue, compareValue);
         assertTrue("trueResult", trueResult);
         assertFalse("falseResult", falseResult);
-        assertEquals("toString", expression, toString);
+        assertEquals("toExpression", expression, toString);
     }
 }
