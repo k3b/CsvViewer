@@ -141,14 +141,18 @@ public class TableModelUtils {
         }
         InMemoryTableModel result = sourceModel.createEmptyClone(name);
         int rowCount = sourceModel.getRowCount();
-        boolean hasIncludes = filterList != null && !filterList.isEmpty();
-        for(int rowNo = 0; rowNo < rowCount; rowNo++) {
-            Object[] row = sourceModel.getRow(rowNo);
-            if (hasIncludes && TableModelRowFilterBase.match(filterList, row) != null) {
-                result.addRow(row);
+        if (filterList != null && !filterList.isEmpty()) {
+
+            for (int rowNo = 0; rowNo < rowCount; rowNo++) {
+                Object[] row = sourceModel.getRow(rowNo);
+                if (TableModelRowFilterBase.matchAll(filterList, row)) {
+                    result.addRow(row);
+                }
             }
+            TableProperties.setColumnFilterList(result, filterList);
+        } else {
+            result = sourceModel;
         }
-        TableProperties.setColumnFilterList(result, filterList);
         return result;
     }
 

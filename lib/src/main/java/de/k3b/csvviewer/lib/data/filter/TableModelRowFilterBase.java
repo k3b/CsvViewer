@@ -40,18 +40,18 @@ public abstract class TableModelRowFilterBase {
     }
 
     /**
-     * @return first filter that matches its condition or null if not matching.
+     * @return true if all filters inside filterList matches its condition.
      */
-    public static @Nullable TableModelRowFilterBase match(@Nullable List<TableModelRowFilterBase> filterList, Object[] row) {
+    public static boolean matchAll(@Nullable List<TableModelRowFilterBase> filterList, Object[] row) {
         if (filterList != null) {
             for (int i = filterList.size() - 1; i >= 0; i--) {
                 TableModelRowFilterBase filter = filterList.get(i);
-                if (filter.match(row)) {
-                    return filter;
+                if (!filter.match(row)) {
+                    return false;
                 }
             }
         }
-        return null;
+        return true;
     }
 
     public String getColumnName(@Nullable String[] columnNames) {
