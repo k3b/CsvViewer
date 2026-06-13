@@ -183,7 +183,9 @@ public class TableActivity extends AppCompatActivity {
                         ComparatorTyp comparatorTyp = ComparatorTyp.getComparatorTyp(itemId - DYNAMIC_MENU_FIRST);
                         if (comparatorTyp != null) {
                             String expression = comparatorTyp.toExpression(model.getColumnNames()[columnNumber], stringValue);
-                            TableModelColumnFilter filter = TableModelColumnFilter.create(columnNumber, TableColumnType.String.getFormatter(),
+
+                            FormatterApi<?>  formatter = TableProperties.getColumnFormatter(TableActivity.this.modelLoaded, columnNumber);
+                            TableModelColumnFilter filter = TableModelColumnFilter.create(columnNumber, formatter,
                                     expression);
                             filterList.add(filter);
                             TableActivity.this.updateTableView(TableModelUtils.filter(TableActivity.this.modelLoaded, filterList));

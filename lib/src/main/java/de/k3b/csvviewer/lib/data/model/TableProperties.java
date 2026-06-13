@@ -6,6 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
+import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
@@ -25,9 +26,12 @@ public class TableProperties {
         model.putColumnProperty(columnNumber, PROPERTY_MAX_WIDTH, maxWidth);
     }
 
-    /** @return formatter that belongs to model[columnNumber] */
-    public static @Nullable FormatterApi<?> getColumnFormatter(@NonNull TableModelApi model, int columnNumber) {
-        return model.getColumnProperty(columnNumber, PROPERTY_COLUMN_DEFINITION);
+    /** @return formatter that belongs to model[columnNumber]. If not found return string-formatter */
+    public static @NonNull FormatterApi<?> getColumnFormatter(@NonNull TableModelApi model, int columnNumber) {
+        FormatterApi<?> formatter = model.getColumnProperty(columnNumber, PROPERTY_COLUMN_DEFINITION);
+        if (formatter == null) formatter = TableColumnType.String.getFormatter();
+        return formatter;
+
     }
 
     /** sets formatter for model[columnNumber] */
