@@ -22,11 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +36,7 @@ import de.k3b.android.csvviewer.util.IntentUtil;
 import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.DemoData;
 import de.k3b.csvviewer.lib.data.filter.ITableModelRowFilter;
+import de.k3b.csvviewer.lib.data.filter.TableModelRowContainsFilter;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
@@ -45,20 +46,48 @@ import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 
 public class TableActivity extends AppCompatActivity {
+    /** used for logging */
     private static final String TAG = TableActivity.class.getSimpleName();
+
+    /** after this time of no activity containsFilter is executed */
+    private static final int CONTAINS_FILTER_DELAY_MILLISECS = 500;
+
+    /** used to persist state change of state member */
+    private static final String KEY_INSTANCE_STATE = "STATE";
+
+    /** Activity state saved/retored on screen rotation */
+    private State state;
+
+    /** one second after stopping entering text into contains-search-field the filter is applied to loaded csv */
+    final private Handler executeDelayedContainsFilterHandler = new Handler(Looper.getMainLooper());
+
+    /** State saved/retored on screen rotation */
+    private static class State implements Serializable {
+        List<Integer> sortOrder = new ArrayList<>();
+        List<ITableModelRowFilter> filterList = new ArrayList<>();
+        TableModelRowContainsFilter containsFilter = null;
+        String containsFilterSeachText = null;
+
+        String lastCsvSource;
+
+        InMemoryTableModel createFilteredModel(InMemoryTableModel model) {
+            model.sortBy(sortOrder);
+            return TableModelUtils.filter(model, filterList);
+        }
+    }
 
     private RecyclerView recyclerView;
     private LinearLayout headerRow;
 
     /** last loaded csv data source for error message */
-    private String lastCsvSource;
     private InMemoryTableModel modelFiltered;
     private InMemoryTableModel modelLoaded;
-    private List<Integer> sortOrder = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // savedInstanceState.getString();
+        state = savedInstanceState == null ? new State() : (State) savedInstanceState.getSerializable(KEY_INSTANCE_STATE);
         setContentView(R.layout.activity_table);
 
         recyclerView = findViewById(R.id.tableRecycler);
@@ -77,10 +106,17 @@ public class TableActivity extends AppCompatActivity {
 
         TableModelUtils.convertColumns(model, true);
 
-        this.modelLoaded = model;
         getSupportActionBar().setTitle(model.getName());
+        this.modelLoaded = model.createClone(model.getName());
+        this.modelFiltered = state.createFilteredModel(modelLoaded);
 
-        updateTableView(model.createClone(model.getName()));
+        refilterTableView();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_INSTANCE_STATE, this.state);
     }
 
     @Override
@@ -107,25 +143,16 @@ public class TableActivity extends AppCompatActivity {
     }
 
     private void onActionClearFilterList() {
-        List<ITableModelRowFilter> filterList = getOrCreateFilterList(null);
-
-        filterList.clear();
-        TableActivity.this.updateTableView(TableModelUtils.filter(TableActivity.this.modelLoaded, filterList));
+        getFilterList().clear();
+        refilterTableView();
     }
 
-    private @NonNull List<ITableModelRowFilter> getOrCreateFilterList(@Nullable ITableModelRowFilter filterToAdd) {
-        List<ITableModelRowFilter> filterList = TableProperties.getColumnFilterList(this.modelFiltered);
-        if (filterList == null) {
-            filterList = new ArrayList<>();
-            TableProperties.setColumnFilterList(modelFiltered, filterList);
-        }
-        if (filterToAdd != null) filterList.add(filterToAdd);
-
-        return filterList;
+    private @NonNull List<ITableModelRowFilter> getFilterList() {
+        return state.filterList;
     }
 
-    private void updateTableView(@NonNull InMemoryTableModel modifiedModel) {
-        modelFiltered = modifiedModel;
+    private void refilterTableView() {
+        modelFiltered = TableModelUtils.filter(modelLoaded, getFilterList());
         updateTableView();
     }
 
@@ -141,8 +168,8 @@ public class TableActivity extends AppCompatActivity {
 
         for (int columnNumber = 0; columnNumber < columns.length; columnNumber++) {
             String text = columns[columnNumber];
-            if (sortOrder.contains(columnNumber)) text += " ^";
-            else if (sortOrder.contains(negate(columnNumber))) text += " v";
+            if (state.sortOrder.contains(columnNumber)) text += " ^";
+            else if (state.sortOrder.contains(negate(columnNumber))) text += " v";
 
             TextView tv = GuiHelper.createTextView(this, text, model.getColumnMaxWidth(columnNumber));
             tv.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
@@ -161,22 +188,22 @@ public class TableActivity extends AppCompatActivity {
         Integer descending = negate(columnNumber);
         Integer ascending = columnNumber;
         String dir = "";
-        if (sortOrder.remove(descending)) {
+        if (state.sortOrder.remove(descending)) {
             // descending -> nothing
             // removed from sorting
-        } else if (sortOrder.remove(ascending)) {
+        } else if (state.sortOrder.remove(ascending)) {
                 // ascending -> descending
-                sortOrder.add(0,descending);
+                state.sortOrder.add(0,descending);
                 dir ="v";
         } else {
             // nothing -> ascending
-            sortOrder.add(0,ascending);
+            state.sortOrder.add(0,ascending);
             dir ="^";
         }
 
-        this.modelFiltered.sortBy(sortOrder);
-        Log.i(TAG, modelFiltered.getColumnNames()[columnNumber] + dir + ": " + sortOrder);
-        updateTableView();
+        this.modelFiltered.sortBy(state.sortOrder);
+        Log.i(TAG, modelFiltered.getColumnNames()[columnNumber] + dir + ": " + state.sortOrder);
+        refilterTableView();
     }
 
     private Integer negate(int columnNumber) {
@@ -215,7 +242,8 @@ public class TableActivity extends AppCompatActivity {
                     } else {
                         ITableModelRowFilter filter = AndroidModelHelper.createFilterFromMenuClick(model, menuItemId, columnNumber, stringValue);
                         if (filter != null) {
-                            TableActivity.this.updateTableView(TableModelUtils.filter(TableActivity.this.modelLoaded, getOrCreateFilterList(filter)));
+                            getFilterList().add(filter);
+                            refilterTableView();
                         }
                     }
                     return true;
@@ -245,7 +273,7 @@ public class TableActivity extends AppCompatActivity {
         Uri uri = IntentUtil.getUri(intent);
         String html = null;
         if (uri != null) {
-            this.lastCsvSource = uri.toString();
+            this.state.lastCsvSource = uri.toString();
             try (Reader csvReader = new InputStreamReader(getContentResolver().openInputStream(uri))) {
                 try(Csv2TableModel parser = new Csv2TableModel(options)) {
                     DocumentFile documentFile = DocumentFile.fromSingleUri(this, uri);
@@ -254,7 +282,7 @@ public class TableActivity extends AppCompatActivity {
                 }
             }
         } else {
-            this.lastCsvSource = "";
+            this.state.lastCsvSource = "";
             String csvText = DemoData.demoCsv;
             Object extraValue = IntentUtil.getExtra(intent, Intent.EXTRA_TEXT);
             if (extraValue != null) {
@@ -283,14 +311,20 @@ public class TableActivity extends AppCompatActivity {
         return model;
     }
 
-    final private Handler executeDelayedHandler = new Handler(Looper.getMainLooper());
-    private Runnable executeDelayedRunnable = new Runnable() {
+    final private Runnable executeDelayedSetContainsFilter = new Runnable() {
         @Override
         public void run() {
+            List<ITableModelRowFilter> filterList = getFilterList();
+            if (state.containsFilter != null) filterList.remove(state.containsFilter);
 
+            state.containsFilter = null;
+            if (state.containsFilterSeachText != null && !state.containsFilterSeachText.isEmpty()) {
+                state.containsFilter = new TableModelRowContainsFilter(TableProperties.getColumnFormatters(modelLoaded), state.containsFilterSeachText);
+                filterList.add(state.containsFilter);
+            }
+            refilterTableView();
         }
     };
-    private String seachText = null;
 
     private void initSearchView(Menu menu) {
         MenuItem searchItem = menu.findItem(R.id.search);
@@ -304,7 +338,7 @@ public class TableActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // Handle search submit
-                Log.i(TAG,"onQueryTextSubmit(" + query +")");
+                // Log.i(TAG,"onQueryTextSubmit(" + query +")");
                 // searchView.setIconified(true);
                 return false;
             }
@@ -312,21 +346,11 @@ public class TableActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(final String newText) {
                 // Cancel previous pending task
-                    executeDelayedHandler.removeCallbacks(executeDelayedRunnable);
+                executeDelayedContainsFilterHandler.removeCallbacks(executeDelayedSetContainsFilter);
 
-                if (seachText!=null && !seachText.trim().isEmpty()) {
-                    // Create new task
-/*
-                    String query = s.toExpression();
-                    executeSearch(query); // your function
+                state.containsFilterSeachText = newText;
+                executeDelayedContainsFilterHandler.postDelayed(executeDelayedSetContainsFilter, CONTAINS_FILTER_DELAY_MILLISECS);
 
- */
-
-                    // Delay execution by 1 second
-                    executeDelayedHandler.postDelayed(executeDelayedRunnable, 1000);
-                }
-
-                Log.i(TAG,"onQueryTextChange(" + newText +")");
                 return false;
             }
         });

@@ -4,24 +4,22 @@ import org.jspecify.annotations.Nullable;
 
 import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
-import de.k3b.csvviewer.lib.data.model.TableModelApi;
-import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 /** {@link #match(Object[])} returns true if every token from {@link #lowerCaseSearchValues} is contained in
  * one cell of current row (case insensitive). */
 public class TableModelRowContainsFilter implements ITableModelRowFilter {
     public static final String COMPARATOR_ID = ComparatorTyp.CONTAINS.getCode();
-    private final TableModelApi model;
+    private final FormatterApi<?>[] formatters;
     private final String[] lowerCaseSearchValues;
     private final String name;
 
     /**
-     *
-     * @param model used to format the current row.
+     * create filter for seachValue.
+     * @param formatters used to format the current row.
      * @param seachValue " " delimited list of tokens that must be in every cell of row.
      */
-    public TableModelRowContainsFilter(TableModelApi model, String seachValue) {
-        this.model = model;
+    public TableModelRowContainsFilter(@Nullable FormatterApi<?>[] formatters, String seachValue) {
+        this.formatters = formatters;
         this.name = COMPARATOR_ID + seachValue;
         lowerCaseSearchValues = seachValue == null ? null :  seachValue.trim().toLowerCase().split(" ");
     }
@@ -49,9 +47,9 @@ public class TableModelRowContainsFilter implements ITableModelRowFilter {
         for (int columnNumber = 0; columnNumber < row.length; columnNumber++)
         {
             Object cell = row[columnNumber];
-            if (cell != null) {
-                FormatterApi<?> formatter = TableProperties.getColumnFormatter(model, columnNumber);
-                String stringValue = formatter.formatObject(cell);
+            if (cell != null && columnNumber < formatters.length) {
+                FormatterApi<?> formatter = formatters[columnNumber];
+                String stringValue = formatter == null ? cell.toString() : formatter.formatObject(cell);
                 result[columnNumber] = stringValue == null ? null : stringValue.trim().toLowerCase();
             }
         }

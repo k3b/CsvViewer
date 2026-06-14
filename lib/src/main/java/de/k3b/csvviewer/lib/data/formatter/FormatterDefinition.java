@@ -1,6 +1,8 @@
 package de.k3b.csvviewer.lib.data.formatter;
 
-public interface FormatterDefinition {
+import java.io.Serializable;
+
+public interface FormatterDefinition extends Serializable {
     String getElementClassName();
 
     String getFormatPattern();

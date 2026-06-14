@@ -1,7 +1,18 @@
 ### next
-    gui-filter funktioniert noch nicht richtig.
+* on rotattion dataloss
+* App with title, menu, quicksearch
 
 ### api
+
+Build: 
+	requires android17
+	add gradle plugin https://github.com/uber/NullAway to detect JSpecify errors
+	non android: 
+		https://github.com/uber/NullAway#gradle example https://github.com/uber/NullAway/blob/master/sample-app/build.gradle 
+		must use old version  Alternately, 2.x versions
+	
+
+---------
 
 > ColumnModel
 * Domain (or logical) ColumnModel is defined by the Domain (i.e. AnalyserReport, ConfigurationModel)
@@ -88,15 +99,7 @@ ConfigurationModel (s=save, r=read)
 ### Android gui
 
 v sort via header
-- !!! TODO cell contextmenu
----- !!! todo filter
-- is Boolean : true/false/null/non-null
-- is String : =/!=/null/non-null
-- is Number(int, long, double)/Date : =/<=/>=/</>/!=/null/non-null
-
-
-
-
+v filter via cell contextmenu
 - save when rotation
 
 ### html gui

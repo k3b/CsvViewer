@@ -3,7 +3,9 @@ package de.k3b.csvviewer.lib.data.model;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public interface ColumnModel {
+import java.io.Serializable;
+
+public interface ColumnModel extends Serializable {
     @NonNull String[] getColumnNames();
 
     @Nullable default Object getDomainColumnValue(@Nullable Object[] row, int columnNumber) {

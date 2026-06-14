@@ -3,11 +3,12 @@ package de.k3b.csvviewer.lib.data.model;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CsvFileColumnModel implements ColumnModel {
+public class CsvFileColumnModel implements Serializable,ColumnModel {
     public static class Builder {
         @NonNull private final List<String> csvColumnNames = new ArrayList<>();
         @NonNull private final ColumnModel domainColumnModel;

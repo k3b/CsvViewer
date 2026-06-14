@@ -6,6 +6,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.TreeMap;
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
-public enum ComparatorTyp {
+public enum ComparatorTyp implements Serializable {
     GREATER_OR_EQUAL(0, ">=", (c, v1, v2) -> c.compare(v1, v2) >= 0),
     LESS_OR_EQUAL(1, "<=", (c, v1, v2) -> c.compare(v1, v2) <= 0),
     NOT_EQUALS(2, "!=", (c, v1, v2) -> c.compare(v1, v2) != 0),

@@ -74,7 +74,7 @@ public class TableModelUtilsTest {
         InMemoryTableModel model = getDemoModel(DemoData.demoCsvName);
         TableModelUtils.printDebug2Console(" before filtering", model);
 
-        ITableModelRowFilter filter = new TableModelRowContainsFilter(model, "2001 suSI");
+        ITableModelRowFilter filter = new TableModelRowContainsFilter(TableProperties.getColumnFormatters(model), "2001 suSI");
 
         InMemoryTableModel filteredModel = TableModelUtils.filter(model, filter);
         TableModelUtils.printDebug2Console(" after filtering", filteredModel);

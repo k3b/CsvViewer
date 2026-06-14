@@ -7,6 +7,8 @@
 #########################################################*/
 package de.k3b.csvviewer.lib.csv;
 
+import java.io.Serializable;
+
 import de.k3b.csvviewer.lib.util.StringUtil;
 
 /**
@@ -15,7 +17,8 @@ import de.k3b.csvviewer.lib.util.StringUtil;
  * Implementation detail for csv support. This file should be not have dependencies to
  * android.
  */
-public class CsvConfig {
+
+public class CsvConfig implements Serializable {
     public static final CsvConfig DEFAULT = new CsvConfig(',', '"');
     public static final char[] CSV_DELIMITER_CANDIDATES = {DEFAULT.getFieldDelimiterChar(), ';', '\t', ':', '|'};
     public static final char[] CSV_QUOTE_CANDIDATES = {DEFAULT.getQuoteChar(), '\''};
