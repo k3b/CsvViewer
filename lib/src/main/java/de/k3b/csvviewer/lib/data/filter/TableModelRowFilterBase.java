@@ -6,7 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /** used to filter a TableModel by column values */
-public abstract class TableModelRowFilterBase {
+public abstract class TableModelRowFilterBase implements ITableModelRowFilter {
     protected final int columnNumber;
 
     TableModelRowFilterBase(int columnNumber) {
@@ -19,6 +19,7 @@ public abstract class TableModelRowFilterBase {
         return columnNumber;
     }
 
+    @Override
     public boolean match(Object[] row) {
         return matchImpl(row[columnNumber]);
     }
@@ -39,21 +40,6 @@ public abstract class TableModelRowFilterBase {
         return found;
     }
 
-    /**
-     * @return true if all filters inside filterList matches its condition.
-     */
-    public static boolean matchAll(@Nullable List<TableModelRowFilterBase> filterList, Object[] row) {
-        if (filterList != null) {
-            for (int i = filterList.size() - 1; i >= 0; i--) {
-                TableModelRowFilterBase filter = filterList.get(i);
-                if (!filter.match(row)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     public String getColumnName(@Nullable String[] columnNames) {
         String columnName;
         if (columnNames != null && columnNumber >= 0 && columnNumber < columnNames.length) {
@@ -64,7 +50,7 @@ public abstract class TableModelRowFilterBase {
         return columnName;
     }
 
-    protected @NonNull StringBuilder toStringBuilder(@Nullable String[] columnNames, Object exampleValue) {
+    protected @NonNull StringBuilder toExpression(@Nullable String[] columnNames, Object exampleValue) {
         StringBuilder result = new StringBuilder()
                 .append("Filter: ")
                 .append(getColumnName(columnNames))
@@ -77,5 +63,4 @@ public abstract class TableModelRowFilterBase {
         return result;
     }
 
-    public abstract @NonNull String toString(@Nullable String[] columnNames);
 }

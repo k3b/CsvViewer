@@ -19,8 +19,9 @@ import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
 import de.k3b.csvviewer.lib.data.configuration.FormatterConfigurationProcessor;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
+import de.k3b.csvviewer.lib.data.filter.ITableModelRowFilter;
+import de.k3b.csvviewer.lib.data.filter.TableFilterFactory;
 import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
-import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.formatter.FormatterDefinition;
 import de.k3b.csvviewer.lib.data.formatter.FormatterDefinitionDto;
@@ -128,15 +129,15 @@ public class TableModelUtils {
     }
 
     public static @NonNull InMemoryTableModel filter(@NonNull InMemoryTableModel sourceModel,
-                                                     @Nullable TableModelRowFilterBase filter) {
+                                                     @Nullable ITableModelRowFilter filter) {
         return TableModelUtils.filter(sourceModel, Collections.singletonList(filter));
     }
 
     public static @NonNull InMemoryTableModel filter(@NonNull InMemoryTableModel sourceModel,
-                                                     @Nullable List<@Nullable TableModelRowFilterBase> filterList) {
+                                                     @Nullable List<@Nullable ITableModelRowFilter> filterList) {
         String name = sourceModel.getName() + "->Filtered";
         if (filterList != null && filterList.size() == 1) {
-            TableModelRowFilterBase filter = filterList.get(0);
+            ITableModelRowFilter filter = filterList.get(0);
             if (filter != null) name += "[" + filter +"]";
         }
         InMemoryTableModel result = sourceModel.createEmptyClone(name);
@@ -145,7 +146,7 @@ public class TableModelUtils {
 
             for (int rowNo = 0; rowNo < rowCount; rowNo++) {
                 Object[] row = sourceModel.getRow(rowNo);
-                if (TableModelRowFilterBase.matchAll(filterList, row)) {
+                if (TableFilterFactory.matchAll(filterList, row)) {
                     result.addRow(row);
                 }
             }
@@ -158,7 +159,7 @@ public class TableModelUtils {
 
     public static void applyConfiguration(@NonNull InMemoryTableModel targetModel, @NonNull ConfigurationModel configModel) {
         int col_configType = ConfigurationModel.DomainColumnModel.col_configType;
-        TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
+        ITableModelRowFilter filter = TableFilterFactory.create(col_configType, TableColumnType.String.getFormatter(),
                 FormatterConfigurationProcessor.CONFIGURATION_TYPE);
         InMemoryTableModel columnDefinitions = TableModelUtils.filter(configModel, filter);
 
@@ -209,9 +210,9 @@ public class TableModelUtils {
     public static void printDebug2Console(String header, @NonNull TableModelApi model) {
         System.out.println("# '" + model.getName() + "' " + header);
 
-        List<TableModelRowFilterBase> filterList = TableProperties.getColumnFilterList(model);
+        List<ITableModelRowFilter> filterList = TableProperties.getColumnFilterList(model);
         if (filterList != null) {
-            for(TableModelRowFilterBase filter : filterList) {
+            for(ITableModelRowFilter filter : filterList) {
                 System.out.println("# filter '" + filter + "' " + header);
             }
         }

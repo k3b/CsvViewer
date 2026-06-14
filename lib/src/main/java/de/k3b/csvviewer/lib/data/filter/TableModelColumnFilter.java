@@ -20,19 +20,17 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
     @Nullable private final Object compareValue;
     @Nullable private final String compareValueString;
 
-    /** @return filter for columnNumber, formatter, expression */
-    public static TableModelColumnFilter create(String[] columnNames, @NonNull FormatterApi<?>[] formatters, @NonNull String expression) {
+    public static @Nullable TableModelColumnFilter createImpl(String[] columnNames, @NonNull FormatterApi<?>[] formatters, @NonNull String expression) {
         TableModelColumnFilter result = null;
 
         ComparatorTyp typ = ComparatorTyp.parseExpression(expression);
         String fieldName = typ== null ? null : typ.getFieldName(expression);
         int columnNumber = fieldName == null ? -1 :  new StringIgnoreCaseComparator().indexOf(columnNames, fieldName);
-        if (columnNumber >= 0) result = create(columnNumber, formatters[columnNumber], expression);
+        if (columnNumber >= 0) result = createImpl(columnNumber, formatters[columnNumber], expression);
         return result;
     }
 
-    /** @return filter for columnNumber, formatter, expression */
-    public static TableModelColumnFilter create(int columnNumber, @NonNull FormatterApi<?> formatter, @NonNull String expression) {
+    public static @Nullable TableModelColumnFilter createImpl(int columnNumber, @NonNull FormatterApi<?> formatter, @NonNull String expression) {
         TableModelColumnFilter result = null;
         ComparatorTyp typ = ComparatorTyp.parseExpression(expression);
         if (typ != null) {
@@ -55,8 +53,8 @@ public class TableModelColumnFilter extends TableModelRowFilterBase {
         return comparatorTyp.compareTo(this.comparator, value, this.compareValue);
     }
 
-    public @NonNull String toString(@Nullable String[] columnNames) {
-        StringBuilder result = super.toStringBuilder(columnNames, getCompareValue());
+    public @NonNull String toExpression(@Nullable String[] columnNames) {
+        StringBuilder result = super.toExpression(columnNames, getCompareValue());
 
         result
             .append(comparatorTyp.toExpression("", compareValueString))

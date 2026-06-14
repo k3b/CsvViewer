@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.k3b.csvviewer.lib.data.comparator.TableModelRowComparator;
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
+import de.k3b.csvviewer.lib.data.filter.ITableModelRowFilter;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 
@@ -47,12 +48,12 @@ public class TableProperties {
     }
 
     /** @return filterList that belongs to model */
-    public static @Nullable List<@Nullable TableModelRowFilterBase> getColumnFilterList(@NonNull TableModelApi model) {
+    public static @Nullable List<@Nullable ITableModelRowFilter> getColumnFilterList(@NonNull TableModelApi model) {
         return model.getColumnProperty(-1, PROPERTY_FILTER);
     }
 
     /** sets filterList for model */
-    public static void setColumnFilterList(@NonNull TableModelApi model, @Nullable List<@Nullable TableModelRowFilterBase>  filterList) {
+    public static void setColumnFilterList(@NonNull TableModelApi model, @Nullable List<@Nullable ITableModelRowFilter>  filterList) {
         model.putColumnProperty(-1, PROPERTY_FILTER, filterList);
     }
 

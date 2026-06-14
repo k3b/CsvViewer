@@ -5,12 +5,11 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-
 import de.k3b.csvviewer.lib.Global;
 import de.k3b.csvviewer.lib.data.comparator.StringIgnoreCaseComparator;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel.DomainColumnModel;
-import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
+import de.k3b.csvviewer.lib.data.filter.ITableModelRowFilter;
+import de.k3b.csvviewer.lib.data.filter.TableFilterFactory;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.model.TableModelUtils;
@@ -56,7 +55,7 @@ public abstract class ConfigurationProcessorBase<T> {
     public T applyConfiguration(@NonNull InMemoryTableModel targetModel) {
         int col_configType = ConfigurationModel.DomainColumnModel.col_configType;
         String expression = this.configurationModel.getColumnNames()[col_configType] + "=" + configurationType;
-        TableModelColumnFilter filter = TableModelColumnFilter.create(col_configType, TableColumnType.String.getFormatter(),
+        ITableModelRowFilter filter = TableFilterFactory.create(col_configType, TableColumnType.String.getFormatter(),
                 expression);
 
         InMemoryTableModel configurationRows = TableModelUtils.filter(this.configurationModel, filter);

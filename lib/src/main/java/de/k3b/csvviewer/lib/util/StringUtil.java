@@ -3,7 +3,7 @@ package de.k3b.csvviewer.lib.util;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class StringUtil {
+public class StringUtil  {
     /**
      * Modified version of org.apache.commons.lang3.StringUtils#indexOfAny.
      * <p>

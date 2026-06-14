@@ -11,9 +11,10 @@ import de.k3b.csvviewer.lib.csv.Csv2TableModel;
 import de.k3b.csvviewer.lib.csv.DemoData;
 import de.k3b.csvviewer.lib.data.configuration.FormatterConfigurationProcessor;
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
+import de.k3b.csvviewer.lib.data.filter.ITableModelRowFilter;
+import de.k3b.csvviewer.lib.data.filter.TableFilterFactory;
 import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
-import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.model.TableModelUtils;
 import de.k3b.csvviewer.lib.data.configuration.ConfigurationModel;
@@ -61,7 +62,7 @@ public class TableModelUtilsTest {
         TableModelUtils.printDebug2Console(" before filtering", model);
 
         String expression = "name=peter";
-        TableModelColumnFilter filter = TableModelColumnFilter.create(1, TableColumnType.String.getFormatter(),
+        ITableModelRowFilter filter = TableFilterFactory.create(1, TableColumnType.String.getFormatter(),
                 expression);
 
         InMemoryTableModel filteredModel = TableModelUtils.filter(model, filter);

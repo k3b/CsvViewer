@@ -6,6 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.filter.ITableModelRowFilter;
 import de.k3b.csvviewer.lib.data.filter.TableModelRowFilterBase;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 
@@ -13,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** {@link ConfigurationModel} interpreter for filters based on {@link TableModelRowFilterBase}  */
-public class FilterConfigurationProcessor extends ConfigurationProcessorBase<@Nullable List<TableModelRowFilterBase>> {
+public class FilterConfigurationProcessor extends ConfigurationProcessorBase<@Nullable List<ITableModelRowFilter>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
     public FilterConfigurationProcessor(@NonNull ConfigurationModel target, @NonNull String configurationType) {
         super(target, configurationType);
@@ -25,7 +26,7 @@ public class FilterConfigurationProcessor extends ConfigurationProcessorBase<@Nu
      * @param configValue
      */
     @Override
-    public void addConfig(@Nullable List<TableModelRowFilterBase> configValue) {
+    public void addConfig(@Nullable List<ITableModelRowFilter> configValue) {
 
     }
 
