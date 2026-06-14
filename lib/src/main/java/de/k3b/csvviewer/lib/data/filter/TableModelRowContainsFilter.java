@@ -2,6 +2,7 @@ package de.k3b.csvviewer.lib.data.filter;
 
 import org.jspecify.annotations.Nullable;
 
+import de.k3b.csvviewer.lib.data.comparator.ComparatorTyp;
 import de.k3b.csvviewer.lib.data.formatter.FormatterApi;
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
 import de.k3b.csvviewer.lib.data.model.TableProperties;
@@ -9,6 +10,7 @@ import de.k3b.csvviewer.lib.data.model.TableProperties;
 /** {@link #match(Object[])} returns true if every token from {@link #lowerCaseSearchValues} is contained in
  * one cell of current row (case insensitive). */
 public class TableModelRowContainsFilter implements ITableModelRowFilter {
+    public static final String COMPARATOR_ID = ComparatorTyp.CONTAINS.getCode();
     private final TableModelApi model;
     private final String[] lowerCaseSearchValues;
     private final String name;
@@ -20,7 +22,7 @@ public class TableModelRowContainsFilter implements ITableModelRowFilter {
      */
     public TableModelRowContainsFilter(TableModelApi model, String seachValue) {
         this.model = model;
-        this.name = "contains " + seachValue;
+        this.name = COMPARATOR_ID + seachValue;
         lowerCaseSearchValues = seachValue == null ? null :  seachValue.trim().toLowerCase().split(" ");
     }
 
@@ -37,7 +39,7 @@ public class TableModelRowContainsFilter implements ITableModelRowFilter {
 
     private boolean contains(String seachValue, String[] row) {
         for(String cell : row) {
-            if (cell.contains(seachValue)) return true;
+            if (cell != null && cell.contains(seachValue)) return true;
         }
         return false;
     }

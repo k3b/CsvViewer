@@ -23,11 +23,15 @@ public enum ComparatorTyp {
     GREATER_THAN(5, ">", (c, v1, v2) -> c.compare(v1, v2) > 0),
     IS_NOT_NULL(6, "!empty", (c, v1, v2) -> v1 != null),
     IS_NULL(7, "empty", (c, v1, v2) -> v1 == null),
+
+    // non compare based so compare does not work here
+    CONTAINS(8,"🔎 " , (c, v1, v2) -> true)
     ;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_CONFIG);
 
     private final int menuOffset;
+
     private final @NonNull String code;
     private final @NonNull CompareResult compareResult;
 
@@ -106,6 +110,8 @@ public enum ComparatorTyp {
         }
         return null;
     }
+
+    public @NonNull String getCode() {return code;}
 
     /** creates a menu with id and title */
     @NonNull

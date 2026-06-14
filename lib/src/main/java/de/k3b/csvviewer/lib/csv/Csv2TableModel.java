@@ -15,7 +15,9 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import de.k3b.csvviewer.lib.Global;
+import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
+import de.k3b.csvviewer.lib.data.model.TableProperties;
 
 public class Csv2TableModel implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Global.TAG_LIB);
@@ -64,6 +66,7 @@ public class Csv2TableModel implements AutoCloseable {
                 String[] headers = readNextCsvColumnLine();
 
                 if (headers != null && headers.length > 0) {
+                    boolean mustIncludeIdFormatter = false;
                     int idColumn = 0;
                     if (withIdColumn) {
                         idColumn = find(headers, COL_ID);
@@ -73,6 +76,7 @@ public class Csv2TableModel implements AutoCloseable {
                             System.arraycopy(headers, 0, newArray, 1, headers.length);
                             newArray[0] = COL_ID;
                             headers = newArray;
+                            mustIncludeIdFormatter = true;
                         } else if (idColumn > 0) {
                             // swap position 0 and idColumn
                             headers[idColumn] = headers[0];
@@ -81,6 +85,11 @@ public class Csv2TableModel implements AutoCloseable {
                     }
 
                     tableModel = new InMemoryTableModel(name, headers);
+                    if (mustIncludeIdFormatter) {
+                        // because integer-ids=rownumber are added.
+                        TableProperties.setColumnFormatter(tableModel, 0, TableColumnType.Integer.getFormatter());
+                    }
+
                     String[] rawRow;
                     while (null != (rawRow = readNextCsvColumnLine())) {
                         Object[] row;

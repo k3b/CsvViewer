@@ -1,5 +1,6 @@
 package de.k3b.android.csvviewer.lib.data;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import de.k3b.csvviewer.lib.data.configuration.FormatterConfigurationProcessor;
 import de.k3b.csvviewer.lib.data.configuration.TableColumnType;
 import de.k3b.csvviewer.lib.data.filter.ITableModelRowFilter;
 import de.k3b.csvviewer.lib.data.filter.TableFilterFactory;
-import de.k3b.csvviewer.lib.data.filter.TableModelColumnFilter;
+import de.k3b.csvviewer.lib.data.filter.TableModelRowContainsFilter;
 import de.k3b.csvviewer.lib.data.model.InMemoryTableModel;
 import de.k3b.csvviewer.lib.data.analyser.AnalyserReport;
 import de.k3b.csvviewer.lib.data.model.TableModelUtils;
@@ -54,21 +55,32 @@ public class TableModelUtilsTest {
 
     }
 
-    /** treat loaded demo model via analyser and apply config to reloaded demo model
-     * via FormatterConfigurationProcessor. */
     @Test
-    public void filtering() throws IOException {
+    public void filteringByColumn() throws IOException {
         InMemoryTableModel model = getDemoModel(DemoData.demoCsvName);
         TableModelUtils.printDebug2Console(" before filtering", model);
 
-        String expression = "name=peter";
+        String expression = "name = peter";
         ITableModelRowFilter filter = TableFilterFactory.create(1, TableColumnType.String.getFormatter(),
                 expression);
 
         InMemoryTableModel filteredModel = TableModelUtils.filter(model, filter);
         TableModelUtils.printDebug2Console(" after filtering", filteredModel);
-
+        Assert.assertEquals(1, filteredModel.getRowCount());
     }
+
+    @Test
+    public void filteringByRowContains() throws IOException {
+        InMemoryTableModel model = getDemoModel(DemoData.demoCsvName);
+        TableModelUtils.printDebug2Console(" before filtering", model);
+
+        ITableModelRowFilter filter = new TableModelRowContainsFilter(model, "2001 suSI");
+
+        InMemoryTableModel filteredModel = TableModelUtils.filter(model, filter);
+        TableModelUtils.printDebug2Console(" after filtering", filteredModel);
+        Assert.assertEquals(1, filteredModel.getRowCount());
+    }
+
     /** treat loaded demo model via analyser and apply config to reloaded demo model
      * via FormatterConfigurationProcessor. */
     @Test
