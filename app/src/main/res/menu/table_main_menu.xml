@@ -9,7 +9,7 @@
         app:showAsAction="collapseActionView|ifRoom" />
     <item
         android:id="@+id/action_clear_filter"
-        android:title="@string/reset_filter"
+        android:title="@string/cmd_reset_filter"
         />
 </menu>
 

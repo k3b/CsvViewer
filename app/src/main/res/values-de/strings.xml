@@ -21,4 +21,8 @@ this program. If not, see <http://www.gnu.org/licenses/>
 -->
 <resources>
     <string name="err_exception">Fehler beim laden %1$s und csv verarbeiten: %2$s.</string>
+    <string name="cmd_reset_filter">Filter entfernen</string>
+    <string name="filter_text_empty">Leer</string>
+    <string name="filter_text_non_empty">Nicht-Leer</string>
+
 </resources>
