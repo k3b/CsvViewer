@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/* 
+ * This file is part of "CsvViewer" .
+ *
+ * Localized Aboutbox within the app
+ */
+ -->
+<resources>
+  <!--!!generated from .../values-de/fdroid.xml!!-->
+  <string name="about_content_about"><![CDATA["
+<h1>CsvViewer</h1>
+<br />
+<h2>Android App zum anzeigen/sortieren/auffinden von CSV Daten in einer Table.</h2>
+<br />
+<h2>Wie benutzt man CsvViewer?</h2>
+<ul>
+<li>Öffnen Sie in einem Dateimanager eine Datei, die auf '.csv' endet.</li>
+<li>Wählen Sie im 'Öffnen mit'-Dialog 'CsvViewer' aus.</li>
+<li>Wird CsvViewer ohne eine '.csv'-Datei gestartet, werden Beispiel-Daten angezeigt.</li>
+<li>Klicken Sie auf eine Spaltenüberschrift, um die Tabelle zu sortieren. (^) bedeutet Sortierung von klein nach groß.  (v) bedeutet Sortierung von groß nach klein.</li>
+<li>Ein langer Klick auf eine Tabellenzelle öffnet ein Kontextmenü, um die Tabelle nach dieser Spalte zu filtern.</li>
+<li>Ein Klick auf den Such-Button '🔍' aktiviert die 'Zeilen enthalten'-Suche</li>
+<li>Beispiel: '🔍 2001 SuSI' zeigt alle Zeilen an, die (ohne Groß-/Kleinschreibung zu beachten) in irgendeiner Spalte die Begriffe '2001' und 'susi' enthalten</li>
+</ul>
+<h2>Funktionen</h2>
+<ul>
+<li>Automatische Erkennung des CSV-Formats</li>
+<li>Unterstützte Trennzeichen: ; , : | oder <Tab></li>
+<li>Unterstützte optionale Anführungszeichen: “ '</li>
+<li>Die erste CSV-Zeile wird als Kopfzeile verwendet</li>
+<li>Automatische Erkennung des Spaltentyps</li>
+<li>Datum/Uhrzeit bei Format 'yyyy-MM-dd HH:mm:ss' Beispiel: '2026-12-24 17:59:55'</li>
+<li>Ja/Nein (Boolean), wenn nur 2 unterschiedliche Werte vorhanden sind</li>
+<li>Zahlen (Integer/Long)</li>
+<li>(Noch nicht implementiert): Dezimalzahlen (Double)</li>
+<li>String, wenn kein anderer Typ erkannt wird</li>
+</ul>
+<h2>Anforderungen</h2>
+<ul>
+<li>MinSdk = 21 = Lollipop (oder höher)</li>
+<li>Genügend Speicher, um die komplette CSV-Datei im Arbeitsspeicher zu halten.</li>
+</ul>
+<br />
+<br />
+<br />
+<br />
+  "]]></string>
+</resources>

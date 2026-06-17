@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?><!--
+/*
+ * Translation to de (German) 2020: franconian, 2015-2020 by k3b and v133.
+ *
+ * These Texts will be shown as programdescription in the fdroid app store
+ * https://f-droid.org/app/de.k3b.android.CsvViewer.
+ *
+ * the content will be copied to .../fastlane/metadata/android/*.txt
+ *
+ * This file is part of "CsvViewer" .
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>
+ */
+ -->
+<resources>
+    <!-- Optional: This becomes .../fastlane/metadata/android/title.txt.
+      See https://f-droid.org/docs/Build_Metadata_Reference/#Name
+      Example: If spanish title="Manejador de fotos" then the App name/title in F-Droid-store becomes "CsvViewer (Manejador de fotos)" -->
+    <string name="title">CsvViewer</string>
+    <!-- This becomes .../fastlane/metadata/android/short_description.txt.
+    See https://f-droid.org/docs/Build_Metadata_Reference/#Summary -->
+    <string name="short_description">Android App zum anzeigen/sortieren/auffinden von CSV Daten in einer Table.</string>
+    <!-- This becomes .../fastlane/metadata/android/full_description.txt.
+    See https://f-droid.org/docs/Build_Metadata_Reference/#Description -->
+    <string name="full_description"><![CDATA["
+## Wie benutzt man CsvViewer?
+* Öffnen Sie in einem Dateimanager eine Datei, die auf '.csv' endet.
+  * Wählen Sie im 'Öffnen mit'-Dialog 'CsvViewer' aus.
+* Wird CsvViewer ohne eine '.csv'-Datei gestartet, werden Beispiel-Daten angezeigt.
+* Klicken Sie auf eine Spaltenüberschrift, um die Tabelle zu sortieren. (^) bedeutet Sortierung von klein nach groß.  (v) bedeutet Sortierung von groß nach klein.
+* Ein langer Klick auf eine Tabellenzelle öffnet ein Kontextmenü, um die Tabelle nach dieser Spalte zu filtern.
+* Ein Klick auf den Such-Button '🔍' aktiviert die 'Zeilen enthalten'-Suche
+  * Beispiel: '🔍 2001 SuSI' zeigt alle Zeilen an, die (ohne Groß-/Kleinschreibung zu beachten) in irgendeiner Spalte die Begriffe '2001' und 'susi' enthalten
+
+## Funktionen
+* Automatische Erkennung des CSV-Formats
+  * Unterstützte Trennzeichen: ; , : | oder <Tab>
+  * Unterstützte optionale Anführungszeichen: “ '
+  * Die erste CSV-Zeile wird als Kopfzeile verwendet
+* Automatische Erkennung des Spaltentyps
+  * Datum/Uhrzeit bei Format 'yyyy-MM-dd HH:mm:ss' Beispiel: '2026-12-24 17:59:55'
+  * Ja/Nein (Boolean), wenn nur 2 unterschiedliche Werte vorhanden sind
+  * Zahlen (Integer/Long)
+  * (Noch nicht implementiert): Dezimalzahlen (Double)
+  * String, wenn kein anderer Typ erkannt wird
+
+## Anforderungen
+* MinSdk = 21 = Lollipop (oder höher)
+* Genügend Speicher, um die komplette CSV-Datei im Arbeitsspeicher zu halten.
+"]]></string>
+</resources>

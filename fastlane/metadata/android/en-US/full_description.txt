@@ -1,0 +1,28 @@
+<h2>How to use CsvViewer?</h2>
+<ul>
+<li>Inside a filemanager, click on a file that ends with '.csv'.</li>
+<li>In the 'Open with' popup select CsvViewer'.</li>
+<li>If CsvViewer is startet without  a '.csv' file it shows some demo data.</li>
+<li>Click a header to sort the table. (^ means sort from small to big; v sort from big to small)</li>
+<li>Long click into table cell will open a context menu to filter the table by column.</li>
+<li>Clicking on the search button '🔍' activates the 'row contains search'</li>
+<li>Example '🔍 2001 SuSI' will show all rows that contain (case insentive) in any column '2001' and 'susi'</li>
+</ul>
+<h2>Features</h2>
+<ul>
+<li>Automatic csv format detection,</li>
+<li>Supported delimiters: ;,:| or <tab></li>
+<li>Supported optional Quoting: “'</li>
+<li>First csv row is used as header</li>
+<li>automatic column type detection.</li>
+<li>Date/Time if format is 'yyyy-MM-dd HH:mm:ss' (Example '2026-12-24 17:59:55')</li>
+<li>Yes/No (aka Boolean) if there are only 2 different values.</li>
+<li>Numbers (Integer/Long)</li>
+<li>(not implemented yet): Decimal number (Double)</li>
+<li>String if no other type is detected.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>MinSdk=21=LOLLIPOP (or later)</li>
+<li>enough memory to keep the complete csv file in memory</li>
+</ul>
