@@ -47,6 +47,13 @@ public interface TableModelApi {
      */
     @Nullable Object getValueAt(int rowNumber, int columnNumber);
 
+    /**
+     * Returns the cell values at <code>rowNumber</code>.
+     * <p>
+     *
+     * @param   rowNumber             the rowNumber whose value is to be queried
+     * @return  the cell values at <code>rowNumber</code>.
+     */
     @NonNull Object[] getRow(int rowNumber);
 
     /**
@@ -77,7 +84,6 @@ public interface TableModelApi {
      * @return the number of rows shown in the <code>JTable</code>
      * @see #getColumnCount
      */
-
     int getRowCount();
 
     /**
@@ -99,12 +105,13 @@ public interface TableModelApi {
         return TableProperties.getColumnMaxWidth(this, columnNumber);
     }
 
-    /** return columnNumber specific propery */
+    /** @return columnNumber specific property for key. */
     @Nullable default <VALUE> VALUE getColumnProperty(int columnNumber, @NonNull Object key)  { return null; }
 
-    /** put columnNumber specific propery */
+    /** put columnNumber specific property for key. */
     default void putColumnProperty(int columnNumber, @NonNull Object key, Object value) {}
 
+    /** return all column properties  for key. */
     @Nullable default <VALUE> VALUE[] getColumnProperties(VALUE[] result, @NonNull Object key)  {
         int columnCount = result.length;
         boolean allEmpty = true;
@@ -118,9 +125,10 @@ public interface TableModelApi {
         return allEmpty ? null : result;
     }
 
-    /** @return a valid version of rowCandidate. */
+    /** @return a valid or fixed version of rowCandidate. */
     @NonNull
     Object[] fixRow(@Nullable Object[] rowCandidate);
 
+    /** @return a human readable name of the data. */
     String getName();
 }

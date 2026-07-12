@@ -7,6 +7,9 @@ import org.jspecify.annotations.Nullable;
 
 import de.k3b.csvviewer.lib.data.model.TableModelApi;
 
+/**
+ * minimal implementation of demo data and for tests.
+ */
 public class DemoTableModel implements TableModelApi {
 
     private final String[] columns = {"ID", "Name", "Age"};
@@ -80,5 +83,10 @@ public class DemoTableModel implements TableModelApi {
     @Override
     public @NonNull Object[] fixRow(@Nullable Object[] rowCandidate) {
         return new Object[0];
+    }
+
+    @Override
+    public String getName() {
+        return "Demo";
     }
 }

@@ -13,7 +13,7 @@ android {
         // minSdk 23 // WebView instable with minSdk 21
         targetSdk = 36
         applicationId = "de.k3b.android.csvviewer"
-        versionCode = 2000 // increment in 1000 steps
+        versionCode = 2000 // increment in 100 steps
         versionName = "0.1.1"
 
         /*
@@ -50,14 +50,16 @@ android {
             minSdkVersion 21 // android 5
             versionCode = android.defaultConfig.versionCode + 21
             versionNameSuffix = "-minApi21"
-            applicationId = "de.k3b.android.csvviewer.api21"
+            applicationId = "${android.defaultConfig.applicationId}.api21"
+            print("$applicationId($versionCode)\n")
         }
         minApi23 {
             dimension = "api"
             minSdkVersion 23 // android 6
             versionCode = android.defaultConfig.versionCode + 23
             versionNameSuffix = "-minApi23"
-            applicationId = "de.k3b.android.csvviewer.api23"
+            applicationId = "${android.defaultConfig.applicationId}.api23"
+            print("$applicationId($versionCode)\n")
         }
     }
 }
@@ -73,11 +75,11 @@ dependencies {
         // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
+    implementation project(':csv_model_lib')
 
-    implementation project(':lib')
 
     testImplementation libs.test.java.junit
-    testImplementation project(':lib')
+    testImplementation project(':csv_model_lib')
     androidTestImplementation libs.test.android.ext.junit
     androidTestImplementation libs.test.android.espresso.core
 }
