@@ -50,7 +50,7 @@ android {
             minSdkVersion 21 // android 5
             versionCode = android.defaultConfig.versionCode + 21
             versionNameSuffix = "-minApi21"
-            applicationId = "${android.defaultConfig.applicationId}.api21"
+            // applicationId = "${android.defaultConfig.applicationId}.api21"
             print("$applicationId($versionCode)\n")
         }
         minApi23 {
@@ -58,7 +58,23 @@ android {
             minSdkVersion 23 // android 6
             versionCode = android.defaultConfig.versionCode + 23
             versionNameSuffix = "-minApi23"
-            applicationId = "${android.defaultConfig.applicationId}.api23"
+            // applicationId = "${android.defaultConfig.applicationId}.api23"
+            print("$applicationId($versionCode)\n")
+        }
+        minApi24 {
+            dimension = "api"
+            minSdkVersion 24 // android 7
+            versionCode = android.defaultConfig.versionCode + 24
+            versionNameSuffix = "-minApi24"
+            // applicationId = "${android.defaultConfig.applicationId}.api24"
+            print("$applicationId($versionCode)\n")
+        }
+        minApi29 {
+            dimension = "api"
+            minSdkVersion 29 // android 10
+            versionCode = android.defaultConfig.versionCode + 29
+            versionNameSuffix = "-minApi29"
+            // applicationId = "${android.defaultConfig.applicationId}.api29"
             print("$applicationId($versionCode)\n")
         }
     }

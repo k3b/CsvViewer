@@ -20,7 +20,7 @@ application {
 
 dependencies {
     // No external dependencies required
-    implementation(libs.bundles.old.java) {
+    implementation(libs.bundles.old5.java) {
         // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }

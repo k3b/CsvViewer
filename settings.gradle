@@ -20,6 +20,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Csv Viewer"
-include ':csv_view_android_app'
+include ':csv_viewer_android_app'
 include ':csv_model_lib'
-include ':csv_view_swing_app'
+include ':csv_viewer_swing_app'
