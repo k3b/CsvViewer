@@ -91,6 +91,16 @@ dependencies {
         // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
+    minApi24Implementation(libs.bundles.api24) {
+        // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
+
+    minApi29Implementation  libs.bundles.last.android
+    minApi29Implementation(libs.bundles.api29) {
+        // do not get transitive 'commons-beanutils:commons-beanutils as the opencsv bean <-> csv feature is not used
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
     implementation project(':csv_model_lib')
 
 
