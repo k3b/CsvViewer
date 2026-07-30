@@ -73,18 +73,10 @@ DecimalFormat df = new DecimalFormat("#,##0.###", symbols);
 double value = df.parse("1.234,56").doubleValue();
 System.out.println(value);
 
+-----
 
-
-
-
-
-
-
-
-
-
-
-
+license-report
+* Display ...apk\assets\open_source_licenses.csv
 
 TableRowEditorActivity
 * ? started from TableActivity

@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.license.report)
 }
 
 android {
@@ -40,6 +41,23 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    licenseReport {
+        // Generate reports
+        generateCsvReport = true
+        generateHtmlReport = false
+
+        // Copy reports - These options are ignored for Java projects
+        copyCsvReportToAssets = true
+        copyHtmlReportToAssets = false
+        useVariantSpecificAssetDirs = true
+
+        // Ignore licenses for certain artifact patterns
+        ignoredPatterns = []
+
+        // Show versions in the report - default is false
+        showVersions = true
     }
 
     flavorDimensions "api"
@@ -108,4 +126,33 @@ dependencies {
     testImplementation project(':csv_model_lib')
     androidTestImplementation libs.test.android.ext.junit
     androidTestImplementation libs.test.android.espresso.core
+}
+
+// define task "copyLicenseXxx" to be called before compileXxxSources
+// goal: creates build/generated/${variant.name}/res/raw/licenseReport.csv that will be compiled into the app.
+// example: gradlew.bat copyLicenseMinApi21Debug
+// example: gradlew.bat copyLicenseMinApi24Release
+android.applicationVariants.all { variant ->
+    def variantName = variant.name.capitalize() // MinApi29Release
+
+    tasks.register("copyLicense${variantName}", Copy) {
+        group = "license"
+        description = "Copies license report for ${variantName}"
+
+        dependsOn("license${variantName}Report")
+
+        from(layout.buildDirectory.file(
+                "reports/licenses/license${variantName}Report.csv"
+        ))
+
+        into(layout.buildDirectory.dir(
+                "generated/${variant.name}/res/raw"
+        ))
+
+        rename { "licenseReport.csv" }
+    }
+
+    tasks.named("compile${variantName}Sources") {
+        dependsOn(tasks.named("copyLicense${variantName}"))
+    }
 }

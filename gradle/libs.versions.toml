@@ -22,6 +22,12 @@ android-webkit-old5 = "1.14.0"
 android-webkit = "1.15.0"
 android-webkit-last = "1.16.0"
 
+# Build support
+
+# See https://github.com/jaredsburrows/gradle-license-plugin#Compatibility-Matrix
+# 0.9.8 last version compatible with java11
+build-license-report-version = "0.9.8"
+
 #--------------------------------
 # android independent libs
 
@@ -42,6 +48,8 @@ opencsv-old5 = "3.10"
 opencsv = "5.12.0"
 
 jspecify = "1.0.0"
+
+
 
 [libraries]
 # android independant ide support for null/notnull
@@ -92,3 +100,9 @@ old5-java = [ "java-jspecify", "old5-java-opencsv", "old5-java-commons-io", "slf
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-agp" }
+
+# Build support
+# See https://github.com/jaredsburrows/gradle-license-plugin
+license-report = { id = "com.jaredsburrows.license", version.ref = "build-license-report-version" }
+
+
