@@ -43,6 +43,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
@@ -300,16 +301,31 @@ public class TableActivity extends AppCompatActivity {
                     return parser.toTableModel(name, csvReader);
                 }
             }
-        } else {
+        } else  {
             this.state.lastCsvSource = "";
-            String csvText = DemoData.demoCsv;
-            Object extraValue = IntentUtil.getExtra(intent, Intent.EXTRA_TEXT);
-            if (extraValue != null) {
-                csvText = extraValue.toString();
-            }
+            try {
+                //this.getResources().getR
+                // R.raw.license_report99
+                // getResources().openRawResource(resourceName)
+                //try (Reader csvReader = new InputStreamReader(getResources().openRawResource(R.raw.license_report))) { // getAssets().open("licenseReport.csv"))) {
+                try (Reader csvReader = new InputStreamReader(getAssets().open("licenseReport.csv"))) {
+                    try (Csv2TableModel parser = new Csv2TableModel(options)) {
+                        DocumentFile documentFile = DocumentFile.fromSingleUri(this, uri);
+                        String name = documentFile != null ? documentFile.getName() : uri.toString();
+                        return parser.toTableModel(name, csvReader);
+                    }
+                }
+            } catch (Exception ex) {
+                String csvText = DemoData.demoCsv;
+                Object extraValue = IntentUtil.getExtra(intent, Intent.EXTRA_TEXT);
+                if (extraValue != null) {
+                    csvText = extraValue.toString();
+                }
 
-            try(Csv2TableModel parser = new Csv2TableModel(options)) {
-                return parser.toTableModel(DemoData.demoCsvName, csvText);
+                try(Csv2TableModel parser = new Csv2TableModel(options)) {
+                    return parser.toTableModel(DemoData.demoCsvName, csvText);
+                }
+
             }
         }
     }

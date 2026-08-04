@@ -47,6 +47,8 @@ android {
         // Generate reports
         generateCsvReport = true
         generateHtmlReport = false
+        generateJsonReport = false
+        generateTextReport = false
 
         // Copy reports - These options are ignored for Java projects
         copyCsvReportToAssets = true
@@ -69,6 +71,8 @@ android {
             versionCode = android.defaultConfig.versionCode + 21
             versionNameSuffix = "-minApi21"
             // applicationId = "${android.defaultConfig.applicationId}.api21"
+            // res.srcDirs = ['src/main/res', 'build/generated/${variant.name}/res/raw']
+            // generated/${variant.name}/res/raw
             print("$applicationId($versionCode)\n")
         }
         minApi23 {
@@ -128,11 +132,40 @@ dependencies {
     androidTestImplementation libs.test.android.espresso.core
 }
 
+/*
+//!!! test
+androidComponents {
+    onVariants { variant ->
+
+        var generateTask = tasks.register(
+                "generate${variant.name.replaceFirstChar(Char::titlecase)}Resources",
+                GenerateResourcesTask::class.java
+        ) {
+            outputDir.set(
+                    layout.buildDirectory.dir(
+                            "generated/myResources/${variant.name}/res"
+                    )
+            )
+        }
+
+        variant.sources.res?.addGeneratedSourceDirectory(
+                generateTask,
+                GenerateResourcesTask::outputDir
+        )
+    }
+}
+*/
+
+//#############
 // define task "copyLicenseXxx" to be called before compileXxxSources
 // goal: creates build/generated/${variant.name}/res/raw/licenseReport.csv that will be compiled into the app.
 // example: gradlew.bat copyLicenseMinApi21Debug
 // example: gradlew.bat copyLicenseMinApi24Release
-android.applicationVariants.all { variant ->
+// androidComponents.onVariants { variant -> // agp8 syntax
+android.applicationVariants.all { variant -> // agp7 and older syntax
+    // variant.name            // minApi29Release
+    // variant.buildType       // release
+    // variant.flavorName      // minApi29
     def variantName = variant.name.capitalize() // MinApi29Release
 
     tasks.register("copyLicense${variantName}", Copy) {
@@ -145,14 +178,59 @@ android.applicationVariants.all { variant ->
                 "reports/licenses/license${variantName}Report.csv"
         ))
 
+        def generatedResDir = layout.buildDirectory.dir(
+                "generated/res/${variantName}/raw"
+                // build/generated/res/resValues/minApi21/debug
+        )
+        into(generatedResDir)
+        /*
+        def root = layout.projectDirectory
+        into("${root}/src/${variant.name}/res/raw"
+                // /src/minApi21Debug/res/raw
+                // build/generated/res/resValues/minApi21/debug
+        )
+        /*
         into(layout.buildDirectory.dir(
-                "generated/${variant.name}/res/raw"
+                "generated/res/resValues/${variantName}"
+                // build/generated/res/resValues/minApi21/debug
         ))
+        */
+        // C:\prj\privat\github\CsvViewer\csv_viewer_android_app\build\generated\res\resValues\minApi21\debug
+        // C:\prj\privat\github\CsvViewer\csv_viewer_android_app\src\minApi21Debug\assets
+        // C:\prj\privat\github\CsvViewer\csv_viewer_android_app\src\minApi21Debug\res\raw
 
-        rename { "licenseReport.csv" }
+        rename { "license_report.csv" }
+        afterEvaluate {
+            preBuild.dependsOn("copyLicense${variantName}")
+        }
+        android {
+            sourceSets {
+                main.res.srcDirs += "$buildDir/generated/res"
+            }
+        }
     }
 
-    tasks.named("compile${variantName}Sources") {
+
+
+
+
+
+
+    // "compile${variantName}Sources"
+    // "merge${variantName}Resources"
+    /*
+    tasks.named("merge${variantName}Resources") {
         dependsOn(tasks.named("copyLicense${variantName}"))
+    }
+    tasks.named("merge${variantName}Resources") {
+        dependsOn(tasks.named("copyLicense${variantName}"))
+    }*/
+
+    android {
+        sourceSets {
+            getByName(variant.name) {
+                res.srcDir([layout.buildDirectory.dir("generated/res/${variantName}")])
+            }
+        }
     }
 }
