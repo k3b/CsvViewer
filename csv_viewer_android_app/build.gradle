@@ -132,6 +132,17 @@ dependencies {
     androidTestImplementation libs.test.android.espresso.core
 }
 
+
+/* not working for me :-(
+// AFTER — AGP 9.x
+androidComponents {
+    onVariants { variant ->
+        // Modify artifacts, signing config, manifest values, etc.
+        variant.signingConfig.enableV1Signing.set(false)
+    }
+}
+*/
+
 /*
 //!!! test
 androidComponents {
@@ -161,7 +172,7 @@ androidComponents {
 // goal: creates build/generated/${variant.name}/res/raw/licenseReport.csv that will be compiled into the app.
 // example: gradlew.bat copyLicenseMinApi21Debug
 // example: gradlew.bat copyLicenseMinApi24Release
-// androidComponents.onVariants { variant -> // agp8 syntax
+// androidComponents.onVariants { variant -> // agp8 syntax not working
 android.applicationVariants.all { variant -> // agp7 and older syntax
     // variant.name            // minApi29Release
     // variant.buildType       // release
@@ -195,9 +206,9 @@ android.applicationVariants.all { variant -> // agp7 and older syntax
                 // build/generated/res/resValues/minApi21/debug
         ))
         */
-        // C:\prj\privat\github\CsvViewer\csv_viewer_android_app\build\generated\res\resValues\minApi21\debug
-        // C:\prj\privat\github\CsvViewer\csv_viewer_android_app\src\minApi21Debug\assets
-        // C:\prj\privat\github\CsvViewer\csv_viewer_android_app\src\minApi21Debug\res\raw
+        // ...\github\CsvViewer\csv_viewer_android_app\build\generated\res\resValues\minApi21\debug
+        // ...\github\CsvViewer\csv_viewer_android_app\src\minApi21Debug\assets
+        // ...\github\CsvViewer\csv_viewer_android_app\src\minApi21Debug\res\raw
 
         rename { "license_report.csv" }
         afterEvaluate {
@@ -226,11 +237,12 @@ android.applicationVariants.all { variant -> // agp7 and older syntax
         dependsOn(tasks.named("copyLicense${variantName}"))
     }*/
 
+    /*
     android {
         sourceSets {
             getByName(variant.name) {
                 res.srcDir([layout.buildDirectory.dir("generated/res/${variantName}")])
             }
         }
-    }
+    }*/
 }

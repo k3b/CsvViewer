@@ -77,6 +77,7 @@ System.out.println(value);
 
 license-report
 * Display ...apk\assets\open_source_licenses.csv
+* example gradlew.bat csv_viewer_android_app:copyLicenseMinApi21Debug
 
 TableRowEditorActivity
 * ? started from TableActivity
@@ -119,3 +120,5 @@ if ("/header".equals(uri.getPath())) {
 Toast.makeText(this, "Link clicked", Toast.LENGTH_SHORT).show();
 }
 }
+
+
