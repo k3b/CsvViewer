@@ -1,0 +1,6 @@
+* Version 0.1.1 (2000)
+* fixed columnfilter
+* fixed data loss after screen rotation
+* added rowContainsFilter🔎
+* buildsystem: updated gradle: 8.13 -> 9.5; android-agp: 8.13.2 -> 9.3.1
+* supported Android versions: minApi21 (Android-5); minApi23 (Android-6); minApi24 (Android-7); minApi29 (Android-10)

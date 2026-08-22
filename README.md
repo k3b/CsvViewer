@@ -26,3 +26,20 @@ Goal: Android App to show/sort/find csv database content in a table view.
 ## Requirements
 * MinSdk=21=LOLLIPOP (or later)
 * enough memory to keep the complete csv file in memory
+
+
+## How to Build and install
+* flavor: minApi29|minApi24|minApi23|minApi21
+* buildType: release|debug
+
+to install on connected device call
+* gradlew.bat csv_viewer_android_app:install${flavor}${buildType}
+* Example: gradlew.bat csv_viewer_android_app:installMinApi21Debug
+
+to build all release files
+* gradlew.bat csv_viewer_android_app:assembleRelease
+* will create these filese (for different Android-Versions)
+	* ...\CsvViewer\csv_viewer_android_app\build\outputs\apk\minApi21\release\csv_viewer_android_app-minApi21-release-unsigned.apk
+	* ...\CsvViewer\csv_viewer_android_app\build\outputs\apk\minApi23\release\csv_viewer_android_app-minApi23-release-unsigned.apk
+	* ...\CsvViewer\csv_viewer_android_app\build\outputs\apk\minApi24\release\csv_viewer_android_app-minApi24-release-unsigned.apk
+	* ...\CsvViewer\csv_viewer_android_app\build\outputs\apk\minApi29\release\csv_viewer_android_app-minApi29-release-unsigned.apk
