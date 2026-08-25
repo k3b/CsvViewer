@@ -2,6 +2,12 @@ Goal: Android App to show/sort/find csv database content in a table view.
 
 <img src="https://raw.githubusercontent.com/wiki/k3b/CsvViewer/CsvViewer.svg" width="80" height="80" >
 
+## Why does every release has differnt Android APKs (called "flavors"): minSdkXX
+* minSdk29 is optimized for Android-10 ("Q") and later: it does not run on Android-9 and earlier.
+* minSdk24 is optimized for Android-7 ("Nougat") and later: it does not run on Android-6 and earlier.
+* minSdk23 is optimized for Android-6 ("Marshmallow") and later: it does not run on Android-5 and earlier.
+* minSdk21 is optimized for Android-5 ("Lollipop") and later; Contains a known vulnerability : it does not run on Android-4.4 and earlier.
+
 ## How to use CsvViewer?
 * Inside a filemanager, click on a file that ends with ".csv". 
   * In the "Open with" popup select "CsvViewer".

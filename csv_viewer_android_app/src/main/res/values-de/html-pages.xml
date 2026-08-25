@@ -13,6 +13,13 @@
 <br />
 <h2>Android App zum anzeigen/sortieren/auffinden von CSV Daten in einer Table.</h2>
 <br />
+<h2>Warum gibt es in jedem release verschiedene minSdkXX Android APKs ('flavors')?</h2>
+<ul>
+<li>minSdk29 ist optimiert für Android-10 ('Q') oder neuer: funktioniert nicht mit Android-9 oder älter.</li>
+<li>minSdk24 ist optimiert für Android-7 ('Nougat') oder neuer: funktioniert nicht mit Android-6 oder älter.</li>
+<li>minSdk23 ist optimiert für Android-6 ('Marshmallow') oder neuer: funktioniert nicht mit Android-5 oder älter.</li>
+<li>minSdk21 ist optimiert für Android-5 ('Lollipop') oder neuer; Enthält mindestens eine bekannte Sicherheitslücke : funktioniert nicht mit Android-4.4 oder älter.</li>
+</ul>
 <h2>Wie benutzt man CsvViewer?</h2>
 <ul>
 <li>Öffnen Sie in einem Dateimanager eine Datei, die auf '.csv' endet.</li>

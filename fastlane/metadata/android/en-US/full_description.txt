@@ -1,3 +1,10 @@
+<h2>Why does every release has differnt Android APKs (called 'flavors'): minSdkXX</h2>
+<ul>
+<li>minSdk29 is optimized for Android-10 ('Q') and later: it does not run on Android-9 and earlier.</li>
+<li>minSdk24 is optimized for Android-7 ('Nougat') and later: it does not run on Android-6 and earlier.</li>
+<li>minSdk23 is optimized for Android-6 ('Marshmallow') and later: it does not run on Android-5 and earlier.</li>
+<li>minSdk21 is optimized for Android-5 ('Lollipop') and later; Contains a known vulnerability : it does not run on Android-4.4 and earlier.</li>
+</ul>
 <h2>How to use CsvViewer?</h2>
 <ul>
 <li>Inside a filemanager, click on a file that ends with '.csv'.</li>

@@ -34,6 +34,12 @@
     <!-- This becomes .../fastlane/metadata/android/full_description.txt.
     See https://f-droid.org/docs/Build_Metadata_Reference/#Description -->
     <string name="full_description"><![CDATA["
+## Warum gibt es in jedem release verschiedene minSdkXX Android APKs ('flavors')?
+* minSdk29 ist optimiert für Android-10 ('Q') oder neuer: funktioniert nicht mit Android-9 oder älter.
+* minSdk24 ist optimiert für Android-7 ('Nougat') oder neuer: funktioniert nicht mit Android-6 oder älter.
+* minSdk23 ist optimiert für Android-6 ('Marshmallow') oder neuer: funktioniert nicht mit Android-5 oder älter.
+* minSdk21 ist optimiert für Android-5 ('Lollipop') oder neuer; Enthält mindestens eine bekannte Sicherheitslücke : funktioniert nicht mit Android-4.4 oder älter.
+
 ## Wie benutzt man CsvViewer?
 * Öffnen Sie in einem Dateimanager eine Datei, die auf '.csv' endet.
   * Wählen Sie im 'Öffnen mit'-Dialog 'CsvViewer' aus.

@@ -3,7 +3,7 @@
 # Author: k3b
 # License: GPLv3 or later
 
-# convert [prj-root]/app/src/debug/res/values-zz/fdroid.xml
+# convert [prj-root]/csv_viewer_android_app/src/debug/res/values-zz/fdroid.xml
 # to [prj-root]/fastlane/metadata/android/zz/*.txt
 
 import glob
@@ -20,17 +20,18 @@ DEFAULT_APP_TITLE = "CsvViewer"
 
 # all paths are relativ to [root]/fastlane/*.py
 
-# mandatory: translations come from [prj]/app/src/debug/res/values-[locale]/fdroid.xml
-FD_SRC_PATH_ROOT = '../app/src/debug/res'
+# mandatory: translations come from [prj]/csv_viewer_android_app/src/debug/res/values-[locale]/fdroid.xml
+FD_SRC_PATH_ROOT = '../csv_viewer_android_app/src/debug/res'
 
 # mandatory: fastlane data is written to [prj]/fastlane/metadata/android/*/*.txt
 FASTLANE_OUT_ROOT = 'metadata/android'
 
-# if not null markdown in full_description is written to [prj]/app/src/main/res/values-[locale]/html-pages.xml
-APP_OUT_RES_ROOT = '../app/src/main/res'
+# if not null markdown in full_description is written to [prj]/csv_viewer_android_app/src/main/res/values-[locale]/html-pages.xml
+APP_OUT_RES_ROOT = '../csv_viewer_android_app/src/main/res'
 
 # if not null markdown in full_description is written to [prj]/../CsvViewer.wiki/[locale]-home.md
-WIKI_OUT_ROOT = '../../CsvViewer.wiki'
+# WIKI_OUT_ROOT = '../../CsvViewer.wiki'
+WIKI_OUT_ROOT = '../local/CsvViewer.wiki'
 
 DEFAULT_LANG = 'en-US'
 
@@ -236,6 +237,7 @@ def mylen(item):
 
 def main():
     path = os.path.join(PATH, FD_SRC_PATH_ROOT, 'values*/fdroid.xml')
+    print("Executing script with path " + path)
 
     # path = os.path.join(path,'values[^/\\]*/fdroid.xml')
     glob.glob(path)
@@ -243,6 +245,7 @@ def main():
         android_locale = REGEX_ANDROID_LOCALE.sub(r'\1', fdroid_xml)
 
         process_translation(fdroid_xml, android_locale)
+    print("Executing script finished")
 
 
 if __name__ == "__main__":
