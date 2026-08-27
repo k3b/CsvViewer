@@ -49,3 +49,12 @@ to build all release files
 	* ...\CsvViewer\csv_viewer_android_app\build\outputs\apk\minApi23\release\csv_viewer_android_app-minApi23-release-unsigned.apk
 	* ...\CsvViewer\csv_viewer_android_app\build\outputs\apk\minApi24\release\csv_viewer_android_app-minApi24-release-unsigned.apk
 	* ...\CsvViewer\csv_viewer_android_app\build\outputs\apk\minApi29\release\csv_viewer_android_app-minApi29-release-unsigned.apk
+
+-----
+
+## Donations:
+
+If you like this app please consider to donating to https://f-droid.org/donate .
+
+Since android-developping is a hobby (and an education tool) i do not want any money for my apps so
+donation should go to projects i benefit from.
